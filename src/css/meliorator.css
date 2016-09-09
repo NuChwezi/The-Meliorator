@@ -1,0 +1,76 @@
+/* this is to apply some desired styling to default Meliorator classes */
+.widget {
+    display: inline-block;
+    padding: 6px;
+    border: 2px solid #85d3e8;
+    border-radius: 6px;
+    margin: 3px;
+}
+
+.widget label select {
+    margin-left: 3px;
+}
+
+.widget-button {
+    padding: 6px;
+    background-color: #5be5f1;
+    color: black;
+    border: 2px solid #bfbfbb;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: hand;
+}
+
+.widget-button:active, .widget-button:hover {
+    background-color: yellow;
+}
+
+.chart {
+    display: block;
+}
+
+.chart-canvas {
+    width: 100%;
+    height: 500px;
+}
+
+.chart.table table {
+    overflow: auto;
+    height: 500px;
+    display: block;
+    width: auto;
+}
+
+.flot-x-axis .flot-tick-label {
+    white-space: nowrap;
+    transform: translate(-9px, 0) rotate(-60deg);
+    text-indent: -100%;
+    transform-origin: top right;
+    text-align: right !important;
+}
+
+.chart td,th {
+    border: 1px #ccc solid !important;
+    padding: 4px;
+}
+
+.pie-chart .legend table {
+    overflow: auto;
+    height: 400px;
+    display: block;
+    width: 200px;
+}
+
+.chart.widget {
+    padding-bottom: 100px;
+}
+
+.chart.table.widget {
+    padding-bottom: 6px;
+}
+
+.chart.widget.pie-chart {
+    height: 580px;
+    overflow: auto;
+    padding-bottom: 6px;
+}
