@@ -52,5 +52,11 @@ and then invoke these statistical powers as:
 	$('JQUERY SELECTOR FOR TARGET').Meliorator('ACTION', [CONFIGURATION_OPTIONS]);
 	
 	
+SHOWCASE
+----------------------
 
+![Bar Chart](/showcase/bar-charts.png?raw=true "Bar Chart Example")
+![Line Chart](/showcase/line-charts.png?raw=true "Line Chart Example")
+![Pie Chart](/showcase/pie-chart.png?raw=true "Pie Chart Example")
+![Tabular Chart](/showcase/table-chart.png?raw=true "Tabular Chart Example")
 
