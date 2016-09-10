@@ -1,0 +1,342 @@
+<html>
+    <meta name="referrer" content="origin">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <head>
+        <title>Meliorator: Test</title>
+        <!-- this is all u need to include -->
+        <script src="../vendor/jquery.min.js"></script>
+        <script src="../src/js/meliorator.js"></script>
+        <link rel="stylesheet" type="text/css" href="../src/css/meliorator.css"/>
+        <!-- just the above -->
+        <!-- using prism to highlight code examples -->
+        <script src="prism.js"></script>
+        <link rel="stylesheet" type="text/css" href="prism.css"/>
+        <!-- some fancy typography... -->
+        <script src="jquery.fittext.min.js"></script>
+        <script>
+            function range(low, high) {
+                d = []
+                for (i = low; i <= high; i++)
+                    d.push(i);
+                return d;
+            }
+            $(document).ready(function() {
+                $('.fit').fitText(0.8);
+                // let's make some basic dataset that we'll use to test our lib...
+                var sampleData = range(0, 40).map(function(i) {
+                    return {
+                        Number: i,
+                        Square: Math.pow(i, 2),
+                        Cube: Math.pow(i, 3)
+                    }
+                });
+                // here, we get the dataset, and see how we can use Meliorator to tranform it into a proper html table,
+                // which is rendered in the container(s) we specify.
+                // the only option we need to set is the 'data' field, others are optional.
+                $('#table').Meliorator('table', {
+                    data: sampleData,
+                    tableClass: 'originalTable'
+                });
+                // in the next one, we shall attempt to use a pre-existing html table, as the source of our other
+                // transformations. This comes in handy, because, there might be scenarios in the real world, where
+                // the data to be used for analysis is only available in some html table on the document.
+                // so, the following shows how Meliorator can scan an existing html table, and return an array of
+                // objects from it.
+                // NOTE: because jQuery annotates any results from operating on its selectors, we shall need to force
+                // casting to plain old arrays for simpler use...
+                var parsedDataSet = $.makeArray($('.originalTable').Meliorator('parse-table')[0]);
+                console.log(parsedDataSet);
+                // then, let's see if this parsed DataSet is indeed capable of being used to render the same table again
+                $('#derivedTable').Meliorator('table', {
+                    data: parsedDataSet,
+                    tableClass: 'derivedTable'
+                });
+                // okay, now let's take this parsed table, and render an analytics panel for it :-)
+                $('#analytics').Meliorator('analytics-panel', {
+                    data: parsedDataSet
+                });
+            });
+        </script>
+        <style>
+            @font-face {
+                font-family: Pixel;
+                src: url(LLPIXEL3.ttf);
+                font-weight: bold;
+            }
+
+            .fit {
+                font-family: 'Pixel';
+                text-shadow: 0px 1px 2px rgb(191, 255, 66);
+            }
+
+            *, *:before, *:after {
+                padding: 0;
+                margin: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: sans-serif;
+                font-size: 10px;
+            }
+
+            .plan {
+                background: #ccc;
+                border: .09em solid #999;
+                width: 22.2em;
+                position: relative;
+                box-shadow: 0 0 1em .05em #666;
+                display: inline-block;
+                margin: 3em;
+                font-size: 1.2em;
+                -webkit-transition: .15s ease-in;
+                -moz-transition: .15s ease-in;
+                -ms-transition: .15s ease-in;
+            }
+
+            .plan.large {
+                width: 66em;
+            }
+
+            .plan.large h2 {
+                width: 27em;
+            }
+
+            hgroup > h1 {
+                background: #333;
+                display: block;
+                border-top-left-radius: .3em;
+                border-top-right-radius: .3em;
+                -moz-border-top-left-radius: .3em;
+                -moz-border-top-right-radius: .3em;
+                top: -.3em;
+                position: relative;
+                color: #dedede;
+                text-align: center;
+                line-height: 1.8em;
+                font-size: 2em;
+                font-weight: normal;
+            }
+
+            .plan h2 {
+                background: #29A6CF;
+                line-height: 2em;
+                font-size: 2.5em;
+                font-weight: normal;
+                text-align: center;
+                position: relative;
+                width: 9.5em;
+                left: -.35em;
+                margin-top: -.3em;
+                box-shadow: 0 0 .3em 1px #333;
+                color: #dedede;
+            }
+
+            .plan h2:before {
+                content: "";
+                width: 0;
+                height: 0;
+                border-top: .35em solid #2081A1;
+                border-left: .35em solid transparent;
+                position: absolute;
+                bottom: -.35em;
+                left: 0;
+            }
+
+            .plan h2:after {
+                content: "";
+                width: 0;
+                height: 0;
+                border-top: .35em solid #2081A1;
+                border-right: .35em solid transparent;
+                position: absolute;
+                bottom: -.35em;
+                right: 0;
+            }
+
+            .inline {
+                display: inline-block;
+            }
+
+            .data-container {
+                padding: 6px;
+                border: 2px solid #ccc;
+                border-radius: 6px;
+                background: white;
+                width: 250px;
+                height: 300px;
+                overflow: auto;
+                margin: 6px;
+            }
+
+            .legend {
+                color: #49a761;
+                font-size: larger;
+            }
+
+            #analytics {
+                margin: 6px;
+            }
+        </style>
+<style type="text/css">
+.downloadBtn {
+	-moz-box-shadow:inset 1px 3px 12px 0px #fce2c1;
+	-webkit-box-shadow:inset 1px 3px 12px 0px #fce2c1;
+	box-shadow:inset 1px 3px 12px 0px #fce2c1;
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ffc477), color-stop(1, #fa5725) );
+	background:-moz-linear-gradient( center top, #ffc477 5%, #fa5725 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffc477', endColorstr='#fa5725');
+	background-color:#ffc477;
+	-webkit-border-top-left-radius:2px;
+	-moz-border-radius-topleft:2px;
+	border-top-left-radius:2px;
+	-webkit-border-top-right-radius:2px;
+	-moz-border-radius-topright:2px;
+	border-top-right-radius:2px;
+	-webkit-border-bottom-right-radius:2px;
+	-moz-border-radius-bottomright:2px;
+	border-bottom-right-radius:2px;
+	-webkit-border-bottom-left-radius:2px;
+	-moz-border-radius-bottomleft:2px;
+	border-bottom-left-radius:2px;
+	text-indent:0;
+	border:1px solid #eeb44f;
+	display:inline-block;
+	color:#ffffff;
+	font-family:Verdana;
+	font-size:15px;
+	font-weight:bold;
+	font-style:normal;
+	height:45px;
+	line-height:45px;
+	width:131px;
+	text-decoration:none;
+	text-align:center;
+	text-shadow:1px 1px 0px #cc9f52;
+}
+.downloadBtn:hover {
+	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #fa5725), color-stop(1, #ffc477) );
+	background:-moz-linear-gradient( center top, #fa5725 5%, #ffc477 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#fa5725', endColorstr='#ffc477');
+	background-color:#fa5725;
+}.downloadBtn:active {
+	position:relative;
+	top:1px;
+}</style>
+
+
+    </head>
+    <body>
+
+<a href="https://github.com/NuChwezi/The-Meliorator"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/652c5b9acfaddf3a9c326fa6bde407b87f7be0f4/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6f72616e67655f6666373630302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"></a>
+
+        <header>
+            <h1 class="fit">The Meliorator</h1>
+        </header>
+        <content>
+            <div>
+                <div class="plan">
+                    <hgroup>
+                        <h1>First, let's</h1>
+                        <h2>Use Meliorator to make a table</h2>
+                        <pre>
+                            <code class="language-javascript">
+
+var sampleData = range(0, 40).map(function(i) {
+return {
+        Number: i,
+        Square: Math.pow(i, 2),
+        Cube: Math.pow(i, 3)
+    }
+});
+
+$('#table').Meliorator('table', {
+    data: sampleData,
+    tableClass: 'originalTable'
+});
+
+                            </code>
+                        </pre>
+                    </hgroup>
+                </div>
+                <div class="plan">
+                    <hgroup>
+                        <h1>So?</h1>
+                        <h2>We get this...</h2>
+                        <div id="table" class="inline data-container"></div>
+                    </hgroup>
+                </div>
+                <div class="plan">
+                    <hgroup>
+                        <h1>Meliorator</h1>
+                        <h2>Can reverse engineer an existing table</h2>
+                        <pre>
+                            <code class="language-javascript">
+
+var parsedDataSet = $.makeArray(
+    $('.originalTable').Meliorator('parse-table')[0]
+);
+
+                            </code>
+                        </pre>
+                    </hgroup>
+                </div>
+                <div class="plan">
+                    <hgroup>
+                        <h1>To get?</h1>
+                        <h2>This!</h2>
+                        <div id="derivedTable" class="inline data-container"></div>
+                    </hgroup>
+                </div>
+                <div class="plan">
+                    <hgroup>
+                        <h1>Then, with a dataset</h1>
+                        <h2>We can Meliorate</h2>
+                        <pre>
+                            <code class="language-javascript">
+
+$('#analytics').Meliorator('analytics-panel', {
+    data: parsedDataSet
+});
+
+                            </code>
+                        </pre>
+                    </hgroup>
+                </div>
+            </div>
+
+            <div class="plan large">
+                <hgroup>
+                    <h1>To Get?</h1>
+                    <h2>This amazing analytics panel for FREE!</h2>
+                    <div id="analytics"></div>
+                </hgroup>
+            </div>
+
+            <br/>
+            
+            <div class="plan">
+                    <hgroup>
+                        <h1>It's Open Source!</h1>
+                        <h2>Fork or Downlaod...</h2>
+                        <div style="padding:10px; margin-left:40px; margin-top:20px">
+                        
+                            <div style="margin:10px">
+                                <a href="https://github.com/NuChwezi/The-Meliorator/archive/master.zip" class="downloadBtn">DOWNLOAD</a>
+                            </div>
+
+                            <div style="margin:10px">
+                                <iframe src="https://ghbtns.com/github-btn.html?user=NuChwezi&repo=The-Meliorator&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+                            </div>
+
+                             <div style="margin:10px">
+                                <iframe src="https://ghbtns.com/github-btn.html?user=NuChwezi&repo=The-Meliorator&type=fork&count=true&size=large&v=2" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+                            </div>
+
+                        </div>
+                    </hgroup>
+            </div>
+
+        </content>
+    </body>
+</html>

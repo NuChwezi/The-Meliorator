@@ -2,9 +2,10 @@
 .widget {
     display: inline-block;
     padding: 6px;
-    border: 2px solid #85d3e8;
+    border: 2px solid #ccc;
     border-radius: 6px;
     margin: 3px;
+    background-color: whitesmoke;
 }
 
 .widget label select {
