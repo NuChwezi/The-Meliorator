@@ -51,6 +51,7 @@ and then invoke these statistical powers as:
 
 	$('JQUERY SELECTOR FOR TARGET').Meliorator('ACTION', [CONFIGURATION_OPTIONS]);
 	
+For More detailed example usage, visit [the documentation here](https://nuchwezi.github.io/The-Meliorator/).
 	
 SHOWCASE
 ----------------------
