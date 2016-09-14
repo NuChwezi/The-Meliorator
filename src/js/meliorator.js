@@ -4007,12 +4007,13 @@ Requires and includes dependencies of the Open Source Flot js Charting library
     /* given an html table, return it as an array of objects */
     this.htmlTableToObjectArray = function(table) {
         var headers = $(table).find('thead tr:last').find('th,td').map(function(i, td) {
-            return $(td).text();
+            return $(td).text().trim();
         });
         var dataSet = $(table).find('tbody tr').map(function(r, tr) {
             var o = {};
             $(tr).find('th,td').map(function(i, td) {
-                o[headers[i]] = $(td).text();
+                var val = $(td).text().trim();
+                o[headers[i]] = isNaN(val) ? val : Number(val);
             });
             return o;
         });
