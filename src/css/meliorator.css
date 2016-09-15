@@ -75,3 +75,7 @@
     overflow: auto;
     padding-bottom: 6px;
 }
+
+.flotTip {
+    font-size: 1em !important;
+}

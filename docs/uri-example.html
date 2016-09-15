@@ -27,7 +27,11 @@
                 });
                 // okay, now let's take this parsed table, and render an analytics panel for it :-)
                 $('#analytics').Meliorator('analytics-panel', {
-                    data: data
+                    data: data,
+                    labels: {
+                    	domain: 'Series',
+                    	domainAggregation: 'Series Aggregation'
+                    }
                 });
 
         	}      
