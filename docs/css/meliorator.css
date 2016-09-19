@@ -21,6 +21,15 @@
     font-weight: bold;
     cursor: hand;
 }
+.export-button {
+    padding: 6px;
+    background-color: #5bf1aa;
+    color: black;
+    border: 2px solid #bfbfbb;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: hand;
+}
 
 .widget-button:active, .widget-button:hover {
     background-color: yellow;
