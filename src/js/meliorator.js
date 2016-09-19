@@ -4286,89 +4286,1934 @@ Licensed under the MIT License ~ http://threedubmedia.googlecode.com/files/MIT-L
 }
 ).call(this);
 //# sourceMappingURL=underscore-min.map
-
 /* Html2Canvas.js */
-(function(t,D,y){function M(e,b,c){var f=e.runtimeStyle&&e.runtimeStyle[b],h,n=e.style;!/^-?[0-9]+\.?[0-9]*(?:px)?$/i.test(c)&&/^-?\d/.test(c)&&(h=n.left,f&&(e.runtimeStyle.left=e.currentStyle.left),n.left="fontSize"===b?"1em":c||0,c=n.pixelLeft+"px",n.left=h,f&&(e.runtimeStyle.left=f));return/^(thin|medium|thick)$/i.test(c)?c:Math.round(parseFloat(c))+"px"}function S(e){return parseInt(e,10)}function N(e,b,c,f,h,n){b=g.Util.getCSS(b,e,h);var a;1===b.length&&(h=b[0],b=[],b[0]=h,b[1]=h);-1!==b[0].toString().indexOf("%")?
-(a=parseFloat(b[0])/100,h=c.width*a,"backgroundSize"!==e&&(h-=(n||f).width*a)):h="backgroundSize"===e?"auto"===b[0]?f.width:/contain|cover/.test(b[0])?g.Util.resizeBounds(f.width,f.height,c.width,c.height,b[0]).width:parseInt(b[0],10):parseInt(b[0],10);"auto"===b[1]?c=h/f.width*f.height:-1!==b[1].toString().indexOf("%")?(a=parseFloat(b[1])/100,c=c.height*a,"backgroundSize"!==e&&(c-=(n||f).height*a)):c=parseInt(b[1],10);return[h,c]}function ca(e,b){var c=[];return{storage:c,width:e,height:b,clip:function(){c.push({type:"function",
-name:"clip",arguments:arguments})},translate:function(){c.push({type:"function",name:"translate",arguments:arguments})},fill:function(){c.push({type:"function",name:"fill",arguments:arguments})},save:function(){c.push({type:"function",name:"save",arguments:arguments})},restore:function(){c.push({type:"function",name:"restore",arguments:arguments})},fillRect:function(){c.push({type:"function",name:"fillRect",arguments:arguments})},createPattern:function(){c.push({type:"function",name:"createPattern",
-arguments:arguments})},drawShape:function(){var e=[];c.push({type:"function",name:"drawShape",arguments:e});return{moveTo:function(){e.push({name:"moveTo",arguments:arguments})},lineTo:function(){e.push({name:"lineTo",arguments:arguments})},arcTo:function(){e.push({name:"arcTo",arguments:arguments})},bezierCurveTo:function(){e.push({name:"bezierCurveTo",arguments:arguments})},quadraticCurveTo:function(){e.push({name:"quadraticCurveTo",arguments:arguments})}}},drawImage:function(){c.push({type:"function",
-name:"drawImage",arguments:arguments})},fillText:function(){c.push({type:"function",name:"fillText",arguments:arguments})},setVariable:function(e,b){c.push({type:"variable",name:e,arguments:b});return b}}}var g={},O;g.Util={};g.Util.log=function(e){g.logging&&t.console&&t.console.log&&t.console.log(e)};g.Util.trimText=function(e){return function(b){return e?e.apply(b):((b||"")+"").replace(/^\s+|\s+$/g,"")}}(String.prototype.trim);g.Util.asFloat=function(e){return parseFloat(e)};(function(){var e=
-/((rgba|rgb)\([^\)]+\)(\s-?\d+px){0,})/g,b=/(-?\d+px)|(#.+)|(rgb\(.+\))|(rgba\(.+\))/g;g.Util.parseTextShadows=function(c){if(!c||"none"===c)return[];c=c.match(e);for(var f=[],h=0;c&&h<c.length;h++){var n=c[h].match(b);f.push({color:n[0],offsetX:n[1]?n[1].replace("px",""):0,offsetY:n[2]?n[2].replace("px",""):0,blur:n[3]?n[3].replace("px",""):0})}return f}})();g.Util.parseBackgroundImage=function(e){var b,c,f,h,n,a=[],v,d=0,m=0,g,p,k=function(){b&&('"'===c.substr(0,1)&&(c=c.substr(1,c.length-2)),c&&
-p.push(c),"-"===b.substr(0,1)&&0<(h=b.indexOf("-",1)+1)&&(f=b.substr(0,h),b=b.substr(h)),a.push({prefix:f,method:b.toLowerCase(),value:n,args:p}));p=[];b=f=c=n=""};k();for(var t=0,y=e.length;t<y;t++)if(v=e[t],!(0===d&&-1<" \r\n\t".indexOf(v))){switch(v){case '"':g?g===v&&(g=null):g=v;break;case "(":if(!g)if(0===d){d=1;n+=v;continue}else m++;break;case ")":if(!g&&1===d)if(0===m){d=0;n+=v;k();continue}else m--;break;case ",":if(!g)if(0===d){k();continue}else if(1===d&&0===m&&!b.match(/^url$/i)){p.push(c);
-c="";n+=v;continue}}n+=v;0===d?b+=v:c+=v}k();return a};g.Util.Bounds=function(e){var b,c={};e.getBoundingClientRect&&(b=e.getBoundingClientRect(),c.top=b.top,c.bottom=b.bottom||b.top+b.height,c.left=b.left,c.width=e.offsetWidth,c.height=e.offsetHeight);return c};g.Util.OffsetBounds=function(e){var b=e.offsetParent?g.Util.OffsetBounds(e.offsetParent):{top:0,left:0};return{top:e.offsetTop+b.top,bottom:e.offsetTop+e.offsetHeight+b.top,left:e.offsetLeft+b.left,width:e.offsetWidth,height:e.offsetHeight}};
-g.Util.getCSS=function(e,b,c){void 0!==e&&(O=D.defaultView.getComputedStyle(e,null));var f=O[b];if(/^background(Size|Position)$/.test(b)){a:{f=(f||"").split(",");f=f[c||0]||f[0]||"auto";f=g.Util.trimText(f).split(" ");if("backgroundSize"!==b||f[0]&&!f[0].match(/cover|contain|auto/)){f[0]=-1===f[0].indexOf("%")?M(e,b+"X",f[0]):f[0];if(f[1]===y)if("backgroundSize"===b){f[1]="auto";e=f;break a}else f[1]=f[0];f[1]=-1===f[1].indexOf("%")?M(e,b+"Y",f[1]):f[1]}e=f}return e}return/border(Top|Bottom)(Left|Right)Radius/.test(b)?
-(e=f.split(" "),1>=e.length&&(e[1]=e[0]),e.map(S)):f};g.Util.resizeBounds=function(e,b,c,f,h){e/=b;h&&"auto"!==h?c/f<e^"contain"===h?(c=f,h=f*e):(h=c,c/=e):(h=c,c=f);return{width:h,height:c}};g.Util.BackgroundPosition=function(e,b,c,f,h){e=N("backgroundPosition",e,b,c,f,h);return{left:e[0],top:e[1]}};g.Util.BackgroundSize=function(e,b,c,f){e=N("backgroundSize",e,b,c,f);return{width:e[0],height:e[1]}};g.Util.Extend=function(e,b){for(var c in e)e.hasOwnProperty(c)&&(b[c]=e[c]);return b};g.Util.Children=
-function(e){var b;try{var c;if(e.nodeName&&"IFRAME"===e.nodeName.toUpperCase())c=e.contentDocument||e.contentWindow.document;else{var f=e.childNodes;e=[];if(null!==f){var h=e.length,n=0;if("number"===typeof f.length)for(var a=f.length;n<a;n++)e[h++]=f[n];else for(;f[n]!==y;)e[h++]=f[n++];e.length=h}c=e}b=c}catch(v){g.Util.log("html2canvas.Util.Children failed with exception: "+v.message),b=[]}return b};g.Util.isTransparent=function(e){return"transparent"===e||"rgba(0, 0, 0, 0)"===e};g.Util.Font=function(){var e=
-{};return function(b,c,f){if(e[b+"-"+c]!==y)return e[b+"-"+c];var h=f.createElement("div"),n=f.createElement("img"),a=f.createElement("span"),v;h.style.visibility="hidden";h.style.fontFamily=b;h.style.fontSize=c;h.style.margin=0;h.style.padding=0;f.body.appendChild(h);n.src="data:image/gif;base64,R0lGODlhAQABAIABAP///wAAACwAAAAAAQABAAACAkQBADs=";n.width=1;n.height=1;n.style.margin=0;n.style.padding=0;n.style.verticalAlign="baseline";a.style.fontFamily=b;a.style.fontSize=c;a.style.margin=0;a.style.padding=
-0;a.appendChild(f.createTextNode("Hidden Text"));h.appendChild(a);h.appendChild(n);v=n.offsetTop-a.offsetTop+1;h.removeChild(a);h.appendChild(f.createTextNode("Hidden Text"));h.style.lineHeight="normal";n.style.verticalAlign="super";n={baseline:v,lineWidth:1,middle:n.offsetTop-h.offsetTop+1};e[b+"-"+c]=n;f.body.removeChild(h);return n}}();(function(){function e(e){return function(c){try{e.addColorStop(c.stop,c.color)}catch(a){b.log(["failed to add color stop: ",a,"; tried to add: ",c])}}}var b=g.Util,
-c={};g.Generate=c;var f=[/^(-webkit-linear-gradient)\(([a-z\s]+)([\w\d\.\s,%\(\)]+)\)$/,/^(-o-linear-gradient)\(([a-z\s]+)([\w\d\.\s,%\(\)]+)\)$/,/^(-webkit-gradient)\((linear|radial),\s((?:\d{1,3}%?)\s(?:\d{1,3}%?),\s(?:\d{1,3}%?)\s(?:\d{1,3}%?))([\w\d\.\s,%\(\)\-]+)\)$/,/^(-moz-linear-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?))([\w\d\.\s,%\(\)]+)\)$/,/^(-webkit-radial-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?)),\s(\w+)\s([a-z\-]+)([\w\d\.\s,%\(\)]+)\)$/,/^(-moz-radial-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?)),\s(\w+)\s?([a-z\-]*)([\w\d\.\s,%\(\)]+)\)$/,
-/^(-o-radial-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?)),\s(\w+)\s([a-z\-]+)([\w\d\.\s,%\(\)]+)\)$/];c.parseGradient=function(e,c){var a,b,d=f.length,m,g,p,k;for(b=0;b<d&&!(m=e.match(f[b]));b+=1);if(m)switch(m[1]){case "-webkit-linear-gradient":case "-o-linear-gradient":a={type:"linear",x0:null,y0:null,x1:null,y1:null,colorStops:[]};if(d=m[2].match(/\w+/g))for(g=d.length,b=0;b<g;b+=1)switch(d[b]){case "top":a.y0=0;a.y1=c.height;break;case "right":a.x0=c.width;a.x1=0;break;case "bottom":a.y0=c.height;
-a.y1=0;break;case "left":a.x0=0,a.x1=c.width}null===a.x0&&null===a.x1&&(a.x0=a.x1=c.width/2);null===a.y0&&null===a.y1&&(a.y0=a.y1=c.height/2);if(d=m[3].match(/((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)(?:\s\d{1,3}(?:%|px))?)+/g))for(g=d.length,p=1/Math.max(g-1,1),b=0;b<g;b+=1)k=d[b].match(/((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\))\s*(\d{1,3})?(%|px)?/),k[2]?(m=parseFloat(k[2]),m="%"===k[3]?m/100:m/c.width):m=b*p,a.colorStops.push({color:k[1],stop:m});break;case "-webkit-gradient":a=
-{type:"radial"===m[2]?"circle":m[2],x0:0,y0:0,x1:0,y1:0,colorStops:[]};if(d=m[3].match(/(\d{1,3})%?\s(\d{1,3})%?,\s(\d{1,3})%?\s(\d{1,3})%?/))a.x0=d[1]*c.width/100,a.y0=d[2]*c.height/100,a.x1=d[3]*c.width/100,a.y1=d[4]*c.height/100;if(d=m[4].match(/((?:from|to|color-stop)\((?:[0-9\.]+,\s)?(?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)\))+/g))for(g=d.length,b=0;b<g;b+=1)k=d[b].match(/(from|to|color-stop)\(([0-9\.]+)?(?:,\s)?((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\))\)/),
-m=parseFloat(k[2]),"from"===k[1]&&(m=0),"to"===k[1]&&(m=1),a.colorStops.push({color:k[3],stop:m});break;case "-moz-linear-gradient":a={type:"linear",x0:0,y0:0,x1:0,y1:0,colorStops:[]};if(d=m[2].match(/(\d{1,3})%?\s(\d{1,3})%?/))a.x0=d[1]*c.width/100,a.y0=d[2]*c.height/100,a.x1=c.width-a.x0,a.y1=c.height-a.y0;if(d=m[3].match(/((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)(?:\s\d{1,3}%)?)+/g))for(g=d.length,p=1/Math.max(g-1,1),b=0;b<g;b+=1)k=d[b].match(/((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\))\s*(\d{1,3})?(%)?/),
-k[2]?(m=parseFloat(k[2]),k[3]&&(m/=100)):m=b*p,a.colorStops.push({color:k[1],stop:m});break;case "-webkit-radial-gradient":case "-moz-radial-gradient":case "-o-radial-gradient":a={type:"circle",x0:0,y0:0,x1:c.width,y1:c.height,cx:0,cy:0,rx:0,ry:0,colorStops:[]};if(d=m[2].match(/(\d{1,3})%?\s(\d{1,3})%?/))a.cx=d[1]*c.width/100,a.cy=d[2]*c.height/100;d=m[3].match(/\w+/);k=m[4].match(/[a-z\-]*/);if(d&&k)switch(k[0]){case "farthest-corner":case "cover":case "":b=Math.sqrt(Math.pow(a.cx,2)+Math.pow(a.cy,
-2));d=Math.sqrt(Math.pow(a.cx,2)+Math.pow(a.y1-a.cy,2));g=Math.sqrt(Math.pow(a.x1-a.cx,2)+Math.pow(a.y1-a.cy,2));k=Math.sqrt(Math.pow(a.x1-a.cx,2)+Math.pow(a.cy,2));a.rx=a.ry=Math.max(b,d,g,k);break;case "closest-corner":b=Math.sqrt(Math.pow(a.cx,2)+Math.pow(a.cy,2));d=Math.sqrt(Math.pow(a.cx,2)+Math.pow(a.y1-a.cy,2));g=Math.sqrt(Math.pow(a.x1-a.cx,2)+Math.pow(a.y1-a.cy,2));k=Math.sqrt(Math.pow(a.x1-a.cx,2)+Math.pow(a.cy,2));a.rx=a.ry=Math.min(b,d,g,k);break;case "farthest-side":"circle"===d[0]?a.rx=
-a.ry=Math.max(a.cx,a.cy,a.x1-a.cx,a.y1-a.cy):(a.type=d[0],a.rx=Math.max(a.cx,a.x1-a.cx),a.ry=Math.max(a.cy,a.y1-a.cy));break;case "closest-side":case "contain":"circle"===d[0]?a.rx=a.ry=Math.min(a.cx,a.cy,a.x1-a.cx,a.y1-a.cy):(a.type=d[0],a.rx=Math.min(a.cx,a.x1-a.cx),a.ry=Math.min(a.cy,a.y1-a.cy))}if(d=m[5].match(/((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)(?:\s\d{1,3}(?:%|px))?)+/g))for(g=d.length,p=1/Math.max(g-1,1),b=0;b<g;b+=1)k=d[b].match(/((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\))\s*(\d{1,3})?(%|px)?/),
-k[2]?(m=parseFloat(k[2]),m="%"===k[3]?m/100:m/c.width):m=b*p,a.colorStops.push({color:k[1],stop:m})}return a};c.Gradient=function(b,c){if(0!==c.width&&0!==c.height){var a=D.createElement("canvas"),f=a.getContext("2d"),d,m;a.width=c.width;a.height=c.height;if(d=g.Generate.parseGradient(b,c))switch(d.type){case "linear":m=f.createLinearGradient(d.x0,d.y0,d.x1,d.y1);d.colorStops.forEach(e(m));f.fillStyle=m;f.fillRect(0,0,c.width,c.height);break;case "circle":m=f.createRadialGradient(d.cx,d.cy,0,d.cx,
-d.cy,d.rx);d.colorStops.forEach(e(m));f.fillStyle=m;f.fillRect(0,0,c.width,c.height);break;case "ellipse":var u=D.createElement("canvas"),p=u.getContext("2d");m=Math.max(d.rx,d.ry);var k=2*m;u.width=u.height=k;m=p.createRadialGradient(d.rx,d.ry,0,d.rx,d.ry,m);d.colorStops.forEach(e(m));p.fillStyle=m;p.fillRect(0,0,k,k);f.fillStyle=d.colorStops[d.colorStops.length-1].color;f.fillRect(0,0,a.width,a.height);f.drawImage(u,d.cx-d.rx,d.cy-d.ry,2*d.rx,2*d.ry)}return a}};c.ListAlpha=function(c){var b="",
-a;do a=c%26,b=String.fromCharCode(a+64)+b,c/=26;while(26<26*c);return b};c.ListRoman=function(c){var b="M CM D CD C XC L XL X IX V IV I".split(" "),a=[1E3,900,500,400,100,90,50,40,10,9,5,4,1],e="",d,f=b.length;if(0>=c||4E3<=c)return c;for(d=0;d<f;d+=1)for(;c>=a[d];)c-=a[d],e+=b[d];return e}})();g.Parse=function(e,b){function c(l,q){var c=parseInt(r(l,q),10);return isNaN(c)?0:c}function f(l,q,c,a,b,e){"transparent"!==e&&(l.setVariable("fillStyle",e),l.fillRect(q,c,a,b))}function h(l,q,c){if(0<l.length)return q+
-c.toUpperCase()}function n(l,q){switch(q){case "lowercase":return l.toLowerCase();case "capitalize":return l.replace(/(^|\s|:|-|\(|\))([a-z])/g,h);case "uppercase":return l.toUpperCase();default:return l}}function a(l,q,c,a){var b=r(q,"fontWeight"),e=r(q,"fontFamily"),d=r(q,"fontSize"),f=w.parseTextShadows(r(q,"textShadow"));switch(parseInt(b,10)){case 401:b="bold";break;case 400:b="normal"}l.setVariable("fillStyle",a);l.setVariable("font",[r(q,"fontStyle"),r(q,"fontVariant"),b,d,e].join(" "));l.setVariable("textAlign",
-"left");f.length&&(l.setVariable("shadowColor",f[0].color),l.setVariable("shadowOffsetX",f[0].offsetX),l.setVariable("shadowOffsetY",f[0].offsetY),l.setVariable("shadowBlur",f[0].blur));if("none"!==c)return w.Font(e,d,z)}function v(l,q,c){var e=c.ctx,d=r(l,"color"),U=r(l,"textDecoration"),h=r(l,"textAlign"),g,m,k=q,F=0;0<w.trimText(q.nodeValue).length&&(q.nodeValue=n(q.nodeValue,r(l,"textTransform")),h=h.replace(["-webkit-auto"],["auto"]),m=!b.letterRendering&&/^(left|right|justify|auto)$/.test(h)&&
-/^(normal|none|0px)$/.test(r(l,"letterSpacing"))?q.nodeValue.split(/(\b| )/):q.nodeValue.split(""),g=a(e,l,U,d),b.chinese&&m.forEach(function(l,q){/.*[\u4E00-\u9FA5].*$/.test(l)&&(l=l.split(""),l.unshift(q,1),m.splice.apply(m,l))}),m.forEach(function(l,q){var a,b=q<m.length-1;a=c.transform.matrix;var h;if(da.rangeBounds&&!a){if("none"!==U||0!==w.trimText(l).length)a=k,b=F,h=z.createRange(),h.setStart(a,b),h.setEnd(a,b+l.length),h=h.getBoundingClientRect();F+=l.length}else if(k&&"string"===typeof k.nodeValue){var b=
-b?k.splitText(l.length):null,n=k;h=n.parentNode;var K=z.createElement("wrapper"),B=n.cloneNode(!0);K.appendChild(n.cloneNode(!0));h.replaceChild(K,n);a=a?w.OffsetBounds(K):w.Bounds(K);h.replaceChild(B,K);h=a;k=b}if(a=h)switch(b=a.left,h=a.bottom,null!==l&&0<w.trimText(l).length&&e.fillText(l,b,h),U){case "underline":f(e,a.left,Math.round(a.top+g.baseline+g.lineWidth),a.width,1,d);break;case "overline":f(e,a.left,Math.round(a.top),a.width,1,d);break;case "line-through":f(e,a.left,Math.ceil(a.top+g.middle+
-g.lineWidth),a.width,1,d)}}))}function d(l,q,c){var b;q=q.ctx;var e=r(l,"listStyleType");if(/^(decimal|decimal-leading-zero|upper-alpha|upper-latin|upper-roman|lower-alpha|lower-greek|lower-latin|lower-roman)$/i.test(e)){var d;d=-1;var f=1,h=l.parentNode.childNodes;if(l.parentNode){for(;h[++d]!==l;)1===h[d].nodeType&&f++;d=f}else d=-1;switch(e){case "decimal":b=d;break;case "decimal-leading-zero":b=1===d.toString().length?"0"+d.toString():d.toString();break;case "upper-roman":b=g.Generate.ListRoman(d);
-break;case "lower-roman":b=g.Generate.ListRoman(d).toLowerCase();break;case "lower-alpha":b=g.Generate.ListAlpha(d).toLowerCase();break;case "upper-alpha":b=g.Generate.ListAlpha(d)}b+=". ";d=z.createElement("boundelement");d.style.display="inline";f=l.style.listStyleType;l.style.listStyleType="none";d.appendChild(z.createTextNode(b));l.insertBefore(d,l.firstChild);e=w.Bounds(d);l.removeChild(d);l.style.listStyleType=f;a(q,l,"none",r(l,"color"));"inside"===r(l,"listStylePosition")&&(q.setVariable("textAlign",
-"left"),l=c.left,c=e.bottom,null!==b&&0<w.trimText(b).length&&q.fillText(b,l,c))}}function m(l){return(l=e[l])&&!0===l.succeeded?l.img:!1}function u(l,q){var a=Math.max(l.left,q.left),b=Math.max(l.top,q.top);return{left:a,top:b,width:Math.min(l.left+l.width,q.left+q.width)-a,height:Math.min(l.top+l.height,q.top+q.height)-b}}function p(l,q,a,b,d){var e=c(q,"paddingLeft"),f=c(q,"paddingTop"),h=c(q,"paddingRight");q=c(q,"paddingBottom");F(l,a,0,0,a.width,a.height,b.left+e+d[3].width,b.top+f+d[0].width,
-b.width-(d[1].width+d[3].width+e+h),b.height-(d[0].width+d[2].width+f+q))}function k(l){return["Top","Right","Bottom","Left"].map(function(q){return{width:c(l,"border"+q+"Width"),color:r(l,"border"+q+"Color")}})}function T(l){return["TopLeft","TopRight","BottomRight","BottomLeft"].map(function(q){return r(l,"border"+q+"Radius")})}function A(l,q,a,b){var c=function(l,a,b){return{x:l.x+(a.x-l.x)*b,y:l.y+(a.y-l.y)*b}};return{start:l,startControl:q,endControl:a,end:b,subdivide:function(d){var e=c(l,q,
-d),f=c(q,a,d),h=c(a,b,d),g=c(e,f,d),f=c(f,h,d);d=c(g,f,d);return[A(l,e,g,d),A(d,f,h,b)]},curveTo:function(l){l.push(["bezierCurve",q.x,q.y,a.x,a.y,b.x,b.y])},curveToReversed:function(b){b.push(["bezierCurve",a.x,a.y,q.x,q.y,l.x,l.y])}}}function G(l,a,b,c,d,e,f){0<a[0]||0<a[1]?(l.push(["line",c[0].start.x,c[0].start.y]),c[0].curveTo(l),c[1].curveTo(l)):l.push(["line",e,f]);(0<b[0]||0<b[1])&&l.push(["line",d[0].start.x,d[0].start.y])}function J(l,a,b,c,d,e,f){var h=[];0<a[0]||0<a[1]?(h.push(["line",
-c[1].start.x,c[1].start.y]),c[1].curveTo(h)):h.push(["line",l.c1[0],l.c1[1]]);0<b[0]||0<b[1]?(h.push(["line",e[0].start.x,e[0].start.y]),e[0].curveTo(h),h.push(["line",f[0].end.x,f[0].end.y]),f[0].curveToReversed(h)):(h.push(["line",l.c2[0],l.c2[1]]),h.push(["line",l.c3[0],l.c3[1]]));0<a[0]||0<a[1]?(h.push(["line",d[1].end.x,d[1].end.y]),d[1].curveToReversed(h)):h.push(["line",l.c4[0],l.c4[1]]);return h}function E(l,a,b){var c,d,e,f,h,g,m,k,n=a.left,F=a.top,B=a.width,v=a.height,p,C,u,t,x=T(l);k=a.left;
-p=a.top;g=a.width;m=a.height;d=x[0][0];e=x[0][1];f=x[1][0];h=x[1][1];var w=x[2][0],y=x[2][1];C=x[3][0];u=x[3][1];var z=g-f,E=m-y,Q=g-w,A=m-u;c=H(k,p,d,e).topLeft.subdivide(.5);d=H(k+b[3].width,p+b[0].width,Math.max(0,d-b[3].width),Math.max(0,e-b[0].width)).topLeft.subdivide(.5);e=H(k+z,p,f,h).topRight.subdivide(.5);f=H(k+Math.min(z,g+b[3].width),p+b[0].width,z>g+b[3].width?0:f-b[3].width,h-b[0].width).topRight.subdivide(.5);h=H(k+Q,p+E,w,y).bottomRight.subdivide(.5);g=H(k+Math.min(Q,g+b[3].width),
-p+Math.min(E,m+b[0].width),Math.max(0,w-b[1].width),Math.max(0,y-b[2].width)).bottomRight.subdivide(.5);m=H(k,p+A,C,u).bottomLeft.subdivide(.5);k=H(k+b[3].width,p+A,Math.max(0,C-b[3].width),Math.max(0,u-b[2].width)).bottomLeft.subdivide(.5);p=[];switch(r(l,"backgroundClip")){case "content-box":case "padding-box":G(p,x[0],x[1],d,f,a.left+b[3].width,a.top+b[0].width);G(p,x[1],x[2],f,g,a.left+a.width-b[1].width,a.top+b[0].width);G(p,x[2],x[3],g,k,a.left+a.width-b[1].width,a.top+a.height-b[2].width);
-G(p,x[3],x[0],k,d,a.left+b[3].width,a.top+a.height-b[2].width);break;default:G(p,x[0],x[1],c,e,a.left,a.top),G(p,x[1],x[2],e,h,a.left+a.width,a.top),G(p,x[2],x[3],h,m,a.left+a.width,a.top+a.height),G(p,x[3],x[0],m,c,a.left,a.top+a.height)}A={clip:p,borders:[]};for(l=0;4>l;l++)if(0<b[l].width){a=n;p=F;C=B;u=v-b[2].width;switch(l){case 0:u=b[0].width;t=J({c1:[a,p],c2:[a+C,p],c3:[a+C-b[1].width,p+u],c4:[a+b[3].width,p+u]},x[0],x[1],c,d,e,f);break;case 1:a=n+B-b[1].width;C=b[1].width;t=J({c1:[a+C,p],
-c2:[a+C,p+u+b[2].width],c3:[a,p+u],c4:[a,p+b[0].width]},x[1],x[2],e,f,h,g);break;case 2:p=p+v-b[2].width;u=b[2].width;t=J({c1:[a+C,p+u],c2:[a,p+u],c3:[a+b[3].width,p],c4:[a+C-b[3].width,p]},x[2],x[3],h,g,m,k);break;case 3:C=b[3].width,t=J({c1:[a,p+u+b[2].width],c2:[a,p],c3:[a+C,p+b[0].width],c4:[a+C,p+u]},x[3],x[0],m,k,c,d)}A.borders.push({args:t,color:b[l].color})}return A}function L(a,b){var c=a.drawShape();b.forEach(function(a,b){c[0===b?"moveTo":a[0]+"To"].apply(null,a.slice(1))});return c}function I(a,
-b,c){var d=z.createElement("valuewrap");"lineHeight textAlign fontFamily color fontSize paddingLeft paddingTop width height border borderLeftWidth borderTopWidth".split(" ").forEach(function(b){try{d.style[b]=r(a,b)}catch(c){w.log("html2canvas: Parse: Exception caught in renderFormValue: "+c.message)}});d.style.borderColor="black";d.style.borderStyle="solid";d.style.display="block";d.style.position="absolute";if(/^(submit|reset|button|text|password)$/.test(a.type)||"SELECT"===a.nodeName)d.style.lineHeight=
-r(a,"height");d.style.top=b.top+"px";d.style.left=b.left+"px";b="SELECT"===a.nodeName?(a.options[a.selectedIndex]||0).text:a.value;b||(b=a.placeholder);b=z.createTextNode(b);d.appendChild(b);P.appendChild(d);v(a,b,c);P.removeChild(d)}function F(a){a.drawImage.apply(a,Array.prototype.slice.call(arguments,1))}function B(a,b){var d=t.getComputedStyle(a,b);if(d&&d.content&&"none"!==d.content&&"-moz-alt-content"!==d.content&&"none"!==d.display){var c=d.content+"",e=c.substr(0,1);e===c.substr(c.length-
-1)&&e.match(/'|"/)&&(c=c.substr(1,c.length-2));var e="url"===c.substr(0,3),f=D.createElement(e?"img":"span");f.className="___html2canvas___pseudoelement-before ___html2canvas___pseudoelement-after";Object.keys(d).filter(C).forEach(function(a){try{f.style[a]=d[a]}catch(b){w.log(["Tried to assign readonly property ",a,"Error:",b])}});e?f.src=w.parseBackgroundImage(c)[0].args[0]:f.innerHTML=c;return f}}function C(a){return isNaN(t.parseInt(a,10))}function Q(a,b){var d=B(a,":before"),c=B(a,":after");
-if(d||c)d&&(a.className+=" ___html2canvas___pseudoelement-before",a.parentNode.insertBefore(d,a),V(d,b,!0),a.parentNode.removeChild(d),a.className=a.className.replace("___html2canvas___pseudoelement-before","").trim()),c&&(a.className+=" ___html2canvas___pseudoelement-after",a.appendChild(c),V(c,b,!0),a.removeChild(c),a.className=a.className.replace("___html2canvas___pseudoelement-after","").trim())}function Y(a,b,d,c){var e=Math.round(c.left+d.left);d=Math.round(c.top+d.top);a.createPattern(b);a.translate(e,
-d);a.fill();a.translate(-e,-d)}function W(a,b,d,c,e,f,h,g){var m=[];m.push(["line",Math.round(e),Math.round(f)]);m.push(["line",Math.round(e+h),Math.round(f)]);m.push(["line",Math.round(e+h),Math.round(g+f)]);m.push(["line",Math.round(e),Math.round(g+f)]);L(a,m);a.save();a.clip();Y(a,b,d,c);a.restore()}function ea(a,b,d){for(var c=r(a,"backgroundImage"),e=w.parseBackgroundImage(c),f,h=e.length;h--;)if(c=e[h],c.args&&0!==c.args.length)if(f=m("url"===c.method?c.args[0]:c.value)){var g=a,c=b,k=d,n=f;
-f=h;var p=w.BackgroundSize(g,c,n,f),B=w.BackgroundPosition(g,c,n,f,p),g=r(g,"backgroundRepeat").split(",").map(w.trimText);if(n.width!==p.width||n.height!==p.height){var C,v=z.createElement("canvas");v.width=p.width;v.height=p.height;C=v.getContext("2d");F(C,n,0,0,n.width,n.height,0,0,p.width,p.height);n=v}g=g[f]||g[0];switch(g){case "repeat-x":W(k,n,B,c,c.left,c.top+B.top,99999,n.height);break;case "repeat-y":W(k,n,B,c,c.left+B.left,c.top,n.width,99999);break;case "no-repeat":W(k,n,B,c,c.left+B.left,
-c.top+B.top,n.width,n.height);break;default:Y(k,n,B,{top:c.top,left:c.left,width:n.width,height:n.height})}}else w.log("html2canvas: Error loading background:",c)}function M(a){return a.replace("px","")}function N(a,b){var c=r(a,"transform")||r(a,"-webkit-transform")||r(a,"-moz-transform")||r(a,"-ms-transform")||r(a,"-o-transform"),d=r(a,"transform-origin")||r(a,"-webkit-transform-origin")||r(a,"-moz-transform-origin")||r(a,"-ms-transform-origin")||r(a,"-o-transform-origin")||"0px 0px",d=d.split(" ").map(M).map(w.asFloat),
-e;if(c&&"none"!==c&&(c=c.match(fa)))switch(c[1]){case "matrix":e=c[2].split(",").map(w.trimText).map(w.asFloat)}return{origin:d,matrix:e}}function O(a,c,d,e){var f=ca(c?d.width:Math.max(Math.max(z.body.scrollWidth,z.documentElement.scrollWidth),Math.max(z.body.offsetWidth,z.documentElement.offsetWidth),Math.max(z.body.clientWidth,z.documentElement.clientWidth)),c?d.height:Math.max(Math.max(z.body.scrollHeight,z.documentElement.scrollHeight),Math.max(z.body.offsetHeight,z.documentElement.offsetHeight),
-Math.max(z.body.clientHeight,z.documentElement.clientHeight))),h;h=f.setVariable("globalAlpha",r(a,"opacity")*(c?c.opacity:1));e={ctx:f,opacity:h,cssPosition:r(a,"position"),borders:k(a),transform:e,clip:c&&c.clip?w.Extend({},c.clip):null};var g=(h="static"!==e.cssPosition)?r(a,"zIndex"):"auto",m=r(a,"opacity"),n="none"!==r(a,"cssFloat");e.zIndex=f={zindex:g,children:[]};f.isPositioned=h;f.isFloated=n;f.opacity=m;f.ownStacking="auto"!==g||1>m;c&&c.zIndex.children.push(e);!0===b.useOverflow&&!0===
-/(hidden|scroll|auto)/.test(r(a,"overflow"))&&!1===/(BODY)/i.test(a.nodeName)&&(e.clip=e.clip?u(e.clip,d):d);return e}function S(a,b,c){a={left:b.left+a[3].width,top:b.top+a[0].width,width:b.width-(a[1].width+a[3].width),height:b.height-(a[0].width+a[2].width)};c&&(a=u(a,c));return a}function ga(a,b){var c=b.matrix?w.OffsetBounds(a):w.Bounds(a);b.origin[0]+=c.left;b.origin[1]+=c.top;return c}function Z(a,b,c,e){var h=N(a,b),g=ga(a,h),n;b=O(a,b,g,h);var h=b.borders,k=b.ctx,F=S(h,g,b.clip),B=E(a,g,
-h),v=aa.test(a.nodeName)?"#efefef":r(a,"backgroundColor");L(k,B.clip);k.save();k.clip();0<F.height&&0<F.width&&!e?(f(k,g.left,g.top,g.width,g.height,v),ea(a,F,k)):e&&(b.backgroundColor=v);k.restore();B.borders.forEach(function(a){var b=a.args;a=a.color;"transparent"!==a&&(k.setVariable("fillStyle",a),L(k,b),k.fill())});c||Q(a,b);switch(a.nodeName){case "IMG":(n=m(a.getAttribute("src")))?p(k,a,n,g,h):w.log("html2canvas: Error loading <img>:"+a.getAttribute("src"));break;case "INPUT":/^(text|url|email|submit|button|reset)$/.test(a.type)&&
-0<(a.value||a.placeholder||"").length&&I(a,g,b);break;case "TEXTAREA":0<(a.value||a.placeholder||"").length&&I(a,g,b);break;case "SELECT":0<(a.options||a.placeholder||"").length&&I(a,g,b);break;case "LI":d(a,b,F);break;case "CANVAS":p(k,a,a,g,h)}return b}function V(a,b,c){"none"===r(a,"display")||"hidden"===r(a,"visibility")||a.hasAttribute("data-html2canvas-ignore")||(b=Z(a,b,c,!1)||b,aa.test(a.nodeName)||ba(a,b,c))}function ba(a,b,c){w.Children(a).forEach(function(d){d.nodeType===d.ELEMENT_NODE?
-V(d,b,c):d.nodeType===d.TEXT_NODE&&v(a,d,b)})}t.scroll(0,0);var R=b.elements===y?D.body:b.elements[0],z=R.ownerDocument,w=g.Util,da=w.Support(b,z),aa=new RegExp("("+b.ignoreElements+")"),P=z.body,r=w.getCSS,X=z.createElement("style");X.innerHTML='.___html2canvas___pseudoelement-before:before { content: "" !important; display: none !important; }.___html2canvas___pseudoelement-after:after { content: "" !important; display: none !important; }';P.appendChild(X);e=e||{};var H=function(a){return function(b,
-c,d,e){var f=d*a,h=e*a;d=b+d;e=c+e;return{topLeft:A({x:b,y:e},{x:b,y:e-h},{x:d-f,y:c},{x:d,y:c}),topRight:A({x:b,y:c},{x:b+f,y:c},{x:d,y:e-h},{x:d,y:e}),bottomRight:A({x:d,y:c},{x:d,y:c+h},{x:b+f,y:e},{x:b,y:e}),bottomLeft:A({x:d,y:e},{x:d-f,y:e},{x:b,y:c+h},{x:b,y:c})}}}((Math.sqrt(2)-1)/3*4),fa=/(matrix)\((.+)\)/;return function(){var a=r(D.documentElement,"backgroundColor"),b=w.isTransparent(a)&&R===D.body,c=Z(R,null,!1,b);ba(R,c);b&&(a=c.backgroundColor);P.removeChild(X);return{backgroundColor:a,
-stack:c}}()};g.Preload=function(e){function b(){u.log("html2canvas: start: images: "+d.numLoaded+" / "+d.numTotal+" (failed: "+d.numFailed+")");!d.firstRun&&d.numLoaded>=d.numTotal&&(u.log("Finished loading images: # "+d.numTotal+" (failed: "+d.numFailed+")"),"function"===typeof e.complete&&e.complete(d))}function c(a,c,f){var h,g=e.proxy,k;E.href=a;a=E.href;h="html2canvas_"+T++;f.callbackname=h;g=-1<g.indexOf("?")?g+"&":g+"?";g+="url="+encodeURIComponent(a)+"&callback="+h;k=A.createElement("script");
-t[h]=function(a){"error:"===a.substring(0,6)?(f.succeeded=!1,d.numLoaded++,d.numFailed++,b()):(v(c,f),c.src=a);t[h]=y;try{delete t[h]}catch(e){}k.parentNode.removeChild(k);k=null;delete f.script;delete f.callbackname};k.setAttribute("type","text/javascript");k.setAttribute("src",g);f.script=k;t.document.body.appendChild(k)}function f(a,b){var c=t.getComputedStyle(a,b),d=c.content;"url"===d.substr(0,3)&&p.loadImage(g.Util.parseBackgroundImage(d)[0].args[0]);n(c.backgroundImage,a)}function h(a){return a&&
-a.method&&a.args&&0<a.args.length}function n(a,c){var e;g.Util.parseBackgroundImage(a).filter(h).forEach(function(a){if("url"===a.method)p.loadImage(a.args[0]);else if(a.method.match(/\-?gradient$/)){e===y&&(e=g.Util.Bounds(c));a=a.value;var f=g.Generate.Gradient(a,e);f!==y&&(d[a]={img:f,succeeded:!0},d.numTotal++,d.numLoaded++,b())}})}function a(b){var c=!1;try{u.Children(b).forEach(a)}catch(d){}try{c=b.nodeType}catch(d){c=!1,u.log("html2canvas: failed to access some element's nodeType - Exception: "+
-d.message)}if(1===c||c===y){f(b,":before");f(b,":after");try{n(u.getCSS(b,"backgroundImage"),b)}catch(d){u.log("html2canvas: failed to get background-image - Exception: "+d.message)}n(b)}}function v(a,f){a.onload=function(){f.timer!==y&&t.clearTimeout(f.timer);d.numLoaded++;f.succeeded=!0;a.onerror=a.onload=null;b()};a.onerror=function(){if("anonymous"===a.crossOrigin&&(t.clearTimeout(f.timer),e.proxy)){var h=a.src;a=new Image;f.img=a;a.src=h;c(a.src,a,f);return}d.numLoaded++;d.numFailed++;f.succeeded=
-!1;a.onerror=a.onload=null;b()}}var d={numLoaded:0,numFailed:0,numTotal:0,cleanupDone:!1},m,u=g.Util,p,k,T=0;k=e.elements[0]||D.body;var A=k.ownerDocument,G=k.getElementsByTagName("img"),J=G.length,E=A.createElement("a"),L=(new Image).crossOrigin!==y,I;E.href=t.location.href;m=E.protocol+E.host;p={loadImage:function(a){var b,f;a&&d[a]===y&&(b=new Image,a.match(/data:image\/.*;base64,/i)?(b.src=a.replace(/url\(['"]{0,}|['"]{0,}\)$/ig,""),f=d[a]={img:b},d.numTotal++,v(b,f)):(E.href=a,E.href=E.href,
-E.protocol+E.host===m||!0===e.allowTaint?(f=d[a]={img:b},d.numTotal++,v(b,f),b.src=a):L&&!e.allowTaint&&e.useCORS?(b.crossOrigin="anonymous",f=d[a]={img:b},d.numTotal++,v(b,f),b.src=a):e.proxy&&(f=d[a]={img:b},d.numTotal++,c(a,b,f))))},cleanupDOM:function(a){var c,f;if(!d.cleanupDone){a&&"string"===typeof a?u.log("html2canvas: Cleanup because: "+a):u.log("html2canvas: Cleanup after timeout: "+e.timeout+" ms.");for(f in d)if(d.hasOwnProperty(f)&&(c=d[f],"object"===typeof c&&c.callbackname&&c.succeeded===
-y)){t[c.callbackname]=y;try{delete t[c.callbackname]}catch(h){}c.script&&c.script.parentNode&&(c.script.setAttribute("src","about:blank"),c.script.parentNode.removeChild(c.script));d.numLoaded++;d.numFailed++;u.log("html2canvas: Cleaned up failed img: '"+f+"' Steps: "+d.numLoaded+" / "+d.numTotal)}t.stop!==y?t.stop():D.execCommand!==y&&D.execCommand("Stop",!1);D.close!==y&&D.close();d.cleanupDone=!0;a&&"string"===typeof a||b()}},renderingDone:function(){I&&t.clearTimeout(I)}};0<e.timeout&&(I=t.setTimeout(p.cleanupDOM,
-e.timeout));u.log("html2canvas: Preload starts: finding background-images");d.firstRun=!0;a(k);u.log("html2canvas: Preload: Finding images");for(k=0;k<J;k+=1)p.loadImage(G[k].getAttribute("src"));d.firstRun=!1;u.log("html2canvas: Preload: Done.");d.numTotal===d.numLoaded&&b();return p};g.Renderer=function(e,b){return function(c){if("string"===typeof b.renderer&&g.Renderer[c]!==y)c=g.Renderer[c](b);else if("function"===typeof c)c=c(b);else throw Error("Unknown renderer");if("function"!==typeof c)throw Error("Invalid renderer defined");
-return c}(b.renderer)(e,b,D,function(b){function e(b){Object.keys(b).sort().forEach(function(a){var c=[],d=[],g=[],u=[];b[a].forEach(function(a){a.node.zIndex.isPositioned||1>a.node.zIndex.opacity?g.push(a):a.node.zIndex.isFloated?d.push(a):c.push(a)});(function k(a){a.forEach(function(a){u.push(a);a.children&&k(a.children)})})(c.concat(d,g));u.forEach(function(a){a.context?e(a.context):h.push(a.node)})})}var h=[];b=function(b){function a(b,c,e){var f="auto"===c.zIndex.zindex?0:Number(c.zIndex.zindex),
-h=b,g=c.zIndex.isPositioned,n=c.zIndex.isFloated,v={node:c},t=e;if(c.zIndex.ownStacking)h=v.context={"!":[{node:c,children:[]}]},t=y;else if(g||n)t=v.children=[];0===f&&e?e.push(v):(b[f]||(b[f]=[]),b[f].push(v));c.zIndex.children.forEach(function(b){a(h,b,t)})}var c={};a(c,b);return c}(b);e(b);return h}(e.stack),g)};g.Util.Support=function(e,b){function c(){var c=new Image,e=b.createElement("canvas"),n=e.getContext===y?!1:e.getContext("2d");if(!1===n)return!1;e.width=e.height=10;c.src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><foreignObject width='10' height='10'><div xmlns='http://www.w3.org/1999/xhtml' style='width:10;height:10;'>sup</div></foreignObject></svg>";
-try{n.drawImage(c,0,0),e.toDataURL()}catch(a){return!1}g.Util.log("html2canvas: Parse: SVG powered rendering available");return!0}return{rangeBounds:function(){var c,e,g=!1;b.createRange&&(c=b.createRange(),c.getBoundingClientRect&&(e=b.createElement("boundtest"),e.style.height="123px",e.style.display="block",b.body.appendChild(e),c.selectNode(e),c=c.getBoundingClientRect(),c=c.height,123===c&&(g=!0),b.body.removeChild(e)));return g}(),svgRendering:e.svgRendering&&c()}};t.html2canvas=function(e,b){e=
-e.length?e:[e];var c,f,h={logging:!1,elements:e,background:"#fff",proxy:null,timeout:0,useCORS:!1,allowTaint:!1,svgRendering:!1,ignoreElements:"IFRAME|OBJECT|PARAM",useOverflow:!0,letterRendering:!1,chinese:!1,width:null,height:null,taintTest:!0,renderer:"Canvas"},h=g.Util.Extend(b,h);g.logging=h.logging;h.complete=function(b){if("function"!==typeof h.onpreloaded||!1!==h.onpreloaded(b))if(c=g.Parse(b,h),"function"!==typeof h.onparsed||!1!==h.onparsed(c))if(f=g.Renderer(c,h),"function"===typeof h.onrendered)h.onrendered(f)};
-t.setTimeout(function(){g.Preload(h)},0);return{render:function(b,a){return g.Renderer(b,g.Util.Extend(a,h))},parse:function(b,a){return g.Parse(b,g.Util.Extend(a,h))},preload:function(b){return g.Preload(g.Util.Extend(b,h))},log:g.Util.log}};t.html2canvas.log=g.Util.log;t.html2canvas.Renderer={Canvas:y};g.Renderer.Canvas=function(e){function b(a,b){a.beginPath();b.forEach(function(b){a[b.name].apply(a,b.arguments)});a.closePath()}e=e||{};var c=[],f=D.createElement("canvas"),h=f.getContext("2d"),
-n=g.Util,a=e.canvas||D.createElement("canvas");return function(g,d,m,u,p){var k=a.getContext("2d"),t,A=g.stack;a.width=a.style.width=d.width||A.ctx.width;a.height=a.style.height=d.height||A.ctx.height;t=k.fillStyle;k.fillStyle=n.isTransparent(A.backgroundColor)&&d.background!==y?d.background:g.backgroundColor;k.fillRect(0,0,a.width,a.height);k.fillStyle=t;u.forEach(function(a){k.textBaseline="bottom";k.save();a.transform.matrix&&(k.translate(a.transform.origin[0],a.transform.origin[1]),k.transform.apply(k,
-a.transform.matrix),k.translate(-a.transform.origin[0],-a.transform.origin[1]));a.clip&&(k.beginPath(),k.rect(a.clip.left,a.clip.top,a.clip.width,a.clip.height),k.clip());a.ctx.storage&&a.ctx.storage.forEach(function(a){var d=k;switch(a.type){case "variable":d[a.name]=a.arguments;break;case "function":switch(a.name){case "createPattern":if(0<a.arguments[0].width&&0<a.arguments[0].height)try{d.fillStyle=d.createPattern(a.arguments[0],"repeat")}catch(g){n.log("html2canvas: Renderer: Error creating pattern",
-g.message)}break;case "drawShape":b(d,a.arguments);break;case "drawImage":if(0<a.arguments[8]&&0<a.arguments[7]){var m;if(!(m=!e.taintTest)&&(m=e.taintTest))a:{if(-1===c.indexOf(a.arguments[0].src)){h.drawImage(a.arguments[0],0,0);try{h.getImageData(0,0,1,1)}catch(g){f=D.createElement("canvas");h=f.getContext("2d");m=!1;break a}c.push(a.arguments[0].src)}m=!0}m&&d.drawImage.apply(d,a.arguments)}break;default:d[a.name].apply(d,a.arguments)}}});k.restore()});n.log("html2canvas: Renderer: Canvas renderer done - returning canvas obj");
-return 1===d.elements.length&&"object"===typeof d.elements[0]&&"BODY"!==d.elements[0].nodeName?(g=p.Util.Bounds(d.elements[0]),m=m.createElement("canvas"),m.width=Math.ceil(g.width),m.height=Math.ceil(g.height),k=m.getContext("2d"),k.drawImage(a,g.left,g.top,g.width,g.height,0,0,g.width,g.height),a=null,m):a}}})(window,document);
+(function(t, D, y) {
+    function M(e, b, c) {
+        var f = e.runtimeStyle && e.runtimeStyle[b], h, n = e.style;
+        !/^-?[0-9]+\.?[0-9]*(?:px)?$/i.test(c) && /^-?\d/.test(c) && (h = n.left,
+        f && (e.runtimeStyle.left = e.currentStyle.left),
+        n.left = "fontSize" === b ? "1em" : c || 0,
+        c = n.pixelLeft + "px",
+        n.left = h,
+        f && (e.runtimeStyle.left = f));
+        return /^(thin|medium|thick)$/i.test(c) ? c : Math.round(parseFloat(c)) + "px"
+    }
+    function S(e) {
+        return parseInt(e, 10)
+    }
+    function N(e, b, c, f, h, n) {
+        b = g.Util.getCSS(b, e, h);
+        var a;
+        1 === b.length && (h = b[0],
+        b = [],
+        b[0] = h,
+        b[1] = h);
+        -1 !== b[0].toString().indexOf("%") ? (a = parseFloat(b[0]) / 100,
+        h = c.width * a,
+        "backgroundSize" !== e && (h -= (n || f).width * a)) : h = "backgroundSize" === e ? "auto" === b[0] ? f.width : /contain|cover/.test(b[0]) ? g.Util.resizeBounds(f.width, f.height, c.width, c.height, b[0]).width : parseInt(b[0], 10) : parseInt(b[0], 10);
+        "auto" === b[1] ? c = h / f.width * f.height : -1 !== b[1].toString().indexOf("%") ? (a = parseFloat(b[1]) / 100,
+        c = c.height * a,
+        "backgroundSize" !== e && (c -= (n || f).height * a)) : c = parseInt(b[1], 10);
+        return [h, c]
+    }
+    function ca(e, b) {
+        var c = [];
+        return {
+            storage: c,
+            width: e,
+            height: b,
+            clip: function() {
+                c.push({
+                    type: "function",
+                    name: "clip",
+                    arguments: arguments
+                })
+            },
+            translate: function() {
+                c.push({
+                    type: "function",
+                    name: "translate",
+                    arguments: arguments
+                })
+            },
+            fill: function() {
+                c.push({
+                    type: "function",
+                    name: "fill",
+                    arguments: arguments
+                })
+            },
+            save: function() {
+                c.push({
+                    type: "function",
+                    name: "save",
+                    arguments: arguments
+                })
+            },
+            restore: function() {
+                c.push({
+                    type: "function",
+                    name: "restore",
+                    arguments: arguments
+                })
+            },
+            fillRect: function() {
+                c.push({
+                    type: "function",
+                    name: "fillRect",
+                    arguments: arguments
+                })
+            },
+            createPattern: function() {
+                c.push({
+                    type: "function",
+                    name: "createPattern",
+                    arguments: arguments
+                })
+            },
+            drawShape: function() {
+                var e = [];
+                c.push({
+                    type: "function",
+                    name: "drawShape",
+                    arguments: e
+                });
+                return {
+                    moveTo: function() {
+                        e.push({
+                            name: "moveTo",
+                            arguments: arguments
+                        })
+                    },
+                    lineTo: function() {
+                        e.push({
+                            name: "lineTo",
+                            arguments: arguments
+                        })
+                    },
+                    arcTo: function() {
+                        e.push({
+                            name: "arcTo",
+                            arguments: arguments
+                        })
+                    },
+                    bezierCurveTo: function() {
+                        e.push({
+                            name: "bezierCurveTo",
+                            arguments: arguments
+                        })
+                    },
+                    quadraticCurveTo: function() {
+                        e.push({
+                            name: "quadraticCurveTo",
+                            arguments: arguments
+                        })
+                    }
+                }
+            },
+            drawImage: function() {
+                c.push({
+                    type: "function",
+                    name: "drawImage",
+                    arguments: arguments
+                })
+            },
+            fillText: function() {
+                c.push({
+                    type: "function",
+                    name: "fillText",
+                    arguments: arguments
+                })
+            },
+            setVariable: function(e, b) {
+                c.push({
+                    type: "variable",
+                    name: e,
+                    arguments: b
+                });
+                return b
+            }
+        }
+    }
+    var g = {}, O;
+    g.Util = {};
+    g.Util.log = function(e) {
+        g.logging && t.console && t.console.log && t.console.log(e)
+    }
+    ;
+    g.Util.trimText = function(e) {
+        return function(b) {
+            return e ? e.apply(b) : ((b || "") + "").replace(/^\s+|\s+$/g, "")
+        }
+    }(String.prototype.trim);
+    g.Util.asFloat = function(e) {
+        return parseFloat(e)
+    }
+    ;
+    (function() {
+        var e = /((rgba|rgb)\([^\)]+\)(\s-?\d+px){0,})/g
+          , b = /(-?\d+px)|(#.+)|(rgb\(.+\))|(rgba\(.+\))/g;
+        g.Util.parseTextShadows = function(c) {
+            if (!c || "none" === c)
+                return [];
+            c = c.match(e);
+            for (var f = [], h = 0; c && h < c.length; h++) {
+                var n = c[h].match(b);
+                f.push({
+                    color: n[0],
+                    offsetX: n[1] ? n[1].replace("px", "") : 0,
+                    offsetY: n[2] ? n[2].replace("px", "") : 0,
+                    blur: n[3] ? n[3].replace("px", "") : 0
+                })
+            }
+            return f
+        }
+    })();
+    g.Util.parseBackgroundImage = function(e) {
+        var b, c, f, h, n, a = [], v, d = 0, m = 0, g, p, k = function() {
+            b && ('"' === c.substr(0, 1) && (c = c.substr(1, c.length - 2)),
+            c && p.push(c),
+            "-" === b.substr(0, 1) && 0 < (h = b.indexOf("-", 1) + 1) && (f = b.substr(0, h),
+            b = b.substr(h)),
+            a.push({
+                prefix: f,
+                method: b.toLowerCase(),
+                value: n,
+                args: p
+            }));
+            p = [];
+            b = f = c = n = ""
+        }
+        ;
+        k();
+        for (var t = 0, y = e.length; t < y; t++)
+            if (v = e[t],
+            !(0 === d && -1 < " \r\n\t".indexOf(v))) {
+                switch (v) {
+                case '"':
+                    g ? g === v && (g = null ) : g = v;
+                    break;
+                case "(":
+                    if (!g)
+                        if (0 === d) {
+                            d = 1;
+                            n += v;
+                            continue
+                        } else
+                            m++;
+                    break;
+                case ")":
+                    if (!g && 1 === d)
+                        if (0 === m) {
+                            d = 0;
+                            n += v;
+                            k();
+                            continue
+                        } else
+                            m--;
+                    break;
+                case ",":
+                    if (!g)
+                        if (0 === d) {
+                            k();
+                            continue
+                        } else if (1 === d && 0 === m && !b.match(/^url$/i)) {
+                            p.push(c);
+                            c = "";
+                            n += v;
+                            continue
+                        }
+                }
+                n += v;
+                0 === d ? b += v : c += v
+            }
+        k();
+        return a
+    }
+    ;
+    g.Util.Bounds = function(e) {
+        var b, c = {};
+        e.getBoundingClientRect && (b = e.getBoundingClientRect(),
+        c.top = b.top,
+        c.bottom = b.bottom || b.top + b.height,
+        c.left = b.left,
+        c.width = e.offsetWidth,
+        c.height = e.offsetHeight);
+        return c
+    }
+    ;
+    g.Util.OffsetBounds = function(e) {
+        var b = e.offsetParent ? g.Util.OffsetBounds(e.offsetParent) : {
+            top: 0,
+            left: 0
+        };
+        return {
+            top: e.offsetTop + b.top,
+            bottom: e.offsetTop + e.offsetHeight + b.top,
+            left: e.offsetLeft + b.left,
+            width: e.offsetWidth,
+            height: e.offsetHeight
+        }
+    }
+    ;
+    g.Util.getCSS = function(e, b, c) {
+        void 0 !== e && (O = D.defaultView.getComputedStyle(e, null ));
+        var f = O[b];
+        if (/^background(Size|Position)$/.test(b)) {
+            a: {
+                f = (f || "").split(",");
+                f = f[c || 0] || f[0] || "auto";
+                f = g.Util.trimText(f).split(" ");
+                if ("backgroundSize" !== b || f[0] && !f[0].match(/cover|contain|auto/)) {
+                    f[0] = -1 === f[0].indexOf("%") ? M(e, b + "X", f[0]) : f[0];
+                    if (f[1] === y)
+                        if ("backgroundSize" === b) {
+                            f[1] = "auto";
+                            e = f;
+                            break a
+                        } else
+                            f[1] = f[0];
+                    f[1] = -1 === f[1].indexOf("%") ? M(e, b + "Y", f[1]) : f[1]
+                }
+                e = f
+            }
+            return e
+        }
+        return /border(Top|Bottom)(Left|Right)Radius/.test(b) ? (e = f.split(" "),
+        1 >= e.length && (e[1] = e[0]),
+        e.map(S)) : f
+    }
+    ;
+    g.Util.resizeBounds = function(e, b, c, f, h) {
+        e /= b;
+        h && "auto" !== h ? c / f < e ^ "contain" === h ? (c = f,
+        h = f * e) : (h = c,
+        c /= e) : (h = c,
+        c = f);
+        return {
+            width: h,
+            height: c
+        }
+    }
+    ;
+    g.Util.BackgroundPosition = function(e, b, c, f, h) {
+        e = N("backgroundPosition", e, b, c, f, h);
+        return {
+            left: e[0],
+            top: e[1]
+        }
+    }
+    ;
+    g.Util.BackgroundSize = function(e, b, c, f) {
+        e = N("backgroundSize", e, b, c, f);
+        return {
+            width: e[0],
+            height: e[1]
+        }
+    }
+    ;
+    g.Util.Extend = function(e, b) {
+        for (var c in e)
+            e.hasOwnProperty(c) && (b[c] = e[c]);
+        return b
+    }
+    ;
+    g.Util.Children = function(e) {
+        var b;
+        try {
+            var c;
+            if (e.nodeName && "IFRAME" === e.nodeName.toUpperCase())
+                c = e.contentDocument || e.contentWindow.document;
+            else {
+                var f = e.childNodes;
+                e = [];
+                if (null !== f) {
+                    var h = e.length
+                      , n = 0;
+                    if ("number" === typeof f.length)
+                        for (var a = f.length; n < a; n++)
+                            e[h++] = f[n];
+                    else
+                        for (; f[n] !== y; )
+                            e[h++] = f[n++];
+                    e.length = h
+                }
+                c = e
+            }
+            b = c
+        } catch (v) {
+            g.Util.log("html2canvas.Util.Children failed with exception: " + v.message),
+            b = []
+        }
+        return b
+    }
+    ;
+    g.Util.isTransparent = function(e) {
+        return "transparent" === e || "rgba(0, 0, 0, 0)" === e
+    }
+    ;
+    g.Util.Font = function() {
+        var e = {};
+        return function(b, c, f) {
+            if (e[b + "-" + c] !== y)
+                return e[b + "-" + c];
+            var h = f.createElement("div"), n = f.createElement("img"), a = f.createElement("span"), v;
+            h.style.visibility = "hidden";
+            h.style.fontFamily = b;
+            h.style.fontSize = c;
+            h.style.margin = 0;
+            h.style.padding = 0;
+            f.body.appendChild(h);
+            n.src = "data:image/gif;base64,R0lGODlhAQABAIABAP///wAAACwAAAAAAQABAAACAkQBADs=";
+            n.width = 1;
+            n.height = 1;
+            n.style.margin = 0;
+            n.style.padding = 0;
+            n.style.verticalAlign = "baseline";
+            a.style.fontFamily = b;
+            a.style.fontSize = c;
+            a.style.margin = 0;
+            a.style.padding = 0;
+            a.appendChild(f.createTextNode("Hidden Text"));
+            h.appendChild(a);
+            h.appendChild(n);
+            v = n.offsetTop - a.offsetTop + 1;
+            h.removeChild(a);
+            h.appendChild(f.createTextNode("Hidden Text"));
+            h.style.lineHeight = "normal";
+            n.style.verticalAlign = "super";
+            n = {
+                baseline: v,
+                lineWidth: 1,
+                middle: n.offsetTop - h.offsetTop + 1
+            };
+            e[b + "-" + c] = n;
+            f.body.removeChild(h);
+            return n
+        }
+    }();
+    (function() {
+        function e(e) {
+            return function(c) {
+                try {
+                    e.addColorStop(c.stop, c.color)
+                } catch (a) {
+                    b.log(["failed to add color stop: ", a, "; tried to add: ", c])
+                }
+            }
+        }
+        var b = g.Util
+          , c = {};
+        g.Generate = c;
+        var f = [/^(-webkit-linear-gradient)\(([a-z\s]+)([\w\d\.\s,%\(\)]+)\)$/, /^(-o-linear-gradient)\(([a-z\s]+)([\w\d\.\s,%\(\)]+)\)$/, /^(-webkit-gradient)\((linear|radial),\s((?:\d{1,3}%?)\s(?:\d{1,3}%?),\s(?:\d{1,3}%?)\s(?:\d{1,3}%?))([\w\d\.\s,%\(\)\-]+)\)$/, /^(-moz-linear-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?))([\w\d\.\s,%\(\)]+)\)$/, /^(-webkit-radial-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?)),\s(\w+)\s([a-z\-]+)([\w\d\.\s,%\(\)]+)\)$/, /^(-moz-radial-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?)),\s(\w+)\s?([a-z\-]*)([\w\d\.\s,%\(\)]+)\)$/, /^(-o-radial-gradient)\(((?:\d{1,3}%?)\s(?:\d{1,3}%?)),\s(\w+)\s([a-z\-]+)([\w\d\.\s,%\(\)]+)\)$/];
+        c.parseGradient = function(e, c) {
+            var a, b, d = f.length, m, g, p, k;
+            for (b = 0; b < d && !(m = e.match(f[b])); b += 1)
+                ;
+            if (m)
+                switch (m[1]) {
+                case "-webkit-linear-gradient":
+                case "-o-linear-gradient":
+                    a = {
+                        type: "linear",
+                        x0: null ,
+                        y0: null ,
+                        x1: null ,
+                        y1: null ,
+                        colorStops: []
+                    };
+                    if (d = m[2].match(/\w+/g))
+                        for (g = d.length,
+                        b = 0; b < g; b += 1)
+                            switch (d[b]) {
+                            case "top":
+                                a.y0 = 0;
+                                a.y1 = c.height;
+                                break;
+                            case "right":
+                                a.x0 = c.width;
+                                a.x1 = 0;
+                                break;
+                            case "bottom":
+                                a.y0 = c.height;
+                                a.y1 = 0;
+                                break;
+                            case "left":
+                                a.x0 = 0,
+                                a.x1 = c.width
+                            }
+                    null === a.x0 && null === a.x1 && (a.x0 = a.x1 = c.width / 2);
+                    null === a.y0 && null === a.y1 && (a.y0 = a.y1 = c.height / 2);
+                    if (d = m[3].match(/((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)(?:\s\d{1,3}(?:%|px))?)+/g))
+                        for (g = d.length,
+                        p = 1 / Math.max(g - 1, 1),
+                        b = 0; b < g; b += 1)
+                            k = d[b].match(/((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\))\s*(\d{1,3})?(%|px)?/),
+                            k[2] ? (m = parseFloat(k[2]),
+                            m = "%" === k[3] ? m / 100 : m / c.width) : m = b * p,
+                            a.colorStops.push({
+                                color: k[1],
+                                stop: m
+                            });
+                    break;
+                case "-webkit-gradient":
+                    a = {
+                        type: "radial" === m[2] ? "circle" : m[2],
+                        x0: 0,
+                        y0: 0,
+                        x1: 0,
+                        y1: 0,
+                        colorStops: []
+                    };
+                    if (d = m[3].match(/(\d{1,3})%?\s(\d{1,3})%?,\s(\d{1,3})%?\s(\d{1,3})%?/))
+                        a.x0 = d[1] * c.width / 100,
+                        a.y0 = d[2] * c.height / 100,
+                        a.x1 = d[3] * c.width / 100,
+                        a.y1 = d[4] * c.height / 100;
+                    if (d = m[4].match(/((?:from|to|color-stop)\((?:[0-9\.]+,\s)?(?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)\))+/g))
+                        for (g = d.length,
+                        b = 0; b < g; b += 1)
+                            k = d[b].match(/(from|to|color-stop)\(([0-9\.]+)?(?:,\s)?((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\))\)/),
+                            m = parseFloat(k[2]),
+                            "from" === k[1] && (m = 0),
+                            "to" === k[1] && (m = 1),
+                            a.colorStops.push({
+                                color: k[3],
+                                stop: m
+                            });
+                    break;
+                case "-moz-linear-gradient":
+                    a = {
+                        type: "linear",
+                        x0: 0,
+                        y0: 0,
+                        x1: 0,
+                        y1: 0,
+                        colorStops: []
+                    };
+                    if (d = m[2].match(/(\d{1,3})%?\s(\d{1,3})%?/))
+                        a.x0 = d[1] * c.width / 100,
+                        a.y0 = d[2] * c.height / 100,
+                        a.x1 = c.width - a.x0,
+                        a.y1 = c.height - a.y0;
+                    if (d = m[3].match(/((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)(?:\s\d{1,3}%)?)+/g))
+                        for (g = d.length,
+                        p = 1 / Math.max(g - 1, 1),
+                        b = 0; b < g; b += 1)
+                            k = d[b].match(/((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\))\s*(\d{1,3})?(%)?/),
+                            k[2] ? (m = parseFloat(k[2]),
+                            k[3] && (m /= 100)) : m = b * p,
+                            a.colorStops.push({
+                                color: k[1],
+                                stop: m
+                            });
+                    break;
+                case "-webkit-radial-gradient":
+                case "-moz-radial-gradient":
+                case "-o-radial-gradient":
+                    a = {
+                        type: "circle",
+                        x0: 0,
+                        y0: 0,
+                        x1: c.width,
+                        y1: c.height,
+                        cx: 0,
+                        cy: 0,
+                        rx: 0,
+                        ry: 0,
+                        colorStops: []
+                    };
+                    if (d = m[2].match(/(\d{1,3})%?\s(\d{1,3})%?/))
+                        a.cx = d[1] * c.width / 100,
+                        a.cy = d[2] * c.height / 100;
+                    d = m[3].match(/\w+/);
+                    k = m[4].match(/[a-z\-]*/);
+                    if (d && k)
+                        switch (k[0]) {
+                        case "farthest-corner":
+                        case "cover":
+                        case "":
+                            b = Math.sqrt(Math.pow(a.cx, 2) + Math.pow(a.cy, 2));
+                            d = Math.sqrt(Math.pow(a.cx, 2) + Math.pow(a.y1 - a.cy, 2));
+                            g = Math.sqrt(Math.pow(a.x1 - a.cx, 2) + Math.pow(a.y1 - a.cy, 2));
+                            k = Math.sqrt(Math.pow(a.x1 - a.cx, 2) + Math.pow(a.cy, 2));
+                            a.rx = a.ry = Math.max(b, d, g, k);
+                            break;
+                        case "closest-corner":
+                            b = Math.sqrt(Math.pow(a.cx, 2) + Math.pow(a.cy, 2));
+                            d = Math.sqrt(Math.pow(a.cx, 2) + Math.pow(a.y1 - a.cy, 2));
+                            g = Math.sqrt(Math.pow(a.x1 - a.cx, 2) + Math.pow(a.y1 - a.cy, 2));
+                            k = Math.sqrt(Math.pow(a.x1 - a.cx, 2) + Math.pow(a.cy, 2));
+                            a.rx = a.ry = Math.min(b, d, g, k);
+                            break;
+                        case "farthest-side":
+                            "circle" === d[0] ? a.rx = a.ry = Math.max(a.cx, a.cy, a.x1 - a.cx, a.y1 - a.cy) : (a.type = d[0],
+                            a.rx = Math.max(a.cx, a.x1 - a.cx),
+                            a.ry = Math.max(a.cy, a.y1 - a.cy));
+                            break;
+                        case "closest-side":
+                        case "contain":
+                            "circle" === d[0] ? a.rx = a.ry = Math.min(a.cx, a.cy, a.x1 - a.cx, a.y1 - a.cy) : (a.type = d[0],
+                            a.rx = Math.min(a.cx, a.x1 - a.cx),
+                            a.ry = Math.min(a.cy, a.y1 - a.cy))
+                        }
+                    if (d = m[5].match(/((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\)(?:\s\d{1,3}(?:%|px))?)+/g))
+                        for (g = d.length,
+                        p = 1 / Math.max(g - 1, 1),
+                        b = 0; b < g; b += 1)
+                            k = d[b].match(/((?:rgb|rgba)\(\d{1,3},\s\d{1,3},\s\d{1,3}(?:,\s[0-9\.]+)?\))\s*(\d{1,3})?(%|px)?/),
+                            k[2] ? (m = parseFloat(k[2]),
+                            m = "%" === k[3] ? m / 100 : m / c.width) : m = b * p,
+                            a.colorStops.push({
+                                color: k[1],
+                                stop: m
+                            })
+                }
+            return a
+        }
+        ;
+        c.Gradient = function(b, c) {
+            if (0 !== c.width && 0 !== c.height) {
+                var a = D.createElement("canvas"), f = a.getContext("2d"), d, m;
+                a.width = c.width;
+                a.height = c.height;
+                if (d = g.Generate.parseGradient(b, c))
+                    switch (d.type) {
+                    case "linear":
+                        m = f.createLinearGradient(d.x0, d.y0, d.x1, d.y1);
+                        d.colorStops.forEach(e(m));
+                        f.fillStyle = m;
+                        f.fillRect(0, 0, c.width, c.height);
+                        break;
+                    case "circle":
+                        m = f.createRadialGradient(d.cx, d.cy, 0, d.cx, d.cy, d.rx);
+                        d.colorStops.forEach(e(m));
+                        f.fillStyle = m;
+                        f.fillRect(0, 0, c.width, c.height);
+                        break;
+                    case "ellipse":
+                        var u = D.createElement("canvas")
+                          , p = u.getContext("2d");
+                        m = Math.max(d.rx, d.ry);
+                        var k = 2 * m;
+                        u.width = u.height = k;
+                        m = p.createRadialGradient(d.rx, d.ry, 0, d.rx, d.ry, m);
+                        d.colorStops.forEach(e(m));
+                        p.fillStyle = m;
+                        p.fillRect(0, 0, k, k);
+                        f.fillStyle = d.colorStops[d.colorStops.length - 1].color;
+                        f.fillRect(0, 0, a.width, a.height);
+                        f.drawImage(u, d.cx - d.rx, d.cy - d.ry, 2 * d.rx, 2 * d.ry)
+                    }
+                return a
+            }
+        }
+        ;
+        c.ListAlpha = function(c) {
+            var b = "", a;
+            do
+                a = c % 26,
+                b = String.fromCharCode(a + 64) + b,
+                c /= 26;
+            while (26 < 26 * c);return b
+        }
+        ;
+        c.ListRoman = function(c) {
+            var b = "M CM D CD C XC L XL X IX V IV I".split(" "), a = [1E3, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1], e = "", d, f = b.length;
+            if (0 >= c || 4E3 <= c)
+                return c;
+            for (d = 0; d < f; d += 1)
+                for (; c >= a[d]; )
+                    c -= a[d],
+                    e += b[d];
+            return e
+        }
+    })();
+    g.Parse = function(e, b) {
+        function c(l, q) {
+            var c = parseInt(r(l, q), 10);
+            return isNaN(c) ? 0 : c
+        }
+        function f(l, q, c, a, b, e) {
+            "transparent" !== e && (l.setVariable("fillStyle", e),
+            l.fillRect(q, c, a, b))
+        }
+        function h(l, q, c) {
+            if (0 < l.length)
+                return q + c.toUpperCase()
+        }
+        function n(l, q) {
+            switch (q) {
+            case "lowercase":
+                return l.toLowerCase();
+            case "capitalize":
+                return l.replace(/(^|\s|:|-|\(|\))([a-z])/g, h);
+            case "uppercase":
+                return l.toUpperCase();
+            default:
+                return l
+            }
+        }
+        function a(l, q, c, a) {
+            var b = r(q, "fontWeight")
+              , e = r(q, "fontFamily")
+              , d = r(q, "fontSize")
+              , f = w.parseTextShadows(r(q, "textShadow"));
+            switch (parseInt(b, 10)) {
+            case 401:
+                b = "bold";
+                break;
+            case 400:
+                b = "normal"
+            }
+            l.setVariable("fillStyle", a);
+            l.setVariable("font", [r(q, "fontStyle"), r(q, "fontVariant"), b, d, e].join(" "));
+            l.setVariable("textAlign", "left");
+            f.length && (l.setVariable("shadowColor", f[0].color),
+            l.setVariable("shadowOffsetX", f[0].offsetX),
+            l.setVariable("shadowOffsetY", f[0].offsetY),
+            l.setVariable("shadowBlur", f[0].blur));
+            if ("none" !== c)
+                return w.Font(e, d, z)
+        }
+        function v(l, q, c) {
+            var e = c.ctx, d = r(l, "color"), U = r(l, "textDecoration"), h = r(l, "textAlign"), g, m, k = q, F = 0;
+            0 < w.trimText(q.nodeValue).length && (q.nodeValue = n(q.nodeValue, r(l, "textTransform")),
+            h = h.replace(["-webkit-auto"], ["auto"]),
+            m = !b.letterRendering && /^(left|right|justify|auto)$/.test(h) && /^(normal|none|0px)$/.test(r(l, "letterSpacing")) ? q.nodeValue.split(/(\b| )/) : q.nodeValue.split(""),
+            g = a(e, l, U, d),
+            b.chinese && m.forEach(function(l, q) {
+                /.*[\u4E00-\u9FA5].*$/.test(l) && (l = l.split(""),
+                l.unshift(q, 1),
+                m.splice.apply(m, l))
+            }),
+            m.forEach(function(l, q) {
+                var a, b = q < m.length - 1;
+                a = c.transform.matrix;
+                var h;
+                if (da.rangeBounds && !a) {
+                    if ("none" !== U || 0 !== w.trimText(l).length)
+                        a = k,
+                        b = F,
+                        h = z.createRange(),
+                        h.setStart(a, b),
+                        h.setEnd(a, b + l.length),
+                        h = h.getBoundingClientRect();
+                    F += l.length
+                } else if (k && "string" === typeof k.nodeValue) {
+                    var b = b ? k.splitText(l.length) : null
+                      , n = k;
+                    h = n.parentNode;
+                    var K = z.createElement("wrapper")
+                      , B = n.cloneNode(!0);
+                    K.appendChild(n.cloneNode(!0));
+                    h.replaceChild(K, n);
+                    a = a ? w.OffsetBounds(K) : w.Bounds(K);
+                    h.replaceChild(B, K);
+                    h = a;
+                    k = b
+                }
+                if (a = h)
+                    switch (b = a.left,
+                    h = a.bottom,
+                    null !== l && 0 < w.trimText(l).length && e.fillText(l, b, h),
+                    U) {
+                    case "underline":
+                        f(e, a.left, Math.round(a.top + g.baseline + g.lineWidth), a.width, 1, d);
+                        break;
+                    case "overline":
+                        f(e, a.left, Math.round(a.top), a.width, 1, d);
+                        break;
+                    case "line-through":
+                        f(e, a.left, Math.ceil(a.top + g.middle + g.lineWidth), a.width, 1, d)
+                    }
+            }))
+        }
+        function d(l, q, c) {
+            var b;
+            q = q.ctx;
+            var e = r(l, "listStyleType");
+            if (/^(decimal|decimal-leading-zero|upper-alpha|upper-latin|upper-roman|lower-alpha|lower-greek|lower-latin|lower-roman)$/i.test(e)) {
+                var d;
+                d = -1;
+                var f = 1
+                  , h = l.parentNode.childNodes;
+                if (l.parentNode) {
+                    for (; h[++d] !== l; )
+                        1 === h[d].nodeType && f++;
+                    d = f
+                } else
+                    d = -1;
+                switch (e) {
+                case "decimal":
+                    b = d;
+                    break;
+                case "decimal-leading-zero":
+                    b = 1 === d.toString().length ? "0" + d.toString() : d.toString();
+                    break;
+                case "upper-roman":
+                    b = g.Generate.ListRoman(d);
+                    break;
+                case "lower-roman":
+                    b = g.Generate.ListRoman(d).toLowerCase();
+                    break;
+                case "lower-alpha":
+                    b = g.Generate.ListAlpha(d).toLowerCase();
+                    break;
+                case "upper-alpha":
+                    b = g.Generate.ListAlpha(d)
+                }
+                b += ". ";
+                d = z.createElement("boundelement");
+                d.style.display = "inline";
+                f = l.style.listStyleType;
+                l.style.listStyleType = "none";
+                d.appendChild(z.createTextNode(b));
+                l.insertBefore(d, l.firstChild);
+                e = w.Bounds(d);
+                l.removeChild(d);
+                l.style.listStyleType = f;
+                a(q, l, "none", r(l, "color"));
+                "inside" === r(l, "listStylePosition") && (q.setVariable("textAlign", "left"),
+                l = c.left,
+                c = e.bottom,
+                null !== b && 0 < w.trimText(b).length && q.fillText(b, l, c))
+            }
+        }
+        function m(l) {
+            return (l = e[l]) && !0 === l.succeeded ? l.img : !1
+        }
+        function u(l, q) {
+            var a = Math.max(l.left, q.left)
+              , b = Math.max(l.top, q.top);
+            return {
+                left: a,
+                top: b,
+                width: Math.min(l.left + l.width, q.left + q.width) - a,
+                height: Math.min(l.top + l.height, q.top + q.height) - b
+            }
+        }
+        function p(l, q, a, b, d) {
+            var e = c(q, "paddingLeft")
+              , f = c(q, "paddingTop")
+              , h = c(q, "paddingRight");
+            q = c(q, "paddingBottom");
+            F(l, a, 0, 0, a.width, a.height, b.left + e + d[3].width, b.top + f + d[0].width, b.width - (d[1].width + d[3].width + e + h), b.height - (d[0].width + d[2].width + f + q))
+        }
+        function k(l) {
+            return ["Top", "Right", "Bottom", "Left"].map(function(q) {
+                return {
+                    width: c(l, "border" + q + "Width"),
+                    color: r(l, "border" + q + "Color")
+                }
+            })
+        }
+        function T(l) {
+            return ["TopLeft", "TopRight", "BottomRight", "BottomLeft"].map(function(q) {
+                return r(l, "border" + q + "Radius")
+            })
+        }
+        function A(l, q, a, b) {
+            var c = function(l, a, b) {
+                return {
+                    x: l.x + (a.x - l.x) * b,
+                    y: l.y + (a.y - l.y) * b
+                }
+            }
+            ;
+            return {
+                start: l,
+                startControl: q,
+                endControl: a,
+                end: b,
+                subdivide: function(d) {
+                    var e = c(l, q, d)
+                      , f = c(q, a, d)
+                      , h = c(a, b, d)
+                      , g = c(e, f, d)
+                      , f = c(f, h, d);
+                    d = c(g, f, d);
+                    return [A(l, e, g, d), A(d, f, h, b)]
+                },
+                curveTo: function(l) {
+                    l.push(["bezierCurve", q.x, q.y, a.x, a.y, b.x, b.y])
+                },
+                curveToReversed: function(b) {
+                    b.push(["bezierCurve", a.x, a.y, q.x, q.y, l.x, l.y])
+                }
+            }
+        }
+        function G(l, a, b, c, d, e, f) {
+            0 < a[0] || 0 < a[1] ? (l.push(["line", c[0].start.x, c[0].start.y]),
+            c[0].curveTo(l),
+            c[1].curveTo(l)) : l.push(["line", e, f]);
+            (0 < b[0] || 0 < b[1]) && l.push(["line", d[0].start.x, d[0].start.y])
+        }
+        function J(l, a, b, c, d, e, f) {
+            var h = [];
+            0 < a[0] || 0 < a[1] ? (h.push(["line", c[1].start.x, c[1].start.y]),
+            c[1].curveTo(h)) : h.push(["line", l.c1[0], l.c1[1]]);
+            0 < b[0] || 0 < b[1] ? (h.push(["line", e[0].start.x, e[0].start.y]),
+            e[0].curveTo(h),
+            h.push(["line", f[0].end.x, f[0].end.y]),
+            f[0].curveToReversed(h)) : (h.push(["line", l.c2[0], l.c2[1]]),
+            h.push(["line", l.c3[0], l.c3[1]]));
+            0 < a[0] || 0 < a[1] ? (h.push(["line", d[1].end.x, d[1].end.y]),
+            d[1].curveToReversed(h)) : h.push(["line", l.c4[0], l.c4[1]]);
+            return h
+        }
+        function E(l, a, b) {
+            var c, d, e, f, h, g, m, k, n = a.left, F = a.top, B = a.width, v = a.height, p, C, u, t, x = T(l);
+            k = a.left;
+            p = a.top;
+            g = a.width;
+            m = a.height;
+            d = x[0][0];
+            e = x[0][1];
+            f = x[1][0];
+            h = x[1][1];
+            var w = x[2][0]
+              , y = x[2][1];
+            C = x[3][0];
+            u = x[3][1];
+            var z = g - f
+              , E = m - y
+              , Q = g - w
+              , A = m - u;
+            c = H(k, p, d, e).topLeft.subdivide(.5);
+            d = H(k + b[3].width, p + b[0].width, Math.max(0, d - b[3].width), Math.max(0, e - b[0].width)).topLeft.subdivide(.5);
+            e = H(k + z, p, f, h).topRight.subdivide(.5);
+            f = H(k + Math.min(z, g + b[3].width), p + b[0].width, z > g + b[3].width ? 0 : f - b[3].width, h - b[0].width).topRight.subdivide(.5);
+            h = H(k + Q, p + E, w, y).bottomRight.subdivide(.5);
+            g = H(k + Math.min(Q, g + b[3].width), p + Math.min(E, m + b[0].width), Math.max(0, w - b[1].width), Math.max(0, y - b[2].width)).bottomRight.subdivide(.5);
+            m = H(k, p + A, C, u).bottomLeft.subdivide(.5);
+            k = H(k + b[3].width, p + A, Math.max(0, C - b[3].width), Math.max(0, u - b[2].width)).bottomLeft.subdivide(.5);
+            p = [];
+            switch (r(l, "backgroundClip")) {
+            case "content-box":
+            case "padding-box":
+                G(p, x[0], x[1], d, f, a.left + b[3].width, a.top + b[0].width);
+                G(p, x[1], x[2], f, g, a.left + a.width - b[1].width, a.top + b[0].width);
+                G(p, x[2], x[3], g, k, a.left + a.width - b[1].width, a.top + a.height - b[2].width);
+                G(p, x[3], x[0], k, d, a.left + b[3].width, a.top + a.height - b[2].width);
+                break;
+            default:
+                G(p, x[0], x[1], c, e, a.left, a.top),
+                G(p, x[1], x[2], e, h, a.left + a.width, a.top),
+                G(p, x[2], x[3], h, m, a.left + a.width, a.top + a.height),
+                G(p, x[3], x[0], m, c, a.left, a.top + a.height)
+            }
+            A = {
+                clip: p,
+                borders: []
+            };
+            for (l = 0; 4 > l; l++)
+                if (0 < b[l].width) {
+                    a = n;
+                    p = F;
+                    C = B;
+                    u = v - b[2].width;
+                    switch (l) {
+                    case 0:
+                        u = b[0].width;
+                        t = J({
+                            c1: [a, p],
+                            c2: [a + C, p],
+                            c3: [a + C - b[1].width, p + u],
+                            c4: [a + b[3].width, p + u]
+                        }, x[0], x[1], c, d, e, f);
+                        break;
+                    case 1:
+                        a = n + B - b[1].width;
+                        C = b[1].width;
+                        t = J({
+                            c1: [a + C, p],
+                            c2: [a + C, p + u + b[2].width],
+                            c3: [a, p + u],
+                            c4: [a, p + b[0].width]
+                        }, x[1], x[2], e, f, h, g);
+                        break;
+                    case 2:
+                        p = p + v - b[2].width;
+                        u = b[2].width;
+                        t = J({
+                            c1: [a + C, p + u],
+                            c2: [a, p + u],
+                            c3: [a + b[3].width, p],
+                            c4: [a + C - b[3].width, p]
+                        }, x[2], x[3], h, g, m, k);
+                        break;
+                    case 3:
+                        C = b[3].width,
+                        t = J({
+                            c1: [a, p + u + b[2].width],
+                            c2: [a, p],
+                            c3: [a + C, p + b[0].width],
+                            c4: [a + C, p + u]
+                        }, x[3], x[0], m, k, c, d)
+                    }
+                    A.borders.push({
+                        args: t,
+                        color: b[l].color
+                    })
+                }
+            return A
+        }
+        function L(a, b) {
+            var c = a.drawShape();
+            b.forEach(function(a, b) {
+                c[0 === b ? "moveTo" : a[0] + "To"].apply(null , a.slice(1))
+            });
+            return c
+        }
+        function I(a, b, c) {
+            var d = z.createElement("valuewrap");
+            "lineHeight textAlign fontFamily color fontSize paddingLeft paddingTop width height border borderLeftWidth borderTopWidth".split(" ").forEach(function(b) {
+                try {
+                    d.style[b] = r(a, b)
+                } catch (c) {
+                    w.log("html2canvas: Parse: Exception caught in renderFormValue: " + c.message)
+                }
+            });
+            d.style.borderColor = "black";
+            d.style.borderStyle = "solid";
+            d.style.display = "block";
+            d.style.position = "absolute";
+            if (/^(submit|reset|button|text|password)$/.test(a.type) || "SELECT" === a.nodeName)
+                d.style.lineHeight = r(a, "height");
+            d.style.top = b.top + "px";
+            d.style.left = b.left + "px";
+            b = "SELECT" === a.nodeName ? (a.options[a.selectedIndex] || 0).text : a.value;
+            b || (b = a.placeholder);
+            b = z.createTextNode(b);
+            d.appendChild(b);
+            P.appendChild(d);
+            v(a, b, c);
+            P.removeChild(d)
+        }
+        function F(a) {
+            a.drawImage.apply(a, Array.prototype.slice.call(arguments, 1))
+        }
+        function B(a, b) {
+            var d = t.getComputedStyle(a, b);
+            if (d && d.content && "none" !== d.content && "-moz-alt-content" !== d.content && "none" !== d.display) {
+                var c = d.content + ""
+                  , e = c.substr(0, 1);
+                e === c.substr(c.length - 1) && e.match(/'|"/) && (c = c.substr(1, c.length - 2));
+                var e = "url" === c.substr(0, 3)
+                  , f = D.createElement(e ? "img" : "span");
+                f.className = "___html2canvas___pseudoelement-before ___html2canvas___pseudoelement-after";
+                Object.keys(d).filter(C).forEach(function(a) {
+                    try {
+                        f.style[a] = d[a]
+                    } catch (b) {
+                        w.log(["Tried to assign readonly property ", a, "Error:", b])
+                    }
+                });
+                e ? f.src = w.parseBackgroundImage(c)[0].args[0] : f.innerHTML = c;
+                return f
+            }
+        }
+        function C(a) {
+            return isNaN(t.parseInt(a, 10))
+        }
+        function Q(a, b) {
+            var d = B(a, ":before")
+              , c = B(a, ":after");
+            if (d || c)
+                d && (a.className += " ___html2canvas___pseudoelement-before",
+                a.parentNode.insertBefore(d, a),
+                V(d, b, !0),
+                a.parentNode.removeChild(d),
+                a.className = a.className.replace("___html2canvas___pseudoelement-before", "").trim()),
+                c && (a.className += " ___html2canvas___pseudoelement-after",
+                a.appendChild(c),
+                V(c, b, !0),
+                a.removeChild(c),
+                a.className = a.className.replace("___html2canvas___pseudoelement-after", "").trim())
+        }
+        function Y(a, b, d, c) {
+            var e = Math.round(c.left + d.left);
+            d = Math.round(c.top + d.top);
+            a.createPattern(b);
+            a.translate(e, d);
+            a.fill();
+            a.translate(-e, -d)
+        }
+        function W(a, b, d, c, e, f, h, g) {
+            var m = [];
+            m.push(["line", Math.round(e), Math.round(f)]);
+            m.push(["line", Math.round(e + h), Math.round(f)]);
+            m.push(["line", Math.round(e + h), Math.round(g + f)]);
+            m.push(["line", Math.round(e), Math.round(g + f)]);
+            L(a, m);
+            a.save();
+            a.clip();
+            Y(a, b, d, c);
+            a.restore()
+        }
+        function ea(a, b, d) {
+            for (var c = r(a, "backgroundImage"), e = w.parseBackgroundImage(c), f, h = e.length; h--; )
+                if (c = e[h],
+                c.args && 0 !== c.args.length)
+                    if (f = m("url" === c.method ? c.args[0] : c.value)) {
+                        var g = a
+                          , c = b
+                          , k = d
+                          , n = f;
+                        f = h;
+                        var p = w.BackgroundSize(g, c, n, f)
+                          , B = w.BackgroundPosition(g, c, n, f, p)
+                          , g = r(g, "backgroundRepeat").split(",").map(w.trimText);
+                        if (n.width !== p.width || n.height !== p.height) {
+                            var C, v = z.createElement("canvas");
+                            v.width = p.width;
+                            v.height = p.height;
+                            C = v.getContext("2d");
+                            F(C, n, 0, 0, n.width, n.height, 0, 0, p.width, p.height);
+                            n = v
+                        }
+                        g = g[f] || g[0];
+                        switch (g) {
+                        case "repeat-x":
+                            W(k, n, B, c, c.left, c.top + B.top, 99999, n.height);
+                            break;
+                        case "repeat-y":
+                            W(k, n, B, c, c.left + B.left, c.top, n.width, 99999);
+                            break;
+                        case "no-repeat":
+                            W(k, n, B, c, c.left + B.left, c.top + B.top, n.width, n.height);
+                            break;
+                        default:
+                            Y(k, n, B, {
+                                top: c.top,
+                                left: c.left,
+                                width: n.width,
+                                height: n.height
+                            })
+                        }
+                    } else
+                        w.log("html2canvas: Error loading background:", c)
+        }
+        function M(a) {
+            return a.replace("px", "")
+        }
+        function N(a, b) {
+            var c = r(a, "transform") || r(a, "-webkit-transform") || r(a, "-moz-transform") || r(a, "-ms-transform") || r(a, "-o-transform"), d = r(a, "transform-origin") || r(a, "-webkit-transform-origin") || r(a, "-moz-transform-origin") || r(a, "-ms-transform-origin") || r(a, "-o-transform-origin") || "0px 0px", d = d.split(" ").map(M).map(w.asFloat), e;
+            if (c && "none" !== c && (c = c.match(fa)))
+                switch (c[1]) {
+                case "matrix":
+                    e = c[2].split(",").map(w.trimText).map(w.asFloat)
+                }
+            return {
+                origin: d,
+                matrix: e
+            }
+        }
+        function O(a, c, d, e) {
+            var f = ca(c ? d.width : Math.max(Math.max(z.body.scrollWidth, z.documentElement.scrollWidth), Math.max(z.body.offsetWidth, z.documentElement.offsetWidth), Math.max(z.body.clientWidth, z.documentElement.clientWidth)), c ? d.height : Math.max(Math.max(z.body.scrollHeight, z.documentElement.scrollHeight), Math.max(z.body.offsetHeight, z.documentElement.offsetHeight), Math.max(z.body.clientHeight, z.documentElement.clientHeight))), h;
+            h = f.setVariable("globalAlpha", r(a, "opacity") * (c ? c.opacity : 1));
+            e = {
+                ctx: f,
+                opacity: h,
+                cssPosition: r(a, "position"),
+                borders: k(a),
+                transform: e,
+                clip: c && c.clip ? w.Extend({}, c.clip) : null
+            };
+            var g = (h = "static" !== e.cssPosition) ? r(a, "zIndex") : "auto"
+              , m = r(a, "opacity")
+              , n = "none" !== r(a, "cssFloat");
+            e.zIndex = f = {
+                zindex: g,
+                children: []
+            };
+            f.isPositioned = h;
+            f.isFloated = n;
+            f.opacity = m;
+            f.ownStacking = "auto" !== g || 1 > m;
+            c && c.zIndex.children.push(e);
+            !0 === b.useOverflow && !0 === /(hidden|scroll|auto)/.test(r(a, "overflow")) && !1 === /(BODY)/i.test(a.nodeName) && (e.clip = e.clip ? u(e.clip, d) : d);
+            return e
+        }
+        function S(a, b, c) {
+            a = {
+                left: b.left + a[3].width,
+                top: b.top + a[0].width,
+                width: b.width - (a[1].width + a[3].width),
+                height: b.height - (a[0].width + a[2].width)
+            };
+            c && (a = u(a, c));
+            return a
+        }
+        function ga(a, b) {
+            var c = b.matrix ? w.OffsetBounds(a) : w.Bounds(a);
+            b.origin[0] += c.left;
+            b.origin[1] += c.top;
+            return c
+        }
+        function Z(a, b, c, e) {
+            var h = N(a, b), g = ga(a, h), n;
+            b = O(a, b, g, h);
+            var h = b.borders
+              , k = b.ctx
+              , F = S(h, g, b.clip)
+              , B = E(a, g, h)
+              , v = aa.test(a.nodeName) ? "#efefef" : r(a, "backgroundColor");
+            L(k, B.clip);
+            k.save();
+            k.clip();
+            0 < F.height && 0 < F.width && !e ? (f(k, g.left, g.top, g.width, g.height, v),
+            ea(a, F, k)) : e && (b.backgroundColor = v);
+            k.restore();
+            B.borders.forEach(function(a) {
+                var b = a.args;
+                a = a.color;
+                "transparent" !== a && (k.setVariable("fillStyle", a),
+                L(k, b),
+                k.fill())
+            });
+            c || Q(a, b);
+            switch (a.nodeName) {
+            case "IMG":
+                (n = m(a.getAttribute("src"))) ? p(k, a, n, g, h) : w.log("html2canvas: Error loading <img>:" + a.getAttribute("src"));
+                break;
+            case "INPUT":
+                /^(text|url|email|submit|button|reset)$/.test(a.type) && 0 < (a.value || a.placeholder || "").length && I(a, g, b);
+                break;
+            case "TEXTAREA":
+                0 < (a.value || a.placeholder || "").length && I(a, g, b);
+                break;
+            case "SELECT":
+                0 < (a.options || a.placeholder || "").length && I(a, g, b);
+                break;
+            case "LI":
+                d(a, b, F);
+                break;
+            case "CANVAS":
+                p(k, a, a, g, h)
+            }
+            return b
+        }
+        function V(a, b, c) {
+            "none" === r(a, "display") || "hidden" === r(a, "visibility") || a.hasAttribute("data-html2canvas-ignore") || (b = Z(a, b, c, !1) || b,
+            aa.test(a.nodeName) || ba(a, b, c))
+        }
+        function ba(a, b, c) {
+            w.Children(a).forEach(function(d) {
+                d.nodeType === d.ELEMENT_NODE ? V(d, b, c) : d.nodeType === d.TEXT_NODE && v(a, d, b)
+            })
+        }
+        t.scroll(0, 0);
+        var R = b.elements === y ? D.body : b.elements[0]
+          , z = R.ownerDocument
+          , w = g.Util
+          , da = w.Support(b, z)
+          , aa = new RegExp("(" + b.ignoreElements + ")")
+          , P = z.body
+          , r = w.getCSS
+          , X = z.createElement("style");
+        X.innerHTML = '.___html2canvas___pseudoelement-before:before { content: "" !important; display: none !important; }.___html2canvas___pseudoelement-after:after { content: "" !important; display: none !important; }';
+        P.appendChild(X);
+        e = e || {};
+        var H = function(a) {
+            return function(b, c, d, e) {
+                var f = d * a
+                  , h = e * a;
+                d = b + d;
+                e = c + e;
+                return {
+                    topLeft: A({
+                        x: b,
+                        y: e
+                    }, {
+                        x: b,
+                        y: e - h
+                    }, {
+                        x: d - f,
+                        y: c
+                    }, {
+                        x: d,
+                        y: c
+                    }),
+                    topRight: A({
+                        x: b,
+                        y: c
+                    }, {
+                        x: b + f,
+                        y: c
+                    }, {
+                        x: d,
+                        y: e - h
+                    }, {
+                        x: d,
+                        y: e
+                    }),
+                    bottomRight: A({
+                        x: d,
+                        y: c
+                    }, {
+                        x: d,
+                        y: c + h
+                    }, {
+                        x: b + f,
+                        y: e
+                    }, {
+                        x: b,
+                        y: e
+                    }),
+                    bottomLeft: A({
+                        x: d,
+                        y: e
+                    }, {
+                        x: d - f,
+                        y: e
+                    }, {
+                        x: b,
+                        y: c + h
+                    }, {
+                        x: b,
+                        y: c
+                    })
+                }
+            }
+        }((Math.sqrt(2) - 1) / 3 * 4)
+          , fa = /(matrix)\((.+)\)/;
+        return function() {
+            var a = r(D.documentElement, "backgroundColor")
+              , b = w.isTransparent(a) && R === D.body
+              , c = Z(R, null , !1, b);
+            ba(R, c);
+            b && (a = c.backgroundColor);
+            P.removeChild(X);
+            return {
+                backgroundColor: a,
+                stack: c
+            }
+        }()
+    }
+    ;
+    g.Preload = function(e) {
+        function b() {
+            u.log("html2canvas: start: images: " + d.numLoaded + " / " + d.numTotal + " (failed: " + d.numFailed + ")");
+            !d.firstRun && d.numLoaded >= d.numTotal && (u.log("Finished loading images: # " + d.numTotal + " (failed: " + d.numFailed + ")"),
+            "function" === typeof e.complete && e.complete(d))
+        }
+        function c(a, c, f) {
+            var h, g = e.proxy, k;
+            E.href = a;
+            a = E.href;
+            h = "html2canvas_" + T++;
+            f.callbackname = h;
+            g = -1 < g.indexOf("?") ? g + "&" : g + "?";
+            g += "url=" + encodeURIComponent(a) + "&callback=" + h;
+            k = A.createElement("script");
+            t[h] = function(a) {
+                "error:" === a.substring(0, 6) ? (f.succeeded = !1,
+                d.numLoaded++,
+                d.numFailed++,
+                b()) : (v(c, f),
+                c.src = a);
+                t[h] = y;
+                try {
+                    delete t[h]
+                } catch (e) {}
+                k.parentNode.removeChild(k);
+                k = null ;
+                delete f.script;
+                delete f.callbackname
+            }
+            ;
+            k.setAttribute("type", "text/javascript");
+            k.setAttribute("src", g);
+            f.script = k;
+            t.document.body.appendChild(k)
+        }
+        function f(a, b) {
+            var c = t.getComputedStyle(a, b)
+              , d = c.content;
+            "url" === d.substr(0, 3) && p.loadImage(g.Util.parseBackgroundImage(d)[0].args[0]);
+            n(c.backgroundImage, a)
+        }
+        function h(a) {
+            return a && a.method && a.args && 0 < a.args.length
+        }
+        function n(a, c) {
+            var e;
+            g.Util.parseBackgroundImage(a).filter(h).forEach(function(a) {
+                if ("url" === a.method)
+                    p.loadImage(a.args[0]);
+                else if (a.method.match(/\-?gradient$/)) {
+                    e === y && (e = g.Util.Bounds(c));
+                    a = a.value;
+                    var f = g.Generate.Gradient(a, e);
+                    f !== y && (d[a] = {
+                        img: f,
+                        succeeded: !0
+                    },
+                    d.numTotal++,
+                    d.numLoaded++,
+                    b())
+                }
+            })
+        }
+        function a(b) {
+            var c = !1;
+            try {
+                u.Children(b).forEach(a)
+            } catch (d) {}
+            try {
+                c = b.nodeType
+            } catch (d) {
+                c = !1,
+                u.log("html2canvas: failed to access some element's nodeType - Exception: " + d.message)
+            }
+            if (1 === c || c === y) {
+                f(b, ":before");
+                f(b, ":after");
+                try {
+                    n(u.getCSS(b, "backgroundImage"), b)
+                } catch (d) {
+                    u.log("html2canvas: failed to get background-image - Exception: " + d.message)
+                }
+                n(b)
+            }
+        }
+        function v(a, f) {
+            a.onload = function() {
+                f.timer !== y && t.clearTimeout(f.timer);
+                d.numLoaded++;
+                f.succeeded = !0;
+                a.onerror = a.onload = null ;
+                b()
+            }
+            ;
+            a.onerror = function() {
+                if ("anonymous" === a.crossOrigin && (t.clearTimeout(f.timer),
+                e.proxy)) {
+                    var h = a.src;
+                    a = new Image;
+                    f.img = a;
+                    a.src = h;
+                    c(a.src, a, f);
+                    return
+                }
+                d.numLoaded++;
+                d.numFailed++;
+                f.succeeded = !1;
+                a.onerror = a.onload = null ;
+                b()
+            }
+        }
+        var d = {
+            numLoaded: 0,
+            numFailed: 0,
+            numTotal: 0,
+            cleanupDone: !1
+        }, m, u = g.Util, p, k, T = 0;
+        k = e.elements[0] || D.body;
+        var A = k.ownerDocument, G = k.getElementsByTagName("img"), J = G.length, E = A.createElement("a"), L = (new Image).crossOrigin !== y, I;
+        E.href = t.location.href;
+        m = E.protocol + E.host;
+        p = {
+            loadImage: function(a) {
+                var b, f;
+                a && d[a] === y && (b = new Image,
+                a.match(/data:image\/.*;base64,/i) ? (b.src = a.replace(/url\(['"]{0,}|['"]{0,}\)$/ig, ""),
+                f = d[a] = {
+                    img: b
+                },
+                d.numTotal++,
+                v(b, f)) : (E.href = a,
+                E.href = E.href,
+                E.protocol + E.host === m || !0 === e.allowTaint ? (f = d[a] = {
+                    img: b
+                },
+                d.numTotal++,
+                v(b, f),
+                b.src = a) : L && !e.allowTaint && e.useCORS ? (b.crossOrigin = "anonymous",
+                f = d[a] = {
+                    img: b
+                },
+                d.numTotal++,
+                v(b, f),
+                b.src = a) : e.proxy && (f = d[a] = {
+                    img: b
+                },
+                d.numTotal++,
+                c(a, b, f))))
+            },
+            cleanupDOM: function(a) {
+                var c, f;
+                if (!d.cleanupDone) {
+                    a && "string" === typeof a ? u.log("html2canvas: Cleanup because: " + a) : u.log("html2canvas: Cleanup after timeout: " + e.timeout + " ms.");
+                    for (f in d)
+                        if (d.hasOwnProperty(f) && (c = d[f],
+                        "object" === typeof c && c.callbackname && c.succeeded === y)) {
+                            t[c.callbackname] = y;
+                            try {
+                                delete t[c.callbackname]
+                            } catch (h) {}
+                            c.script && c.script.parentNode && (c.script.setAttribute("src", "about:blank"),
+                            c.script.parentNode.removeChild(c.script));
+                            d.numLoaded++;
+                            d.numFailed++;
+                            u.log("html2canvas: Cleaned up failed img: '" + f + "' Steps: " + d.numLoaded + " / " + d.numTotal)
+                        }
+                    t.stop !== y ? t.stop() : D.execCommand !== y && D.execCommand("Stop", !1);
+                    D.close !== y && D.close();
+                    d.cleanupDone = !0;
+                    a && "string" === typeof a || b()
+                }
+            },
+            renderingDone: function() {
+                I && t.clearTimeout(I)
+            }
+        };
+        0 < e.timeout && (I = t.setTimeout(p.cleanupDOM, e.timeout));
+        u.log("html2canvas: Preload starts: finding background-images");
+        d.firstRun = !0;
+        a(k);
+        u.log("html2canvas: Preload: Finding images");
+        for (k = 0; k < J; k += 1)
+            p.loadImage(G[k].getAttribute("src"));
+        d.firstRun = !1;
+        u.log("html2canvas: Preload: Done.");
+        d.numTotal === d.numLoaded && b();
+        return p
+    }
+    ;
+    g.Renderer = function(e, b) {
+        return function(c) {
+            if ("string" === typeof b.renderer && g.Renderer[c] !== y)
+                c = g.Renderer[c](b);
+            else if ("function" === typeof c)
+                c = c(b);
+            else
+                throw Error("Unknown renderer");
+            if ("function" !== typeof c)
+                throw Error("Invalid renderer defined");
+            return c
+        }(b.renderer)(e, b, D, function(b) {
+            function e(b) {
+                Object.keys(b).sort().forEach(function(a) {
+                    var c = []
+                      , d = []
+                      , g = []
+                      , u = [];
+                    b[a].forEach(function(a) {
+                        a.node.zIndex.isPositioned || 1 > a.node.zIndex.opacity ? g.push(a) : a.node.zIndex.isFloated ? d.push(a) : c.push(a)
+                    });
+                    (function k(a) {
+                        a.forEach(function(a) {
+                            u.push(a);
+                            a.children && k(a.children)
+                        })
+                    })(c.concat(d, g));
+                    u.forEach(function(a) {
+                        a.context ? e(a.context) : h.push(a.node)
+                    })
+                })
+            }
+            var h = [];
+            b = function(b) {
+                function a(b, c, e) {
+                    var f = "auto" === c.zIndex.zindex ? 0 : Number(c.zIndex.zindex)
+                      , h = b
+                      , g = c.zIndex.isPositioned
+                      , n = c.zIndex.isFloated
+                      , v = {
+                        node: c
+                    }
+                      , t = e;
+                    if (c.zIndex.ownStacking)
+                        h = v.context = {
+                            "!": [{
+                                node: c,
+                                children: []
+                            }]
+                        },
+                        t = y;
+                    else if (g || n)
+                        t = v.children = [];
+                    0 === f && e ? e.push(v) : (b[f] || (b[f] = []),
+                    b[f].push(v));
+                    c.zIndex.children.forEach(function(b) {
+                        a(h, b, t)
+                    })
+                }
+                var c = {};
+                a(c, b);
+                return c
+            }(b);
+            e(b);
+            return h
+        }(e.stack), g)
+    }
+    ;
+    g.Util.Support = function(e, b) {
+        function c() {
+            var c = new Image
+              , e = b.createElement("canvas")
+              , n = e.getContext === y ? !1 : e.getContext("2d");
+            if (!1 === n)
+                return !1;
+            e.width = e.height = 10;
+            c.src = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><foreignObject width='10' height='10'><div xmlns='http://www.w3.org/1999/xhtml' style='width:10;height:10;'>sup</div></foreignObject></svg>";
+            try {
+                n.drawImage(c, 0, 0),
+                e.toDataURL()
+            } catch (a) {
+                return !1
+            }
+            g.Util.log("html2canvas: Parse: SVG powered rendering available");
+            return !0
+        }
+        return {
+            rangeBounds: function() {
+                var c, e, g = !1;
+                b.createRange && (c = b.createRange(),
+                c.getBoundingClientRect && (e = b.createElement("boundtest"),
+                e.style.height = "123px",
+                e.style.display = "block",
+                b.body.appendChild(e),
+                c.selectNode(e),
+                c = c.getBoundingClientRect(),
+                c = c.height,
+                123 === c && (g = !0),
+                b.body.removeChild(e)));
+                return g
+            }(),
+            svgRendering: e.svgRendering && c()
+        }
+    }
+    ;
+    t.html2canvas = function(e, b) {
+        e = e.length ? e : [e];
+        var c, f, h = {
+            logging: !1,
+            elements: e,
+            background: "#fff",
+            proxy: null ,
+            timeout: 0,
+            useCORS: !1,
+            allowTaint: !1,
+            svgRendering: !1,
+            ignoreElements: "IFRAME|OBJECT|PARAM",
+            useOverflow: !0,
+            letterRendering: !1,
+            chinese: !1,
+            width: null ,
+            height: null ,
+            taintTest: !0,
+            renderer: "Canvas"
+        }, h = g.Util.Extend(b, h);
+        g.logging = h.logging;
+        h.complete = function(b) {
+            if ("function" !== typeof h.onpreloaded || !1 !== h.onpreloaded(b))
+                if (c = g.Parse(b, h),
+                "function" !== typeof h.onparsed || !1 !== h.onparsed(c))
+                    if (f = g.Renderer(c, h),
+                    "function" === typeof h.onrendered)
+                        h.onrendered(f)
+        }
+        ;
+        t.setTimeout(function() {
+            g.Preload(h)
+        }, 0);
+        return {
+            render: function(b, a) {
+                return g.Renderer(b, g.Util.Extend(a, h))
+            },
+            parse: function(b, a) {
+                return g.Parse(b, g.Util.Extend(a, h))
+            },
+            preload: function(b) {
+                return g.Preload(g.Util.Extend(b, h))
+            },
+            log: g.Util.log
+        }
+    }
+    ;
+    t.html2canvas.log = g.Util.log;
+    t.html2canvas.Renderer = {
+        Canvas: y
+    };
+    g.Renderer.Canvas = function(e) {
+        function b(a, b) {
+            a.beginPath();
+            b.forEach(function(b) {
+                a[b.name].apply(a, b.arguments)
+            });
+            a.closePath()
+        }
+        e = e || {};
+        var c = []
+          , f = D.createElement("canvas")
+          , h = f.getContext("2d")
+          , n = g.Util
+          , a = e.canvas || D.createElement("canvas");
+        return function(g, d, m, u, p) {
+            var k = a.getContext("2d"), t, A = g.stack;
+            a.width = a.style.width = d.width || A.ctx.width;
+            a.height = a.style.height = d.height || A.ctx.height;
+            t = k.fillStyle;
+            k.fillStyle = n.isTransparent(A.backgroundColor) && d.background !== y ? d.background : g.backgroundColor;
+            k.fillRect(0, 0, a.width, a.height);
+            k.fillStyle = t;
+            u.forEach(function(a) {
+                k.textBaseline = "bottom";
+                k.save();
+                a.transform.matrix && (k.translate(a.transform.origin[0], a.transform.origin[1]),
+                k.transform.apply(k, a.transform.matrix),
+                k.translate(-a.transform.origin[0], -a.transform.origin[1]));
+                a.clip && (k.beginPath(),
+                k.rect(a.clip.left, a.clip.top, a.clip.width, a.clip.height),
+                k.clip());
+                a.ctx.storage && a.ctx.storage.forEach(function(a) {
+                    var d = k;
+                    switch (a.type) {
+                    case "variable":
+                        d[a.name] = a.arguments;
+                        break;
+                    case "function":
+                        switch (a.name) {
+                        case "createPattern":
+                            if (0 < a.arguments[0].width && 0 < a.arguments[0].height)
+                                try {
+                                    d.fillStyle = d.createPattern(a.arguments[0], "repeat")
+                                } catch (g) {
+                                    n.log("html2canvas: Renderer: Error creating pattern", g.message)
+                                }
+                            break;
+                        case "drawShape":
+                            b(d, a.arguments);
+                            break;
+                        case "drawImage":
+                            if (0 < a.arguments[8] && 0 < a.arguments[7]) {
+                                var m;
+                                if (!(m = !e.taintTest) && (m = e.taintTest))
+                                    a: {
+                                        if (-1 === c.indexOf(a.arguments[0].src)) {
+                                            h.drawImage(a.arguments[0], 0, 0);
+                                            try {
+                                                h.getImageData(0, 0, 1, 1)
+                                            } catch (g) {
+                                                f = D.createElement("canvas");
+                                                h = f.getContext("2d");
+                                                m = !1;
+                                                break a
+                                            }
+                                            c.push(a.arguments[0].src)
+                                        }
+                                        m = !0
+                                    }
+                                m && d.drawImage.apply(d, a.arguments)
+                            }
+                            break;
+                        default:
+                            d[a.name].apply(d, a.arguments)
+                        }
+                    }
+                });
+                k.restore()
+            });
+            n.log("html2canvas: Renderer: Canvas renderer done - returning canvas obj");
+            return 1 === d.elements.length && "object" === typeof d.elements[0] && "BODY" !== d.elements[0].nodeName ? (g = p.Util.Bounds(d.elements[0]),
+            m = m.createElement("canvas"),
+            m.width = Math.ceil(g.width),
+            m.height = Math.ceil(g.height),
+            k = m.getContext("2d"),
+            k.drawImage(a, g.left, g.top, g.width, g.height, 0, 0, g.width, g.height),
+            a = null ,
+            m) : a
+        }
+    }
+})(window, document);
 /* Canvas2Blob.js */
-!function(a){"use strict";var b=a.HTMLCanvasElement&&a.HTMLCanvasElement.prototype,c=a.Blob&&function(){try{return Boolean(new Blob)}catch(a){return!1}}(),d=c&&a.Uint8Array&&function(){try{return 100===new Blob([new Uint8Array(100)]).size}catch(a){return!1}}(),e=a.BlobBuilder||a.WebKitBlobBuilder||a.MozBlobBuilder||a.MSBlobBuilder,f=(c||e)&&a.atob&&a.ArrayBuffer&&a.Uint8Array&&function(a){var b,f,g,h,i,j;for(b=a.split(",")[0].indexOf("base64")>=0?atob(a.split(",")[1]):decodeURIComponent(a.split(",")[1]),f=new ArrayBuffer(b.length),g=new Uint8Array(f),h=0;h<b.length;h+=1)g[h]=b.charCodeAt(h);return i=a.split(",")[0].split(":")[1].split(";")[0],c?new Blob([d?g:f],{type:i}):(j=new e,j.append(f),j.getBlob(i))};a.HTMLCanvasElement&&!b.toBlob&&(b.mozGetAsFile?b.toBlob=function(a,c,d){d&&b.toDataURL&&f?a(f(this.toDataURL(c,d))):a(this.mozGetAsFile("blob",c))}:b.toDataURL&&f&&(b.toBlob=function(a,b,c){a(f(this.toDataURL(b,c)))})),"function"==typeof define&&define.amd?define(function(){return f}):a.dataURLtoBlob=f}(this);
+!function(a) {
+    "use strict";
+    var b = a.HTMLCanvasElement && a.HTMLCanvasElement.prototype
+      , c = a.Blob && function() {
+        try {
+            return Boolean(new Blob)
+        } catch (a) {
+            return !1
+        }
+    }()
+      , d = c && a.Uint8Array && function() {
+        try {
+            return 100 === new Blob([new Uint8Array(100)]).size
+        } catch (a) {
+            return !1
+        }
+    }()
+      , e = a.BlobBuilder || a.WebKitBlobBuilder || a.MozBlobBuilder || a.MSBlobBuilder
+      , f = (c || e) && a.atob && a.ArrayBuffer && a.Uint8Array && function(a) {
+        var b, f, g, h, i, j;
+        for (b = a.split(",")[0].indexOf("base64") >= 0 ? atob(a.split(",")[1]) : decodeURIComponent(a.split(",")[1]),
+        f = new ArrayBuffer(b.length),
+        g = new Uint8Array(f),
+        h = 0; h < b.length; h += 1)
+            g[h] = b.charCodeAt(h);
+        return i = a.split(",")[0].split(":")[1].split(";")[0],
+        c ? new Blob([d ? g : f],{
+            type: i
+        }) : (j = new e,
+        j.append(f),
+        j.getBlob(i))
+    }
+    ;
+    a.HTMLCanvasElement && !b.toBlob && (b.mozGetAsFile ? b.toBlob = function(a, c, d) {
+        d && b.toDataURL && f ? a(f(this.toDataURL(c, d))) : a(this.mozGetAsFile("blob", c))
+    }
+    : b.toDataURL && f && (b.toBlob = function(a, b, c) {
+        a(f(this.toDataURL(b, c)))
+    }
+    )),
+    "function" == typeof define && define.amd ? define(function() {
+        return f
+    }) : a.dataURLtoBlob = f
+}(this);
 /* Filesaver.js */
-var saveAs=saveAs||"undefined"!==typeof navigator&&navigator.msSaveOrOpenBlob&&navigator.msSaveOrOpenBlob.bind(navigator)||function(a){if("undefined"===typeof navigator||!/MSIE [1-9]\./.test(navigator.userAgent)){var h=a.document,n=h.createElementNS("http://www.w3.org/1999/xhtml","a"),y="download"in n,z=function(c){var k=h.createEvent("MouseEvents");k.initMouseEvent("click",!0,!1,a,0,0,0,0,0,!1,!1,!1,!1,0,null);c.dispatchEvent(k)},q=a.webkitRequestFileSystem,v=a.requestFileSystem||q||a.mozRequestFileSystem,
-A=function(c){(a.setImmediate||a.setTimeout)(function(){throw c;},0)},w=0,r=function(c){var k=function(){"string"===typeof c?(a.URL||a.webkitURL||a).revokeObjectURL(c):c.remove()};a.chrome?k():setTimeout(k,500)},u=function(c,a,d){a=[].concat(a);for(var b=a.length;b--;){var l=c["on"+a[b]];if("function"===typeof l)try{l.call(c,d||c)}catch(e){A(e)}}},m=function(c,b){var d=this,t=c.type,l=!1,e,p,h=function(){u(d,["writestart","progress","write","writeend"])},f=function(){if(l||!e)e=(a.URL||a.webkitURL||
-a).createObjectURL(c);p?p.location.href=e:void 0==a.open(e,"_blank")&&"undefined"!==typeof safari&&(a.location.href=e);d.readyState=d.DONE;h();r(e)},g=function(a){return function(){if(d.readyState!==d.DONE)return a.apply(this,arguments)}},m={create:!0,exclusive:!1},x;d.readyState=d.INIT;b||(b="download");if(y)e=(a.URL||a.webkitURL||a).createObjectURL(c),n.href=e,n.download=b,z(n),d.readyState=d.DONE,h(),r(e);else{a.chrome&&t&&"application/octet-stream"!==t&&(x=c.slice||c.webkitSlice,c=x.call(c,0,
-c.size,"application/octet-stream"),l=!0);q&&"download"!==b&&(b+=".download");if("application/octet-stream"===t||q)p=a;v?(w+=c.size,v(a.TEMPORARY,w,g(function(a){a.root.getDirectory("saved",m,g(function(a){var e=function(){a.getFile(b,m,g(function(a){a.createWriter(g(function(b){b.onwriteend=function(b){p.location.href=a.toURL();d.readyState=d.DONE;u(d,"writeend",b);r(a)};b.onerror=function(){var a=b.error;a.code!==a.ABORT_ERR&&f()};["writestart","progress","write","abort"].forEach(function(a){b["on"+
-a]=d["on"+a]});b.write(c);d.abort=function(){b.abort();d.readyState=d.DONE};d.readyState=d.WRITING}),f)}),f)};a.getFile(b,{create:!1},g(function(a){a.remove();e()}),g(function(a){a.code===a.NOT_FOUND_ERR?e():f()}))}),f)}),f)):f()}},b=m.prototype;b.abort=function(){this.readyState=this.DONE;u(this,"abort")};b.readyState=b.INIT=0;b.WRITING=1;b.DONE=2;b.error=b.onwritestart=b.onprogress=b.onwrite=b.onabort=b.onerror=b.onwriteend=null;return function(a,b){return new m(a,b)}}}("undefined"!==typeof self&&
-self||"undefined"!==typeof window&&window||this.content);"undefined"!==typeof module&&module.exports?module.exports.saveAs=saveAs:"undefined"!==typeof define&&null!==define&&null!=define.amd&&define([],function(){return saveAs});
-
-
-
+var saveAs = saveAs || "undefined" !== typeof navigator && navigator.msSaveOrOpenBlob && navigator.msSaveOrOpenBlob.bind(navigator) || function(a) {
+    if ("undefined" === typeof navigator || !/MSIE [1-9]\./.test(navigator.userAgent)) {
+        var h = a.document
+          , n = h.createElementNS("http://www.w3.org/1999/xhtml", "a")
+          , y = "download"in n
+          , z = function(c) {
+            var k = h.createEvent("MouseEvents");
+            k.initMouseEvent("click", !0, !1, a, 0, 0, 0, 0, 0, !1, !1, !1, !1, 0, null );
+            c.dispatchEvent(k)
+        }
+          , q = a.webkitRequestFileSystem
+          , v = a.requestFileSystem || q || a.mozRequestFileSystem
+          , A = function(c) {
+            (a.setImmediate || a.setTimeout)(function() {
+                throw c;
+            }, 0)
+        }
+          , w = 0
+          , r = function(c) {
+            var k = function() {
+                "string" === typeof c ? (a.URL || a.webkitURL || a).revokeObjectURL(c) : c.remove()
+            }
+            ;
+            a.chrome ? k() : setTimeout(k, 500)
+        }
+          , u = function(c, a, d) {
+            a = [].concat(a);
+            for (var b = a.length; b--; ) {
+                var l = c["on" + a[b]];
+                if ("function" === typeof l)
+                    try {
+                        l.call(c, d || c)
+                    } catch (e) {
+                        A(e)
+                    }
+            }
+        }
+          , m = function(c, b) {
+            var d = this, t = c.type, l = !1, e, p, h = function() {
+                u(d, ["writestart", "progress", "write", "writeend"])
+            }
+            , f = function() {
+                if (l || !e)
+                    e = (a.URL || a.webkitURL || a).createObjectURL(c);
+                p ? p.location.href = e : void 0 == a.open(e, "_blank") && "undefined" !== typeof safari && (a.location.href = e);
+                d.readyState = d.DONE;
+                h();
+                r(e)
+            }
+            , g = function(a) {
+                return function() {
+                    if (d.readyState !== d.DONE)
+                        return a.apply(this, arguments)
+                }
+            }
+            , m = {
+                create: !0,
+                exclusive: !1
+            }, x;
+            d.readyState = d.INIT;
+            b || (b = "download");
+            if (y)
+                e = (a.URL || a.webkitURL || a).createObjectURL(c),
+                n.href = e,
+                n.download = b,
+                z(n),
+                d.readyState = d.DONE,
+                h(),
+                r(e);
+            else {
+                a.chrome && t && "application/octet-stream" !== t && (x = c.slice || c.webkitSlice,
+                c = x.call(c, 0, c.size, "application/octet-stream"),
+                l = !0);
+                q && "download" !== b && (b += ".download");
+                if ("application/octet-stream" === t || q)
+                    p = a;
+                v ? (w += c.size,
+                v(a.TEMPORARY, w, g(function(a) {
+                    a.root.getDirectory("saved", m, g(function(a) {
+                        var e = function() {
+                            a.getFile(b, m, g(function(a) {
+                                a.createWriter(g(function(b) {
+                                    b.onwriteend = function(b) {
+                                        p.location.href = a.toURL();
+                                        d.readyState = d.DONE;
+                                        u(d, "writeend", b);
+                                        r(a)
+                                    }
+                                    ;
+                                    b.onerror = function() {
+                                        var a = b.error;
+                                        a.code !== a.ABORT_ERR && f()
+                                    }
+                                    ;
+                                    ["writestart", "progress", "write", "abort"].forEach(function(a) {
+                                        b["on" + a] = d["on" + a]
+                                    });
+                                    b.write(c);
+                                    d.abort = function() {
+                                        b.abort();
+                                        d.readyState = d.DONE
+                                    }
+                                    ;
+                                    d.readyState = d.WRITING
+                                }), f)
+                            }), f)
+                        }
+                        ;
+                        a.getFile(b, {
+                            create: !1
+                        }, g(function(a) {
+                            a.remove();
+                            e()
+                        }), g(function(a) {
+                            a.code === a.NOT_FOUND_ERR ? e() : f()
+                        }))
+                    }), f)
+                }), f)) : f()
+            }
+        }
+          , b = m.prototype;
+        b.abort = function() {
+            this.readyState = this.DONE;
+            u(this, "abort")
+        }
+        ;
+        b.readyState = b.INIT = 0;
+        b.WRITING = 1;
+        b.DONE = 2;
+        b.error = b.onwritestart = b.onprogress = b.onwrite = b.onabort = b.onerror = b.onwriteend = null ;
+        return function(a, b) {
+            return new m(a,b)
+        }
+    }
+}("undefined" !== typeof self && self || "undefined" !== typeof window && window || this.content);
+"undefined" !== typeof module && module.exports ? module.exports.saveAs = saveAs : "undefined" !== typeof define && null !== define && null != define.amd && define([], function() {
+    return saveAs
+});
 /**
 MELIORATOR: automatically inject analytics panel into web pages.
 Requires and includes dependencies of the Open Source Flot js Charting library 
@@ -4721,7 +6566,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
         return container;
     }
     /* given an array of objects, return an analytics panel based off of them */
-    this.makeAnalyticsPanel = function(data, labels, panelClass) {
+    this.makeAnalyticsPanel = function(data, labels, panelClass, exportCallback) {
         var panel = $('<div/>');
         if (panelClass)
             panel.addClass(panelClass);
@@ -4859,9 +6704,13 @@ Requires and includes dependencies of the Open Source Flot js Charting library
             // get that drawn canvas, and export it...
             // as image user can save to disk
             html2canvas(chartWidget, {
-                onrendered: function(canvas) {                    
-                    canvas.toBlob(function(blob) {                        
-                        saveAs(blob, "chart-" + (new Date()).toISOString() + ".png");
+                onrendered: function(canvas) {
+                    canvas.toBlob(function(blob) {
+                        if (exportCallback == undefined)
+                            saveAs(blob, "chart-" + (new Date()).toISOString() + ".png");
+                        else {
+                            exportCallback(blob);
+                        }
                     });
                 }
             });
@@ -5120,7 +6969,10 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                         renderAs: labels.renderAs || 'Render As',
                         renderVisuals: labels.renderVisuals || 'Render Visuals',
                         exportVisuals: labels.exportVisuals || 'Export as Image'
-                    }
+                    },
+                    // if defined, clicking the "export" button triggers the configured callback, passing it the analytics blob - this can then be posted to back-end, rendered elsewhere on the page, etc. If not set, export will automatically download the charts as image to client.
+                    // the callback should be of the signature: function(blob){}
+                    exportCallback: options.exportCallback
                 }
                 if (op.data == undefined)
                     break;
@@ -5129,7 +6981,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                 if (op.data.length == 0)
                     break
                 this.each(function() {
-                    $(this).append(makeAnalyticsPanel(op.data, op.labels, op.panelClass))
+                    $(this).append(makeAnalyticsPanel(op.data, op.labels, op.panelClass, op.exportCallback))
                 });
                 break;
             }

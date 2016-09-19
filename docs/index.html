@@ -53,7 +53,13 @@
                 });
                 // okay, now let's take this parsed table, and render an analytics panel for it :-)
                 $('#analytics').Meliorator('analytics-panel', {
-                    data: parsedDataSet
+                    data: parsedDataSet,
+                    // note: it's possible to intercept the export function, to instead deal with the export blob - which is an image of the visuals rendered by the panel...
+                    /*
+                    exportCallback: function(blob){
+                    	alert('we got data...');
+                    	console.log(blob);
+                    }*/
                 });
             });
         </script>
