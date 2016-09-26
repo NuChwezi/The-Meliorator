@@ -6690,7 +6690,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                     chartWidget.addClass('json');
                     setTimeout(function(){
                              Prism.highlightAll();
-                    },5000);
+                    },3000);
                     
                     break;
                 }

@@ -45,7 +45,8 @@
 }
 
 .chart.widget.table {
-    height: 580px;
+    max-height: 580px;
+    height: auto;
     overflow: auto;
     padding-bottom: 6px;
 }
@@ -70,7 +71,8 @@
 
 .pie-chart .legend table {
     overflow: auto;
-    height: 400px;
+    max-height: 400px;
+    height: auto;
     display: block;
     width: 200px;
         padding-bottom: 6px;
@@ -85,13 +87,15 @@
 }
 
 .chart.widget.pie-chart {
-    height: 580px;
+    max-height: 580px;
+    height: auto;
     overflow: auto;
     padding-bottom: 6px;
 }
 
 .chart.widget.json {
-    height: 580px;
+    max-height: 580px;
+    height: auto;
     overflow: auto;
     padding-bottom: 6px;
 }
