@@ -6996,6 +6996,7 @@ MELIORATOR: automatically inject analytics panel into web pages.
 Requires and includes dependencies of the Open Source Flot js Charting library 
 */
 (function($) {
+    this.MelioratorClass = 'meliorator';
     /* given an array of objects, return an html table based off of them */
     this.makeHTMLTable = function(data, tableClass) {
         var sample = data[0];
@@ -7364,6 +7365,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
         var panel = $('<div/>');
         if (panelClass)
             panel.addClass(panelClass);
+        panel.addClass(MelioratorClass);
         var sample = data[0];
         var fields = []
         for (i in sample) {
@@ -7649,13 +7651,13 @@ Requires and includes dependencies of the Open Source Flot js Charting library
     }
     // given a dashboard spec, render 
     this.renderDashboard = function(data, panelClass, dashboardSpec, labels, removePanelCallback, refreshDashboardCallback) {
-        var analyticsPanel = $('.' + panelClass);
+        var analyticsPanel = $('.' + MelioratorClass  + '.' + panelClass);
         var dashboardClass = panelClass + '-dashboard';
         // remove any prior dashboards via this panel
-        $('.' + dashboardClass).remove();
+        $('.' + MelioratorClass + '.' + dashboardClass).remove();
         // create new one
         var dashboardPanel = $('<div/>', {
-            'class': dashboardClass
+            'class': MelioratorClass + ' '+ dashboardClass
         }).css({
             'display': 'flex',
             'flex-wrap': 'wrap'
