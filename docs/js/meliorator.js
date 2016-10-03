@@ -7571,7 +7571,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
             }
             dashboardSpec.push(panelSpec);
             if (addToDashboardCallback == undefined) {
-                alert("Current panel has been added to the dashboard. You may proceed to explore and specify another panel for the dashboard...")
+                //alert("Current panel has been added to the dashboard. You may proceed to explore and specify another panel for the dashboard...")
             } else {
                 addToDashboardCallback(panelSpec);
             }
@@ -7590,7 +7590,17 @@ Requires and includes dependencies of the Open Source Flot js Charting library
         showDashboardTriggerButton.click(function() {
             // get current dashboard spec, and render the dashboard in the analytics panel           
             if (showDashboardCallback == undefined) {
-                renderDashboard(data, panelClass, dashboardSpec);
+                var refreshDashboardCallback;
+                var deleteDashboardPanelCallback = function(index, spec) {
+                    // remove dashboard panel callback
+                    dashboardSpec.splice(index, 1);
+                    // beware of the recurssive step below...
+                    renderDashboard(data, panelClass, dashboardSpec, labels, deleteDashboardPanelCallback, refreshDashboardCallback);
+                }
+                refreshDashboardCallback = function() {
+                    renderDashboard(data, panelClass, dashboardSpec, labels, deleteDashboardPanelCallback, refreshDashboardCallback);
+                }
+                renderDashboard(data, panelClass, dashboardSpec, labels, deleteDashboardPanelCallback, refreshDashboardCallback);
             } else {
                 showDashboardCallback(data, dashboardSpec);
             }
@@ -7647,7 +7657,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
         }
     }
     // given a dashboard spec, render 
-    this.renderDashboard = function(data, panelClass, dashboardSpec) {
+    this.renderDashboard = function(data, panelClass, dashboardSpec, labels, removePanelCallback, refreshDashboardCallback) {
         var analyticsPanel = $('.' + panelClass);
         var dashboardClass = panelClass + '-dashboard';
         // remove any prior dashboards via this panel
@@ -7656,42 +7666,78 @@ Requires and includes dependencies of the Open Source Flot js Charting library
         var dashboardPanel = $('<div/>', {
             'class': dashboardClass
         }).css({
-                    'display': 'flex',
-                    'flex-wrap': 'wrap'
+            'display': 'flex',
+            'flex-wrap': 'wrap'
         });
         // hide analytics panel
         analyticsPanel.hide();
         // insert the dashboard after the analytics panel
         analyticsPanel.after(dashboardPanel);
-        //start adding things to the dashboard
-        $.each(dashboardSpec, function(i, spec) {
-            console.log(spec);
-            // dashboard chart widget...       
-            var chartWidget = $('<div/>', {
-                'class': 'dashboard-widget chart widget'
+        var loadDashboardFunc = function() {
+            dashboardPanel.find('.dashboard-widget').remove();
+            //start adding things to the dashboard
+            $.each(dashboardSpec, function(i, spec) {
+                console.log(spec);
+                // dashboard chart widget...       
+                var chartWidget = $('<div/>', {
+                    'class': 'dashboard-widget chart widget'
+                });
+                dashboardPanel.append(chartWidget);
+                // end dashboard chart widget
+                var selectedDomain = spec.domain;
+                var selectedRange = spec.series;
+                var selectedRendering = spec.render;
+                var selectedAggregation = spec.aggregation;
+                // add render the chart onto the dashboard...
+                renderVisual(data, chartWidget, selectedDomain, selectedRange, selectedAggregation, selectedRendering);
+                var removePanelBtn = $('<button/>', {
+                    'class': 'remove-panel-btn'
+                }).text(labels.removeDashboardPanel);
+                chartWidget.append($('<hr/>').css({
+                    'margin': '5px',
+                    'visibility': 'hidden'
+                }), removePanelBtn);
+                removePanelBtn.click(function() {
+                    if (removePanelCallback == undefined) {
+                        chartWidget.remove();
+                    } else {
+                        removePanelCallback(i, spec);
+                    }
+                })
             });
-            dashboardPanel.append(chartWidget);
-            // end dashboard chart widget
-            var selectedDomain = spec.domain;
-            var selectedRange = spec.series;
-            var selectedRendering = spec.render;
-            var selectedAggregation = spec.aggregation;
-            // add render the chart onto the dashboard...
-            renderVisual(data, chartWidget, selectedDomain, selectedRange, selectedAggregation, selectedRendering);
-        });
-
+        }
+        loadDashboardFunc();
         // show analytics panel trigger...       
         var showDashboardTriggerWidget = $('<div/>', {
-            'class': 'show-dashboard-selector widget'
+            'class': 'show-dashboard-selector dashboard-controller widget'
         });
         var showDashboardTriggerButton = $('<button/>', {
             'class': 'show-dashboard-button trigger'
-        }).text("RETURN");
+        }).text(labels.quitDashboard);
         showDashboardTriggerWidget.append(showDashboardTriggerButton);
         dashboardPanel.append(showDashboardTriggerWidget);
         showDashboardTriggerButton.click(function() {
-             dashboardPanel.hide();
-             analyticsPanel.show();
+            dashboardPanel.hide();
+            analyticsPanel.show();
+        });
+        // end trigger
+        // refresh dashboard trigger...       
+        var refreshDashboardTriggerWidget = $('<div/>', {
+            'class': 'refresh-dashboard-selector dashboard-controller widget'
+        });
+        var refreshDashboardTriggerButton = $('<button/>', {
+            'class': 'refresh-dashboard-button trigger'
+        }).text(labels.refreshDashboard);
+        refreshDashboardTriggerWidget.append(refreshDashboardTriggerButton);
+        dashboardPanel.append(refreshDashboardTriggerWidget);
+        refreshDashboardTriggerButton.click(function() {
+            if (refreshDashboardCallback == undefined) {
+                loadDashboardFunc();
+                // merely re-drawing the panels
+            } else {
+                refreshDashboardCallback();
+                // potential for refreshing with new data
+            }
         });
         // end trigger
     }
@@ -7982,7 +8028,10 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                         renderAs: labels.renderAs || 'Render As',
                         renderVisuals: labels.renderVisuals || 'Render Visuals',
                         addDashboardPanel: labels.addDashboardPanel || 'Add to Dashboard',
-                        showDashboard: labels.showDashboard || 'Show Dashboard'
+                        showDashboard: labels.showDashboard || 'Show Dashboard',
+                        quitDashboard: labels.quitDashboard || 'GO BACK',
+                        refreshDashboard: labels.refreshDashboard || "REFRESH Dashboard",
+                        removeDashboardPanel: labels.removeDashboardPanel || "delete"
                     },
                     // if defined, clicking the "add to dashboard" button triggers the configured callback, passing it an obj containing the user-selected parameters
                     // specifying the currently displayed panel. 

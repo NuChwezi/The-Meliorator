@@ -51,6 +51,30 @@
     cursor: hand;
 }
 
+.remove-panel-btn {
+ 	padding: 6px;
+    background-color: #f15b5b;
+    color: black;
+    border: 2px solid #bfbfbb;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: hand;
+}
+
+.refresh-dashboard-button {
+	padding: 6px;
+    background-color: #5be5f1;
+    color: black;
+    border: 2px solid #bfbfbb;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: hand;
+}
+
+.remove-panel-btn:hover {
+    color: yellow;
+}
+
 .widget-button:active, .widget-button:hover {
     background-color: yellow;
 }
@@ -98,8 +122,12 @@
         padding-bottom: 6px;
 }
 
-.chart.widget {
+.chart.widget:not(.dashboard-widget) {
     padding-bottom: 100px;
+}
+
+.dashboard-controller {
+	height: 50px;
 }
 
 @media screen and (min-width: 800px) {
