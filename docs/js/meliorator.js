@@ -6917,6 +6917,80 @@ The Amazing RandomColor.js
     }
     return randomColor
 });
+/*
+Flot orderBars
+*/
+(function(m) {
+    m.plot.plugins.push({
+        init: function(m) {
+            function q(a, c) {
+                for (var e = [], b = 0; b < a.length; b++)
+                    e[0] = a[b].data[0] ? a[b].data[0][c] : null ,
+                    e[1] = a[b].data[a[b].data.length - 1] ? a[b].data[a[b].data.length - 1][c] : null ;
+                return e
+            }
+            function v(a, c) {
+                var e = a.bars.order
+                  , b = c.bars.order;
+                return e < b ? -1 : e > b ? 1 : 0
+            }
+            function r(a, c, e) {
+                for (var b = 0; c <= e; c++)
+                    b += a[c].bars.barWidth + 2 * n;
+                return b
+            }
+            var h, k, t, n, u = 1, l = !1, p = {};
+            m.hooks.processDatapoints.push(function(a, c, e) {
+                var b = null ;
+                if (null != c.bars && c.bars.show && null != c.bars.order) {
+                    c.bars.horizontal && (l = !0);
+                    var f = l ? a.getPlaceholder().innerHeight() : a.getPlaceholder().innerWidth()
+                      , g = l ? q(a.getData(), 1) : q(a.getData(), 0);
+                    u = (g[1] - g[0]) / f;
+                    a = a.getData();
+                    for (var f = [], g = [], d = 0; d < a.length; d++)
+                        null != a[d].bars.order && a[d].bars.show && 0 > g.indexOf(a[d].bars.order) && (g.push(a[d].bars.order),
+                        f.push(a[d]));
+                    h = f.sort(v);
+                    k = h.length;
+                    t = "undefined" !== typeof c.bars.lineWidth ? c.bars.lineWidth : 2;
+                    n = t * u;
+                    if (2 <= k) {
+                        for (a = b = 0; a < h.length; ++a)
+                            if (c == h[a]) {
+                                b = a;
+                                break
+                            }
+                        b += 1;
+                        a = 0;
+                        0 != k % 2 && (a = h[Math.ceil(k / 2)].bars.barWidth / 2);
+                        "undefined" === typeof p[c.bars.order] && (p[c.bars.order] = b <= Math.ceil(k / 2) ? -1 * r(h, b - 1, Math.floor(k / 2) - 1) - a : r(h, Math.ceil(k / 2), b - 2) + a + 2 * n);
+                        b = p[c.bars.order];
+                        a = e.pointsize;
+                        f = e.points;
+                        g = 0;
+                        for (d = l ? 1 : 0; d < f.length; d += a)
+                            f[d] += b,
+                            c.data[g][3] = f[d],
+                            g++;
+                        b = f;
+                        e.points = b
+                    }
+                }
+                return b
+            })
+        },
+        options: {
+            series: {
+                bars: {
+                    order: null
+                }
+            }
+        },
+        name: "orderBars",
+        version: "0.2"
+    })
+})(jQuery);
 /**
 MELIORATOR: automatically inject analytics panel into web pages.
 Requires and includes dependencies of the Open Source Flot js Charting library 
@@ -7126,7 +7200,12 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                     luminosity: 'bright'
                 }),
                 data: seriesData,
-                label: o
+                label: o,
+                bars: {
+                    lineWidth: 1,
+                    barWidth: 0.2,
+                    order: series.length // for ordering bars
+                }
             };
             if (isCategorical) {
                 options['xaxis']['mode'] = 'categories';
@@ -7570,8 +7649,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                 'render': selectedRendering
             }
             dashboardSpec.push(panelSpec);
-            if (addToDashboardCallback == undefined) {
-                //alert("Current panel has been added to the dashboard. You may proceed to explore and specify another panel for the dashboard...")
+            if (addToDashboardCallback == undefined) {//alert("Current panel has been added to the dashboard. You may proceed to explore and specify another panel for the dashboard...")
             } else {
                 addToDashboardCallback(panelSpec);
             }
