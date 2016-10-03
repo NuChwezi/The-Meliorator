@@ -6638,8 +6638,285 @@ Prism.languages.js = Prism.languages.javascript;
 /**
 The Amazing RandomColor.js
 */
-(function(root,factory){if(typeof define==="function"&&define.amd){define([],factory)}else if(typeof exports==="object"){var randomColor=factory();if(typeof module==="object"&&module&&module.exports){exports=module.exports=randomColor}exports.randomColor=randomColor}else{root.randomColor=factory()}})(this,function(){var seed=null;var colorDictionary={};loadColorBounds();var randomColor=function(options){options=options||{};if(options.seed&&options.seed===parseInt(options.seed,10)){seed=options.seed}else if(typeof options.seed==="string"){seed=stringToInteger(options.seed)}else if(options.seed!==undefined&&options.seed!==null){throw new TypeError("The seed value must be an integer")}else{seed=null}var H,S,B;if(options.count!==null&&options.count!==undefined){var totalColors=options.count,colors=[];options.count=null;while(totalColors>colors.length){if(seed&&options.seed)options.seed+=1;colors.push(randomColor(options))}options.count=totalColors;return colors}H=pickHue(options);S=pickSaturation(H,options);B=pickBrightness(H,S,options);return setFormat([H,S,B],options)};function pickHue(options){var hueRange=getHueRange(options.hue),hue=randomWithin(hueRange);if(hue<0){hue=360+hue}return hue}function pickSaturation(hue,options){if(options.luminosity==="random"){return randomWithin([0,100])}if(options.hue==="monochrome"){return 0}var saturationRange=getSaturationRange(hue);var sMin=saturationRange[0],sMax=saturationRange[1];switch(options.luminosity){case"bright":sMin=55;break;case"dark":sMin=sMax-10;break;case"light":sMax=55;break}return randomWithin([sMin,sMax])}function pickBrightness(H,S,options){var bMin=getMinimumBrightness(H,S),bMax=100;switch(options.luminosity){case"dark":bMax=bMin+20;break;case"light":bMin=(bMax+bMin)/2;break;case"random":bMin=0;bMax=100;break}return randomWithin([bMin,bMax])}function setFormat(hsv,options){switch(options.format){case"hsvArray":return hsv;case"hslArray":return HSVtoHSL(hsv);case"hsl":var hsl=HSVtoHSL(hsv);return"hsl("+hsl[0]+", "+hsl[1]+"%, "+hsl[2]+"%)";case"hsla":var hslColor=HSVtoHSL(hsv);return"hsla("+hslColor[0]+", "+hslColor[1]+"%, "+hslColor[2]+"%, "+Math.random()+")";case"rgbArray":return HSVtoRGB(hsv);case"rgb":var rgb=HSVtoRGB(hsv);return"rgb("+rgb.join(", ")+")";case"rgba":var rgbColor=HSVtoRGB(hsv);return"rgba("+rgbColor.join(", ")+", "+Math.random()+")";default:return HSVtoHex(hsv)}}function getMinimumBrightness(H,S){var lowerBounds=getColorInfo(H).lowerBounds;for(var i=0;i<lowerBounds.length-1;i++){var s1=lowerBounds[i][0],v1=lowerBounds[i][1];var s2=lowerBounds[i+1][0],v2=lowerBounds[i+1][1];if(S>=s1&&S<=s2){var m=(v2-v1)/(s2-s1),b=v1-m*s1;return m*S+b}}return 0}function getHueRange(colorInput){if(typeof parseInt(colorInput)==="number"){var number=parseInt(colorInput);if(number<360&&number>0){return[number,number]}}if(typeof colorInput==="string"){if(colorDictionary[colorInput]){var color=colorDictionary[colorInput];if(color.hueRange){return color.hueRange}}}return[0,360]}function getSaturationRange(hue){return getColorInfo(hue).saturationRange}function getColorInfo(hue){if(hue>=334&&hue<=360){hue-=360}for(var colorName in colorDictionary){var color=colorDictionary[colorName];if(color.hueRange&&hue>=color.hueRange[0]&&hue<=color.hueRange[1]){return colorDictionary[colorName]}}return"Color not found"}function randomWithin(range){if(seed===null){return Math.floor(range[0]+Math.random()*(range[1]+1-range[0]))}else{var max=range[1]||1;var min=range[0]||0;seed=(seed*9301+49297)%233280;var rnd=seed/233280;return Math.floor(min+rnd*(max-min))}}function HSVtoHex(hsv){var rgb=HSVtoRGB(hsv);function componentToHex(c){var hex=c.toString(16);return hex.length==1?"0"+hex:hex}var hex="#"+componentToHex(rgb[0])+componentToHex(rgb[1])+componentToHex(rgb[2]);return hex}function defineColor(name,hueRange,lowerBounds){var sMin=lowerBounds[0][0],sMax=lowerBounds[lowerBounds.length-1][0],bMin=lowerBounds[lowerBounds.length-1][1],bMax=lowerBounds[0][1];colorDictionary[name]={hueRange:hueRange,lowerBounds:lowerBounds,saturationRange:[sMin,sMax],brightnessRange:[bMin,bMax]}}function loadColorBounds(){defineColor("monochrome",null,[[0,0],[100,0]]);defineColor("red",[-26,18],[[20,100],[30,92],[40,89],[50,85],[60,78],[70,70],[80,60],[90,55],[100,50]]);defineColor("orange",[19,46],[[20,100],[30,93],[40,88],[50,86],[60,85],[70,70],[100,70]]);defineColor("yellow",[47,62],[[25,100],[40,94],[50,89],[60,86],[70,84],[80,82],[90,80],[100,75]]);defineColor("green",[63,178],[[30,100],[40,90],[50,85],[60,81],[70,74],[80,64],[90,50],[100,40]]);defineColor("blue",[179,257],[[20,100],[30,86],[40,80],[50,74],[60,60],[70,52],[80,44],[90,39],[100,35]]);defineColor("purple",[258,282],[[20,100],[30,87],[40,79],[50,70],[60,65],[70,59],[80,52],[90,45],[100,42]]);defineColor("pink",[283,334],[[20,100],[30,90],[40,86],[60,84],[80,80],[90,75],[100,73]])}function HSVtoRGB(hsv){var h=hsv[0];if(h===0){h=1}if(h===360){h=359}h=h/360;var s=hsv[1]/100,v=hsv[2]/100;var h_i=Math.floor(h*6),f=h*6-h_i,p=v*(1-s),q=v*(1-f*s),t=v*(1-(1-f)*s),r=256,g=256,b=256;switch(h_i){case 0:r=v;g=t;b=p;break;case 1:r=q;g=v;b=p;break;case 2:r=p;g=v;b=t;break;case 3:r=p;g=q;b=v;break;case 4:r=t;g=p;b=v;break;case 5:r=v;g=p;b=q;break}var result=[Math.floor(r*255),Math.floor(g*255),Math.floor(b*255)];return result}function HSVtoHSL(hsv){var h=hsv[0],s=hsv[1]/100,v=hsv[2]/100,k=(2-s)*v;return[h,Math.round(s*v/(k<1?k:2-k)*1e4)/100,k/2*100]}function stringToInteger(string){var total=0;for(var i=0;i!==string.length;i++){if(total>=Number.MAX_SAFE_INTEGER)break;total+=string.charCodeAt(i)}return total}return randomColor});
-
+(function(root, factory) {
+    if (typeof define === "function" && define.amd) {
+        define([], factory)
+    } else if (typeof exports === "object") {
+        var randomColor = factory();
+        if (typeof module === "object" && module && module.exports) {
+            exports = module.exports = randomColor
+        }
+        exports.randomColor = randomColor
+    } else {
+        root.randomColor = factory()
+    }
+})(this, function() {
+    var seed = null ;
+    var colorDictionary = {};
+    loadColorBounds();
+    var randomColor = function(options) {
+        options = options || {};
+        if (options.seed && options.seed === parseInt(options.seed, 10)) {
+            seed = options.seed
+        } else if (typeof options.seed === "string") {
+            seed = stringToInteger(options.seed)
+        } else if (options.seed !== undefined && options.seed !== null ) {
+            throw new TypeError("The seed value must be an integer")
+        } else {
+            seed = null
+        }
+        var H, S, B;
+        if (options.count !== null && options.count !== undefined) {
+            var totalColors = options.count
+              , colors = [];
+            options.count = null ;
+            while (totalColors > colors.length) {
+                if (seed && options.seed)
+                    options.seed += 1;
+                colors.push(randomColor(options))
+            }
+            options.count = totalColors;
+            return colors
+        }
+        H = pickHue(options);
+        S = pickSaturation(H, options);
+        B = pickBrightness(H, S, options);
+        return setFormat([H, S, B], options)
+    }
+    ;
+    function pickHue(options) {
+        var hueRange = getHueRange(options.hue)
+          , hue = randomWithin(hueRange);
+        if (hue < 0) {
+            hue = 360 + hue
+        }
+        return hue
+    }
+    function pickSaturation(hue, options) {
+        if (options.luminosity === "random") {
+            return randomWithin([0, 100])
+        }
+        if (options.hue === "monochrome") {
+            return 0
+        }
+        var saturationRange = getSaturationRange(hue);
+        var sMin = saturationRange[0]
+          , sMax = saturationRange[1];
+        switch (options.luminosity) {
+        case "bright":
+            sMin = 55;
+            break;
+        case "dark":
+            sMin = sMax - 10;
+            break;
+        case "light":
+            sMax = 55;
+            break
+        }
+        return randomWithin([sMin, sMax])
+    }
+    function pickBrightness(H, S, options) {
+        var bMin = getMinimumBrightness(H, S)
+          , bMax = 100;
+        switch (options.luminosity) {
+        case "dark":
+            bMax = bMin + 20;
+            break;
+        case "light":
+            bMin = (bMax + bMin) / 2;
+            break;
+        case "random":
+            bMin = 0;
+            bMax = 100;
+            break
+        }
+        return randomWithin([bMin, bMax])
+    }
+    function setFormat(hsv, options) {
+        switch (options.format) {
+        case "hsvArray":
+            return hsv;
+        case "hslArray":
+            return HSVtoHSL(hsv);
+        case "hsl":
+            var hsl = HSVtoHSL(hsv);
+            return "hsl(" + hsl[0] + ", " + hsl[1] + "%, " + hsl[2] + "%)";
+        case "hsla":
+            var hslColor = HSVtoHSL(hsv);
+            return "hsla(" + hslColor[0] + ", " + hslColor[1] + "%, " + hslColor[2] + "%, " + Math.random() + ")";
+        case "rgbArray":
+            return HSVtoRGB(hsv);
+        case "rgb":
+            var rgb = HSVtoRGB(hsv);
+            return "rgb(" + rgb.join(", ") + ")";
+        case "rgba":
+            var rgbColor = HSVtoRGB(hsv);
+            return "rgba(" + rgbColor.join(", ") + ", " + Math.random() + ")";
+        default:
+            return HSVtoHex(hsv)
+        }
+    }
+    function getMinimumBrightness(H, S) {
+        var lowerBounds = getColorInfo(H).lowerBounds;
+        for (var i = 0; i < lowerBounds.length - 1; i++) {
+            var s1 = lowerBounds[i][0]
+              , v1 = lowerBounds[i][1];
+            var s2 = lowerBounds[i + 1][0]
+              , v2 = lowerBounds[i + 1][1];
+            if (S >= s1 && S <= s2) {
+                var m = (v2 - v1) / (s2 - s1)
+                  , b = v1 - m * s1;
+                return m * S + b
+            }
+        }
+        return 0
+    }
+    function getHueRange(colorInput) {
+        if (typeof parseInt(colorInput) === "number") {
+            var number = parseInt(colorInput);
+            if (number < 360 && number > 0) {
+                return [number, number]
+            }
+        }
+        if (typeof colorInput === "string") {
+            if (colorDictionary[colorInput]) {
+                var color = colorDictionary[colorInput];
+                if (color.hueRange) {
+                    return color.hueRange
+                }
+            }
+        }
+        return [0, 360]
+    }
+    function getSaturationRange(hue) {
+        return getColorInfo(hue).saturationRange
+    }
+    function getColorInfo(hue) {
+        if (hue >= 334 && hue <= 360) {
+            hue -= 360
+        }
+        for (var colorName in colorDictionary) {
+            var color = colorDictionary[colorName];
+            if (color.hueRange && hue >= color.hueRange[0] && hue <= color.hueRange[1]) {
+                return colorDictionary[colorName]
+            }
+        }
+        return "Color not found"
+    }
+    function randomWithin(range) {
+        if (seed === null ) {
+            return Math.floor(range[0] + Math.random() * (range[1] + 1 - range[0]))
+        } else {
+            var max = range[1] || 1;
+            var min = range[0] || 0;
+            seed = (seed * 9301 + 49297) % 233280;
+            var rnd = seed / 233280;
+            return Math.floor(min + rnd * (max - min))
+        }
+    }
+    function HSVtoHex(hsv) {
+        var rgb = HSVtoRGB(hsv);
+        function componentToHex(c) {
+            var hex = c.toString(16);
+            return hex.length == 1 ? "0" + hex : hex
+        }
+        var hex = "#" + componentToHex(rgb[0]) + componentToHex(rgb[1]) + componentToHex(rgb[2]);
+        return hex
+    }
+    function defineColor(name, hueRange, lowerBounds) {
+        var sMin = lowerBounds[0][0]
+          , sMax = lowerBounds[lowerBounds.length - 1][0]
+          , bMin = lowerBounds[lowerBounds.length - 1][1]
+          , bMax = lowerBounds[0][1];
+        colorDictionary[name] = {
+            hueRange: hueRange,
+            lowerBounds: lowerBounds,
+            saturationRange: [sMin, sMax],
+            brightnessRange: [bMin, bMax]
+        }
+    }
+    function loadColorBounds() {
+        defineColor("monochrome", null , [[0, 0], [100, 0]]);
+        defineColor("red", [-26, 18], [[20, 100], [30, 92], [40, 89], [50, 85], [60, 78], [70, 70], [80, 60], [90, 55], [100, 50]]);
+        defineColor("orange", [19, 46], [[20, 100], [30, 93], [40, 88], [50, 86], [60, 85], [70, 70], [100, 70]]);
+        defineColor("yellow", [47, 62], [[25, 100], [40, 94], [50, 89], [60, 86], [70, 84], [80, 82], [90, 80], [100, 75]]);
+        defineColor("green", [63, 178], [[30, 100], [40, 90], [50, 85], [60, 81], [70, 74], [80, 64], [90, 50], [100, 40]]);
+        defineColor("blue", [179, 257], [[20, 100], [30, 86], [40, 80], [50, 74], [60, 60], [70, 52], [80, 44], [90, 39], [100, 35]]);
+        defineColor("purple", [258, 282], [[20, 100], [30, 87], [40, 79], [50, 70], [60, 65], [70, 59], [80, 52], [90, 45], [100, 42]]);
+        defineColor("pink", [283, 334], [[20, 100], [30, 90], [40, 86], [60, 84], [80, 80], [90, 75], [100, 73]])
+    }
+    function HSVtoRGB(hsv) {
+        var h = hsv[0];
+        if (h === 0) {
+            h = 1
+        }
+        if (h === 360) {
+            h = 359
+        }
+        h = h / 360;
+        var s = hsv[1] / 100
+          , v = hsv[2] / 100;
+        var h_i = Math.floor(h * 6)
+          , f = h * 6 - h_i
+          , p = v * (1 - s)
+          , q = v * (1 - f * s)
+          , t = v * (1 - (1 - f) * s)
+          , r = 256
+          , g = 256
+          , b = 256;
+        switch (h_i) {
+        case 0:
+            r = v;
+            g = t;
+            b = p;
+            break;
+        case 1:
+            r = q;
+            g = v;
+            b = p;
+            break;
+        case 2:
+            r = p;
+            g = v;
+            b = t;
+            break;
+        case 3:
+            r = p;
+            g = q;
+            b = v;
+            break;
+        case 4:
+            r = t;
+            g = p;
+            b = v;
+            break;
+        case 5:
+            r = v;
+            g = p;
+            b = q;
+            break
+        }
+        var result = [Math.floor(r * 255), Math.floor(g * 255), Math.floor(b * 255)];
+        return result
+    }
+    function HSVtoHSL(hsv) {
+        var h = hsv[0]
+          , s = hsv[1] / 100
+          , v = hsv[2] / 100
+          , k = (2 - s) * v;
+        return [h, Math.round(s * v / (k < 1 ? k : 2 - k) * 1e4) / 100, k / 2 * 100]
+    }
+    function stringToInteger(string) {
+        var total = 0;
+        for (var i = 0; i !== string.length; i++) {
+            if (total >= Number.MAX_SAFE_INTEGER)
+                break;
+            total += string.charCodeAt(i)
+        }
+        return total
+    }
+    return randomColor
+});
 /**
 MELIORATOR: automatically inject analytics panel into web pages.
 Requires and includes dependencies of the Open Source Flot js Charting library 
@@ -7172,6 +7449,252 @@ Requires and includes dependencies of the Open Source Flot js Charting library
         // end export trigger
         return panel;
     }
+    /* given an array of objects, return a dashboard building panel */
+    this.makeDashboardPanel = function(data, labels, panelClass, addToDashboardCallback, showDashboardCallback) {
+        var panel = $('<div/>');
+        if (panelClass)
+            panel.addClass(panelClass);
+        var sample = data[0];
+        var fields = []
+        for (i in sample) {
+            fields.push(i);
+        }
+        // domain selector...
+        var domainSelectorWidget = $('<div/>', {
+            'class': 'domain-selector widget'
+        });
+        var label = $('<label/>').text(labels.domain);
+        var domainSelector = $('<select/>', {
+            'class': 'domain-selector'
+        });
+        for (i in fields) {
+            domainSelector.append($('<option/>').text(fields[i]));
+        }
+        label.append(domainSelector)
+        domainSelectorWidget.append(label);
+        panel.append(domainSelectorWidget);
+        // end domain selector
+        // aggregation selector...
+        var aggregationKinds = ['NONE', 'AVERAGE', 'SUM', 'COUNT', 'MINIMUM', 'MAXIMUM'];
+        var aggregationSelectorWidget = $('<div/>', {
+            'class': 'aggregation-selector widget'
+        });
+        var label = $('<label/>').text(labels.domainAggregation);
+        var aggregationSelector = $('<select/>', {
+            'class': 'aggregation-selector'
+        });
+        for (i in aggregationKinds) {
+            aggregationSelector.append($('<option/>').text(aggregationKinds[i]));
+        }
+        label.append(aggregationSelector)
+        aggregationSelectorWidget.append(label);
+        panel.append(aggregationSelectorWidget);
+        // end aggregation selector
+        // range selector...
+        var rangeSelectorWidget = $('<div/>', {
+            'class': 'range-selector widget'
+        });
+        var label = $('<label/>').text(labels.range);
+        var rangeSelector = $('<select/>', {
+            'class': 'range-selector',
+            'multiple': 'multiple'
+        });
+        for (i in fields) {
+            rangeSelector.append($('<option/>').text(fields[i]));
+        }
+        label.append(rangeSelector)
+        rangeSelectorWidget.append(label);
+        panel.append(rangeSelectorWidget);
+        // end range selector
+        // rendering selector...
+        var renderingKinds = ['TABLE', 'LINE', 'SCATTER', 'PIE', 'BAR', 'JSON'];
+        var renderingSelectorWidget = $('<div/>', {
+            'class': 'rendering-selector widget'
+        });
+        var label = $('<label/>').text(labels.renderAs);
+        var renderingSelector = $('<select/>', {
+            'class': 'rendering-selector'
+        });
+        for (i in renderingKinds) {
+            renderingSelector.append($('<option/>').text(renderingKinds[i]));
+        }
+        label.append(renderingSelector)
+        renderingSelectorWidget.append(label);
+        panel.append(renderingSelectorWidget);
+        // end range selector
+        // rendering trigger...       
+        var renderingTriggerWidget = $('<div/>', {
+            'class': 'rendering-selector widget'
+        });
+        var renderingTriggerButton = $('<button/>', {
+            'class': 'widget-button trigger'
+        }).text(labels.renderVisuals);
+        renderingTriggerWidget.append(renderingTriggerButton);
+        panel.append(renderingTriggerWidget);
+        // end rendering trigger
+        // chart widget...       
+        var chartWidget = $('<div/>', {
+            'class': 'chart widget'
+        });
+        panel.append(chartWidget);
+        // end chart widget
+        // handle trigger event...
+        renderingTriggerButton.click(function() {
+            var selectedDomain = domainSelector.val();
+            var selectedRange = rangeSelector.val();
+            var selectedRendering = renderingSelector.val();
+            var selectedAggregation = aggregationSelector.val();
+            renderVisual(data, chartWidget, selectedDomain, selectedRange, selectedAggregation, selectedRendering);
+        });
+        // First, here's where we shall store our dashboard spec
+        var dashboardSpec = [];
+        // add to dashboard trigger...       
+        var addTriggerWidget = $('<div/>', {
+            'class': 'add-selector widget'
+        });
+        var addToDashboardTriggerButton = $('<button/>', {
+            'class': 'add-button trigger'
+        }).text(labels.addDashboardPanel);
+        addTriggerWidget.append(addToDashboardTriggerButton);
+        panel.append(addTriggerWidget);
+        addToDashboardTriggerButton.click(function() {
+            // get current panel parameters, and add them to the dashboard specification
+            var selectedDomain = domainSelector.val();
+            var selectedRange = rangeSelector.val();
+            var selectedRendering = renderingSelector.val();
+            var selectedAggregation = aggregationSelector.val();
+            var panelSpec = {
+                'domain': selectedDomain,
+                'series': selectedRange,
+                'aggregation': selectedAggregation,
+                'render': selectedRendering
+            }
+            dashboardSpec.push(panelSpec);
+            if (addToDashboardCallback == undefined) {
+                alert("Current panel has been added to the dashboard. You may proceed to explore and specify another panel for the dashboard...")
+            } else {
+                addToDashboardCallback(panelSpec);
+            }
+            console.log(dashboardSpec);
+        });
+        // end export trigger
+        // show dashboard trigger...       
+        var showDashboardTriggerWidget = $('<div/>', {
+            'class': 'show-dashboard-selector widget'
+        });
+        var showDashboardTriggerButton = $('<button/>', {
+            'class': 'show-dashboard-button trigger'
+        }).text(labels.showDashboard);
+        showDashboardTriggerWidget.append(showDashboardTriggerButton);
+        panel.append(showDashboardTriggerWidget);
+        showDashboardTriggerButton.click(function() {
+            // get current dashboard spec, and render the dashboard in the analytics panel           
+            if (showDashboardCallback == undefined) {
+                renderDashboard(data, panelClass, dashboardSpec);
+            } else {
+                showDashboardCallback(data, dashboardSpec);
+            }
+        });
+        // end export trigger
+        return panel;
+    }
+    this.renderVisual = function(data, chartWidget, selectedDomain, selectedRange, selectedAggregation, selectedRendering) {
+        chartWidget.empty();
+        var visualizationDataSet = stripDataSet(data, Array.isArray(selectedRange) ? selectedRange.concat(selectedDomain) : [selectedRange, selectedDomain]);
+        switch (selectedRendering) {
+        case 'TABLE':
+            {
+                chartWidget.append(makeHTMLTable(aggregate(visualizationDataSet, selectedDomain, getFlotAggregator(selectedAggregation))));
+                chartWidget.addClass('table');
+                break;
+            }
+        case 'JSON':
+            {
+                var json = JSON.stringify(aggregate(visualizationDataSet, selectedDomain, getFlotAggregator(selectedAggregation)), null , '\t');
+                var present = $('<pre/>', {
+                    'class': ' language-javascript'
+                }).append($('<code/>', {
+                    'class': 'language-javascript'
+                }).text(json));
+                chartWidget.append(present);
+                // prism will do the needful...
+                chartWidget.addClass('json');
+                setTimeout(function() {
+                    Prism.highlightAll();
+                }, 3000);
+                break;
+            }
+        case 'LINE':
+            {
+                makeLineChart(visualizationDataSet, selectedDomain, getFlotAggregator(selectedAggregation), Array.isArray(selectedRange) ? selectedRange : [selectedRange], chartWidget)
+                break;
+            }
+        case 'BAR':
+            {
+                makeBarChart(visualizationDataSet, selectedDomain, getFlotAggregator(selectedAggregation), Array.isArray(selectedRange) ? selectedRange : [selectedRange], chartWidget)
+                break;
+            }
+        case 'SCATTER':
+            {
+                makeScatterChart(visualizationDataSet, selectedDomain, getFlotAggregator(selectedAggregation), Array.isArray(selectedRange) ? selectedRange : [selectedRange], chartWidget)
+                break;
+            }
+        case 'PIE':
+            {
+                makePieChart(aggregate(visualizationDataSet, selectedDomain, getFlotAggregator(selectedAggregation)), selectedDomain, Array.isArray(selectedRange) ? selectedRange : [selectedRange], chartWidget)
+                break;
+            }
+        }
+    }
+    // given a dashboard spec, render 
+    this.renderDashboard = function(data, panelClass, dashboardSpec) {
+        var analyticsPanel = $('.' + panelClass);
+        var dashboardClass = panelClass + '-dashboard';
+        // remove any prior dashboards via this panel
+        $('.' + dashboardClass).remove();
+        // create new one
+        var dashboardPanel = $('<div/>', {
+            'class': dashboardClass
+        }).css({
+                    'display': 'flex',
+                    'flex-wrap': 'wrap'
+        });
+        // hide analytics panel
+        analyticsPanel.hide();
+        // insert the dashboard after the analytics panel
+        analyticsPanel.after(dashboardPanel);
+        //start adding things to the dashboard
+        $.each(dashboardSpec, function(i, spec) {
+            console.log(spec);
+            // dashboard chart widget...       
+            var chartWidget = $('<div/>', {
+                'class': 'dashboard-widget chart widget'
+            });
+            dashboardPanel.append(chartWidget);
+            // end dashboard chart widget
+            var selectedDomain = spec.domain;
+            var selectedRange = spec.series;
+            var selectedRendering = spec.render;
+            var selectedAggregation = spec.aggregation;
+            // add render the chart onto the dashboard...
+            renderVisual(data, chartWidget, selectedDomain, selectedRange, selectedAggregation, selectedRendering);
+        });
+
+        // show analytics panel trigger...       
+        var showDashboardTriggerWidget = $('<div/>', {
+            'class': 'show-dashboard-selector widget'
+        });
+        var showDashboardTriggerButton = $('<button/>', {
+            'class': 'show-dashboard-button trigger'
+        }).text("RETURN");
+        showDashboardTriggerWidget.append(showDashboardTriggerButton);
+        dashboardPanel.append(showDashboardTriggerWidget);
+        showDashboardTriggerButton.click(function() {
+             dashboardPanel.hide();
+             analyticsPanel.show();
+        });
+        // end trigger
+    }
     this.aggregate = function(data, domainField, aggregationKind) {
         switch (aggregationKind) {
         case 'avg':
@@ -7426,7 +7949,10 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                     },
                     // if defined, clicking the "export" button triggers the configured callback, passing it the analytics blob - this can then be posted to back-end, rendered elsewhere on the page, etc. If not set, export will automatically download the charts as image to client.
                     // the callback should be of the signature: function(blob){}
-                    exportCallback: options.exportCallback
+                    exportCallback: options.exportCallback,
+                    // the client might want to render the dashboard themselves and this action is triggered.
+                    // for this, a callback can be defined, that is of the signature: function(panel)
+                    showDashboardCallback: options.showDashboardCallback,
                 }
                 if (op.data == undefined)
                     break;
@@ -7436,6 +7962,42 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                     break
                 this.each(function() {
                     $(this).append(makeAnalyticsPanel(op.data, op.labels, op.panelClass, op.exportCallback))
+                });
+                break;
+            }
+        case 'dashboard-panel':
+            {
+                var labels = options.labels == undefined ? {} : options.labels;
+                var op = {
+                    // data : is REQUIRED : tells Meliorator where the data to work with,
+                    // is to come from. It is expected to be an array of objects. 
+                    data: options.data || undefined,
+                    // panelClass: OPTIONAL : will be the class(es) that will be applied to the generated panels(s)
+                    panelClass: options.panelClass || 'analytics',
+                    // labels : a mapping of keywords to alternative labels user might prefer to use for the widgets in the panel
+                    labels: {
+                        domain: labels.domain || 'Domain',
+                        range: labels.range || 'Range',
+                        domainAggregation: labels.domainAggregation || 'Domain Aggregation',
+                        renderAs: labels.renderAs || 'Render As',
+                        renderVisuals: labels.renderVisuals || 'Render Visuals',
+                        addDashboardPanel: labels.addDashboardPanel || 'Add to Dashboard',
+                        showDashboard: labels.showDashboard || 'Show Dashboard'
+                    },
+                    // if defined, clicking the "add to dashboard" button triggers the configured callback, passing it an obj containing the user-selected parameters
+                    // specifying the currently displayed panel. 
+                    // - this could be saved elsewhere, to allow to render this kind of panel using these parameters later...
+                    // the callback should be of the signature: function(data, dashboardSpec)
+                    addToDashboardCallback: options.addToDashboardCallback
+                }
+                if (op.data == undefined)
+                    break;
+                if (!Array.isArray(op.data))
+                    break
+                if (op.data.length == 0)
+                    break
+                this.each(function() {
+                    $(this).append(makeDashboardPanel(op.data, op.labels, op.panelClass, op.exportCallback))
                 });
                 break;
             }

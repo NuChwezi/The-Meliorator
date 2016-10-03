@@ -31,6 +31,26 @@
     cursor: hand;
 }
 
+.add-button {
+    padding: 6px;
+    background-color: #f1d85b;
+    color: black;
+    border: 2px solid #bfbfbb;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: hand;
+}
+
+.show-dashboard-button {
+    padding: 6px;
+    background-color: #f15bec;
+    color: white;
+    border: 2px solid #bfbfbb;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: hand;
+}
+
 .widget-button:active, .widget-button:hover {
     background-color: yellow;
 }
@@ -81,6 +101,21 @@
 .chart.widget {
     padding-bottom: 100px;
 }
+
+@media screen and (min-width: 800px) {
+	.dashboard-widget {
+    width: 45%;
+    margin: 2%;
+}
+}
+
+@media screen and (max-width: 799px) {
+	.dashboard-widget {
+    width: 90%;
+    margin: 4%;
+}
+}
+
 
 .chart.table.widget {
     padding-bottom: 6px;
