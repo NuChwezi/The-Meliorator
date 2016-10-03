@@ -7434,7 +7434,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
         // end range selector
         // rendering trigger...       
         var renderingTriggerWidget = $('<div/>', {
-            'class': 'rendering-selector widget'
+            'class': 'rendering-trigger widget'
         });
         var renderingTriggerButton = $('<button/>', {
             'class': 'widget-button trigger'
@@ -7529,102 +7529,15 @@ Requires and includes dependencies of the Open Source Flot js Charting library
         return panel;
     }
     /* given an array of objects, return a dashboard building panel */
-    this.makeDashboardPanel = function(data, labels, panelClass, addToDashboardCallback, showDashboardCallback) {
-        var panel = $('<div/>');
-        if (panelClass)
-            panel.addClass(panelClass);
-        var sample = data[0];
-        var fields = []
-        for (i in sample) {
-            fields.push(i);
-        }
-        // domain selector...
-        var domainSelectorWidget = $('<div/>', {
-            'class': 'domain-selector widget'
-        });
-        var label = $('<label/>').text(labels.domain);
-        var domainSelector = $('<select/>', {
-            'class': 'domain-selector'
-        });
-        for (i in fields) {
-            domainSelector.append($('<option/>').text(fields[i]));
-        }
-        label.append(domainSelector)
-        domainSelectorWidget.append(label);
-        panel.append(domainSelectorWidget);
-        // end domain selector
-        // aggregation selector...
-        var aggregationKinds = ['NONE', 'AVERAGE', 'SUM', 'COUNT', 'MINIMUM', 'MAXIMUM'];
-        var aggregationSelectorWidget = $('<div/>', {
-            'class': 'aggregation-selector widget'
-        });
-        var label = $('<label/>').text(labels.domainAggregation);
-        var aggregationSelector = $('<select/>', {
-            'class': 'aggregation-selector'
-        });
-        for (i in aggregationKinds) {
-            aggregationSelector.append($('<option/>').text(aggregationKinds[i]));
-        }
-        label.append(aggregationSelector)
-        aggregationSelectorWidget.append(label);
-        panel.append(aggregationSelectorWidget);
-        // end aggregation selector
-        // range selector...
-        var rangeSelectorWidget = $('<div/>', {
-            'class': 'range-selector widget'
-        });
-        var label = $('<label/>').text(labels.range);
-        var rangeSelector = $('<select/>', {
-            'class': 'range-selector',
-            'multiple': 'multiple'
-        });
-        for (i in fields) {
-            rangeSelector.append($('<option/>').text(fields[i]));
-        }
-        label.append(rangeSelector)
-        rangeSelectorWidget.append(label);
-        panel.append(rangeSelectorWidget);
-        // end range selector
-        // rendering selector...
-        var renderingKinds = ['TABLE', 'LINE', 'SCATTER', 'PIE', 'BAR', 'JSON'];
-        var renderingSelectorWidget = $('<div/>', {
-            'class': 'rendering-selector widget'
-        });
-        var label = $('<label/>').text(labels.renderAs);
-        var renderingSelector = $('<select/>', {
-            'class': 'rendering-selector'
-        });
-        for (i in renderingKinds) {
-            renderingSelector.append($('<option/>').text(renderingKinds[i]));
-        }
-        label.append(renderingSelector)
-        renderingSelectorWidget.append(label);
-        panel.append(renderingSelectorWidget);
-        // end range selector
-        // rendering trigger...       
-        var renderingTriggerWidget = $('<div/>', {
-            'class': 'rendering-selector widget'
-        });
-        var renderingTriggerButton = $('<button/>', {
-            'class': 'widget-button trigger'
-        }).text(labels.renderVisuals);
-        renderingTriggerWidget.append(renderingTriggerButton);
-        panel.append(renderingTriggerWidget);
-        // end rendering trigger
-        // chart widget...       
-        var chartWidget = $('<div/>', {
-            'class': 'chart widget'
-        });
-        panel.append(chartWidget);
-        // end chart widget
-        // handle trigger event...
-        renderingTriggerButton.click(function() {
-            var selectedDomain = domainSelector.val();
-            var selectedRange = rangeSelector.val();
-            var selectedRendering = renderingSelector.val();
-            var selectedAggregation = aggregationSelector.val();
-            renderVisual(data, chartWidget, selectedDomain, selectedRange, selectedAggregation, selectedRendering);
-        });
+    this.makeDashboardPanel = function(data, labels, panelClass, exportCallback, addToDashboardCallback, showDashboardCallback) {
+        // First, we make an analytics panel as usual...
+        var panel = makeAnalyticsPanel(data, labels, panelClass, exportCallback);
+        // we pick out things we'll need
+        var domainSelector = $(panel).find('select.domain-selector');
+        var aggregationSelector = $(panel).find('select.aggregation-selector');
+        var rangeSelector = $(panel).find('select.range-selector');
+        var renderingSelector = $(panel).find('select.rendering-selector');
+        // then we adorn it with new features...
         // First, here's where we shall store our dashboard spec
         var dashboardSpec = [];
         // add to dashboard trigger...       
@@ -8105,6 +8018,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                         domainAggregation: labels.domainAggregation || 'Domain Aggregation',
                         renderAs: labels.renderAs || 'Render As',
                         renderVisuals: labels.renderVisuals || 'Render Visuals',
+                        exportVisuals: labels.exportVisuals || 'Export as Image',
                         addDashboardPanel: labels.addDashboardPanel || 'Add to Dashboard',
                         showDashboard: labels.showDashboard || 'Show Dashboard',
                         quitDashboard: labels.quitDashboard || 'GO BACK',
