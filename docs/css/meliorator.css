@@ -133,14 +133,12 @@
 @media screen and (min-width: 800px) {
 	.dashboard-widget {
     width: 45%;
-    margin: 2%;
 }
 }
 
 @media screen and (max-width: 799px) {
 	.dashboard-widget {
     width: 90%;
-    margin: 4%;
 }
 }
 
