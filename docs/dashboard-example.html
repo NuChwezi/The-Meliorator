@@ -55,6 +55,9 @@
                 // then, we can start constructing and using our dashboard for this data as such...
                 $('#analytics').Meliorator('dashboard-panel', {
                     data: parsedDataSet,
+                    /*saveDashboardCallback: function(dashboardSpec){
+                    	alert(dashboardSpec);
+                    }*/
                     // note: it's possible to intercept the export function, to instead deal with the export blob - which is an image of the visuals rendered by the panel...
                     /*
                     exportCallback: function(blob){

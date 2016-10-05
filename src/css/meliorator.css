@@ -21,7 +21,7 @@
     font-weight: bold;
     cursor: hand;
 }
-.export-button {
+.export-button, .save-dashboard-button {
     padding: 6px;
     background-color: #5bf1aa;
     color: black;
@@ -35,6 +35,16 @@
     padding: 6px;
     background-color: #f1d85b;
     color: black;
+    border: 2px solid #bfbfbb;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: hand;
+}
+
+.delete-saved-dashboard-button, .add-to-dashboard-button, .refresh-saved-dashboard-button {
+	padding: 6px;
+    background-color: black;
+    color: white;
     border: 2px solid #bfbfbb;
     border-radius: 6px;
     font-weight: bold;

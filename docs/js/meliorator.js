@@ -6997,6 +6997,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
 */
 (function($) {
     this.MelioratorClass = 'meliorator';
+    this.STORAGE_KEY_DASHBOARDS = "DASHBOARDS"
     /* given an array of objects, return an html table based off of them */
     this.makeHTMLTable = function(data, tableClass) {
         var sample = data[0];
@@ -7531,7 +7532,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
         return panel;
     }
     /* given an array of objects, return a dashboard building panel */
-    this.makeDashboardPanel = function(data, labels, panelClass, exportCallback, addToDashboardCallback, showDashboardCallback) {
+    this.makeDashboardPanel = function(data, labels, panelClass, exportCallback, addToDashboardCallback, showDashboardCallback, saveDashboardCallback) {
         // First, we make an analytics panel as usual...
         var panel = makeAnalyticsPanel(data, labels, panelClass, exportCallback);
         // we pick out things we'll need
@@ -7544,7 +7545,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
         var dashboardSpec = [];
         // add to dashboard trigger...       
         var addTriggerWidget = $('<div/>', {
-            'class': 'add-selector widget'
+            'class': 'add-trigger widget'
         });
         var addToDashboardTriggerButton = $('<button/>', {
             'class': 'add-button trigger'
@@ -7573,7 +7574,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
         // end export trigger
         // show dashboard trigger...       
         var showDashboardTriggerWidget = $('<div/>', {
-            'class': 'show-dashboard-selector widget'
+            'class': 'show-dashboard-trigger widget'
         });
         var showDashboardTriggerButton = $('<button/>', {
             'class': 'show-dashboard-button trigger'
@@ -7588,18 +7589,155 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                     // remove dashboard panel callback
                     dashboardSpec.splice(index, 1);
                     // beware of the recurssive step below...
-                    renderDashboard(data, panelClass, dashboardSpec, labels, deleteDashboardPanelCallback, refreshDashboardCallback);
+                    renderDashboard(data, panelClass, dashboardSpec, labels, deleteDashboardPanelCallback, refreshDashboardCallback, saveDashboardCallback);
                 }
                 refreshDashboardCallback = function() {
-                    renderDashboard(data, panelClass, dashboardSpec, labels, deleteDashboardPanelCallback, refreshDashboardCallback);
+                    renderDashboard(data, panelClass, dashboardSpec, labels, deleteDashboardPanelCallback, refreshDashboardCallback, saveDashboardCallback);
                 }
-                renderDashboard(data, panelClass, dashboardSpec, labels, deleteDashboardPanelCallback, refreshDashboardCallback);
+                renderDashboard(data, panelClass, dashboardSpec, labels, deleteDashboardPanelCallback, refreshDashboardCallback, saveDashboardCallback);
             } else {
                 showDashboardCallback(data, dashboardSpec);
             }
         });
-        // end export trigger
+        // end trigger
+        // if user specified handler for saving dashboards, then we don't need any of these features
+        if ((saveDashboardCallback == undefined) || (saveDashboardCallback == null )) {
+            // saved dashboard selector...
+            var wrapperSavedDashboards = $('<span/>', {
+                'class': 'saved-dashboard-wrapper'
+            });
+            panel.append(wrapperSavedDashboards);
+            var handleSavedDashboards = function(labels) {
+                window.labels = labels || window.labels;
+                labels = window.labels;
+                // not clean, but...
+                wrapperSavedDashboards.empty();
+                var savedDashboards = this.getsavedDashboards();
+                if (savedDashboards != null ) {
+                    var dashboardSelectorWidget = $('<div/>', {
+                        'class': 'rendering-selector widget'
+                    });
+                    var dashboardSelector = $('<select/>', {
+                        'class': 'rendering-selector'
+                    });
+                    for (i in savedDashboards) {
+                        var dash = savedDashboards[i];
+                        dashboardSelector.append($('<option/>', {
+                            'value': i
+                        }).text(dash.title));
+                    }
+                    dashboardSelectorWidget.append(dashboardSelector)
+                    wrapperSavedDashboards.append(dashboardSelectorWidget);
+                    // end  selector
+                    // rendering saved dashboard...       
+                    var dashboardTriggerWidget = $('<div/>', {
+                        'class': 'show-saved-dashboard-trigger widget'
+                    });
+                    var dashboardTriggerButton = $('<button/>', {
+                        'class': 'show-dashboard-button trigger'
+                    }).text(labels.showSavedDashboard);
+                    dashboardTriggerWidget.append(dashboardTriggerButton);
+                    wrapperSavedDashboards.append(dashboardTriggerWidget);
+                    dashboardTriggerButton.click(function() {
+                        // get current selected saved dashboard spec, and render the dashboard in the analytics panel           
+                        var activeDashboardSpec = savedDashboards[Number(dashboardSelector.val())].spec;
+                        if (showDashboardCallback == undefined) {
+                            var labels = $.extend(true, {}, window.labels);
+                            labels.quitDashboard = '<< BACK';
+                            var refreshDashboardCallback;
+                            var deleteDashboardPanelCallback = function(index, spec) {
+                                // remove dashboard panel callback
+                                activeDashboardSpec.splice(index, 1);
+                                // beware of the recurssive step below...
+                                renderDashboard(data, panelClass, activeDashboardSpec, labels, deleteDashboardPanelCallback, refreshDashboardCallback, saveDashboardCallback);
+                            }
+                            refreshDashboardCallback = function() {
+                                renderDashboard(data, panelClass, activeDashboardSpec, labels, deleteDashboardPanelCallback, refreshDashboardCallback, saveDashboardCallback);
+                            }
+                            renderDashboard(data, panelClass, activeDashboardSpec, labels, deleteDashboardPanelCallback, refreshDashboardCallback, saveDashboardCallback);
+                        } else {
+                            showDashboardCallback(data, activeDashboardSpec);
+                        }
+                    });
+                    // end  trigger
+                    // add to saved dashboard trigger     
+                    var addTriggerWidget = $('<div/>', {
+                        'class': 'add-to-dashboard-trigger widget'
+                    });
+                    var addTriggerButton = $('<button/>', {
+                        'class': 'add-to-dashboard-button trigger',
+                        'title': 'Add the current panel to the selected saved dashboard'
+                    }).text("+");
+                    addTriggerWidget.append(addTriggerButton);
+                    wrapperSavedDashboards.append(addTriggerWidget);
+                    addTriggerButton.click(function() {
+                        // get current selected saved dashboard spec, and render the dashboard in the analytics panel
+                        var specIndex = Number(dashboardSelector.val());
+                        var activeDashboardSpec = savedDashboards[specIndex].spec;
+                        // get current panel parameters, and add them to the dashboard specification
+                        var selectedDomain = domainSelector.val();
+                        var selectedRange = rangeSelector.val();
+                        var selectedRendering = renderingSelector.val();
+                        var selectedAggregation = aggregationSelector.val();
+                        var panelSpec = {
+                            'domain': selectedDomain,
+                            'series': selectedRange,
+                            'aggregation': selectedAggregation,
+                            'render': selectedRendering
+                        }
+                        activeDashboardSpec.push(panelSpec);
+                        console.log(activeDashboardSpec);
+                        savedDashboards[specIndex].spec = activeDashboardSpec;
+                        localStorage.setItem(STORAGE_KEY_DASHBOARDS, JSON.stringify(savedDashboards));
+                    })
+                    // end trigger
+                    // delete trigger     
+                    var deleteTriggerWidget = $('<div/>', {
+                        'class': 'delete-saved-dashboard-trigger widget'
+                    });
+                    var deleteTriggerButton = $('<button/>', {
+                        'class': 'delete-saved-dashboard-button trigger',
+                        'title': 'Delete the selectd saved dashboard'
+                    }).text("x");
+                    deleteTriggerWidget.append(deleteTriggerButton);
+                    wrapperSavedDashboards.append(deleteTriggerWidget);
+                    deleteTriggerButton.click(function() {
+                        // get current selected saved dashboard spec, and render the dashboard in the analytics panel           
+                        savedDashboards.splice(Number(dashboardSelector.val()), 1);
+                        localStorage.setItem(STORAGE_KEY_DASHBOARDS, savedDashboards.length > 0 ? JSON.stringify(savedDashboards) : null );
+                        handleSavedDashboards();
+                        // reload
+                    })
+                    // end trigger
+                }
+            }
+            handleSavedDashboards(labels);
+            // refresh trigger     
+            var refreshTriggerWidget = $('<div/>', {
+                'class': 'refresh-saved-dashboard-trigger widget'
+            });
+            var refreshTriggerButton = $('<button/>', {
+                'class': 'refresh-saved-dashboard-button trigger',
+                'title': 'Click to refresh saved dashboards'
+            }).html("&#x7E");
+            refreshTriggerWidget.append(refreshTriggerButton);
+            panel.append(refreshTriggerWidget);
+            refreshTriggerButton.click(function() {
+                // reload saved dashboards
+                handleSavedDashboards(labels);
+            })
+            // end trigger
+        }
         return panel;
+    }
+    this.getsavedDashboards = function() {
+        var dashboards = localStorage.getItem(this.STORAGE_KEY_DASHBOARDS);
+        if (dashboards == null ) {
+            return null
+        } else {
+            dashboards = JSON.parse(dashboards);
+            return dashboards;
+        }
     }
     this.renderVisual = function(data, chartWidget, selectedDomain, selectedRange, selectedAggregation, selectedRendering) {
         chartWidget.empty();
@@ -7650,14 +7788,14 @@ Requires and includes dependencies of the Open Source Flot js Charting library
         }
     }
     // given a dashboard spec, render 
-    this.renderDashboard = function(data, panelClass, dashboardSpec, labels, removePanelCallback, refreshDashboardCallback) {
-        var analyticsPanel = $('.' + MelioratorClass  + '.' + panelClass);
+    this.renderDashboard = function(data, panelClass, dashboardSpec, labels, removePanelCallback, refreshDashboardCallback, saveDashboardCallback) {
+        var analyticsPanel = $('.' + MelioratorClass + '.' + panelClass);
         var dashboardClass = panelClass + '-dashboard';
         // remove any prior dashboards via this panel
         $('.' + MelioratorClass + '.' + dashboardClass).remove();
         // create new one
         var dashboardPanel = $('<div/>', {
-            'class': MelioratorClass + ' '+ dashboardClass
+            'class': MelioratorClass + ' ' + dashboardClass
         }).css({
             'display': 'flex',
             'flex-wrap': 'wrap'
@@ -7706,7 +7844,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
         });
         var showDashboardTriggerButton = $('<button/>', {
             'class': 'show-dashboard-button trigger'
-        }).text(labels.quitDashboard);
+        }).text(dashboardSpec.length > 0 ? labels.quitDashboard : "<< BACK");
         showDashboardTriggerWidget.append(showDashboardTriggerButton);
         dashboardPanel.append(showDashboardTriggerWidget);
         showDashboardTriggerButton.click(function() {
@@ -7714,6 +7852,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
             analyticsPanel.show();
         });
         // end trigger
+        if(dashboardSpec.length > 0){
         // refresh dashboard trigger...       
         var refreshDashboardTriggerWidget = $('<div/>', {
             'class': 'refresh-dashboard-selector dashboard-controller widget'
@@ -7733,6 +7872,45 @@ Requires and includes dependencies of the Open Source Flot js Charting library
             }
         });
         // end trigger
+        // save dashboard trigger...       
+        var saveDashboardTriggerWidget = $('<div/>', {
+            'class': 'save-dashboard-selector dashboard-controller widget'
+        });
+        var savehDashboardTriggerButton = $('<button/>', {
+            'class': 'save-dashboard-button trigger'
+        }).text(labels.saveDashboard);
+        saveDashboardTriggerWidget.append(savehDashboardTriggerButton);
+        dashboardPanel.append(saveDashboardTriggerWidget);
+        savehDashboardTriggerButton.click(function() {
+            if (saveDashboardCallback == undefined) {
+                saveDashboard(dashboardSpec);
+            } else {
+                saveDashboardCallback(dashboardSpec);
+            }
+        });
+        // end trigger
+        }
+    }
+    this.saveDashboard = function(dashboardSpec) {
+        var dashboards = localStorage.getItem(this.STORAGE_KEY_DASHBOARDS);
+        if (dashboards == null ) {
+            dashboards = [];
+        } else {
+            dashboards = JSON.parse(dashboards);
+            if (dashboards == null )
+                dashboards = [];
+        }
+        var timeStamp = (new Date()).toISOString();
+        var autoDashboardName = "Dashboard-" + timeStamp;
+        var thisDashboardName = prompt("Please set a name to help remember this Dashboard", autoDashboardName);
+        if (thisDashboardName == null )
+            thisDashboardName = autoDashboardName;
+        dashboards.push({
+            title: thisDashboardName,
+            spec: dashboardSpec,
+            timestamp: timeStamp
+        })
+        localStorage.setItem(STORAGE_KEY_DASHBOARDS, JSON.stringify(dashboards));
     }
     this.aggregate = function(data, domainField, aggregationKind) {
         switch (aggregationKind) {
@@ -8022,16 +8200,26 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                         renderVisuals: labels.renderVisuals || 'Render Visuals',
                         exportVisuals: labels.exportVisuals || 'Export as Image',
                         addDashboardPanel: labels.addDashboardPanel || 'Add to Dashboard',
-                        showDashboard: labels.showDashboard || 'Show Dashboard',
-                        quitDashboard: labels.quitDashboard || 'GO BACK',
+                        showDashboard: labels.showDashboard || 'Show Dashboard >>',
+                        quitDashboard: labels.quitDashboard || '<< Add More Panels',
                         refreshDashboard: labels.refreshDashboard || "REFRESH Dashboard",
-                        removeDashboardPanel: labels.removeDashboardPanel || "delete"
+                        removeDashboardPanel: labels.removeDashboardPanel || "delete",
+                        saveDashboard: labels.saveDashboard || "SAVE Dashboard",
+                        showSavedDashboard: labels.showSavedDashboard || "Show Saved Dashboard >>"
                     },
                     // if defined, clicking the "add to dashboard" button triggers the configured callback, passing it an obj containing the user-selected parameters
                     // specifying the currently displayed panel. 
                     // - this could be saved elsewhere, to allow to render this kind of panel using these parameters later...
                     // the callback should be of the signature: function(data, dashboardSpec)
-                    addToDashboardCallback: options.addToDashboardCallback
+                    addToDashboardCallback: options.addToDashboardCallback,
+                    // this callback allows something - perhaps rendering of the dashboard,
+                    // to be done, when user triggers this action. callback signature takes dashboard spec
+                    // function(dashboardSpec)
+                    showDashboardCallback: options.showDashboardCallback,
+                    // if specified, then when user requests to have the designed dashboard saved
+                    // this callback is invoked with the current dashboard spec. 
+                    // the callback signature should be: function(dashboardSpec)
+                    saveDashboardCallback: options.saveDashboardCallback
                 }
                 if (op.data == undefined)
                     break;
@@ -8040,7 +8228,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                 if (op.data.length == 0)
                     break
                 this.each(function() {
-                    $(this).append(makeDashboardPanel(op.data, op.labels, op.panelClass, op.exportCallback))
+                    $(this).append(makeDashboardPanel(op.data, op.labels, op.panelClass, op.exportCallback, op.addToDashboardCallback, op.showDashboardCallback, op.saveDashboardCallback))
                 });
                 break;
             }
