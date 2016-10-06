@@ -46,10 +46,34 @@ As of this moment, the technology only requires a single JS file (besides the JQ
         <script src="The-Meliorator/vendor/jquery.min.js"></script>
         <script src="The-Meliorator/src/meliorator.js"></script>
         <link rel="stylesheet" type="text/css" href="The-Meliorator/src/css/meliorator.css" />
+		
+If you plan to use the powerful, POWER-TABLE action, then you have two other options for how you might load Meliorator into your app. The first option is to load everything using HTML5's Web Components, so that all you need, is to place this in the header of you containing app:
 
-and then invoke these statistical powers as:
+	    <link rel="import" href="The-Meliorator/html/meliorator-imports.html"/>
+		
+The other option is to load the Meliorator files as before (which doesn't load the dependencies required for POWER-TABLE and other future dependencies automatically), and then optionally load the partials component like this:
 
-	$('JQUERY SELECTOR FOR TARGET').Meliorator('ACTION', [CONFIGURATION_OPTIONS]);
+        <script src="The-Meliorator/vendor/jquery.min.js"></script>
+        <script src="The-Meliorator/src/meliorator.js"></script>
+        <link rel="stylesheet" type="text/css" href="The-Meliorator/src/css/meliorator.css" />
+		<link rel="import" href="The-Meliorator/html/meliorator-imports-partials.html"/>
+		
+
+NOTE: the loading options that use Web components require that you host Meliorator on a web-server (even if local), as that's the technical requirement to have web-components work.
+
+After loading Meliorator, you can then invoke these any of its powers using the general syntax:
+
+	$('JQUERY SELECTOR FOR TARGET').Meliorator('ACTION', [CONFIGURATION_OPTIONS
+	
+
+Currently, supported actions include:
+
+	table: this takes a dataset, and renders a vanilla HTML table
+	parse-table: this will reverse-engineer and existing table, and return a dataset representing its data
+	analytics-panel: this takes a dataset, and renders a single analytics panel
+	dashboard-panel: this takes a dataset, and renders a single analytics panel, with options to add the panels to a dashboard, preview the dashboard, save it, and load pre-existing dashboards
+	
+In the analytics panel and dashboard mode, Meliorator allows the client/containing app, to register callbacks in order to intercept such things as saving of a panel image, adding to dashboard, saving dashboard, showing a dashboard, etc. Check the examples and the code for more.
 	
 For More detailed example usage, visit [the documentation here](https://nuchwezi.github.io/The-Meliorator/).
 	

@@ -6991,8 +6991,10 @@ Flot orderBars
         version: "0.2"
     })
 })(jQuery);
+
+
 /**
-MELIORATOR: automatically inject analytics panel into web pages.
+MELIORATOR: automatically inject analytics panel and dashboards into web pages.
 Requires and includes dependencies of the Open Source Flot js Charting library 
 */
 (function($) {
@@ -7074,7 +7076,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
             'class': 'chart-canvas'
         });
         // put a title over our chart...
-        container.append($('<h1/>').text(domainField + " Vs " + rangeFields.join(" and ")));
+        container.append($('<h1/>').text(makeChartTitle(domainField, rangeFields)));
         container.append(chart);
         var series = [];
         var options = {
@@ -7157,7 +7159,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
             'class': 'chart-canvas'
         });
         // put a title over our chart...
-        container.append($('<h1/>').text(domainField + " Vs " + rangeFields.join(" and ")));
+        container.append($('<h1/>').text(makeChartTitle(domainField, rangeFields)));
         container.append(chart);
         var series = [];
         var options = {
@@ -7242,7 +7244,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
             'class': 'chart-canvas'
         });
         // put a title over our chart...
-        container.append($('<h1/>').text(domainField + " Vs " + rangeFields.join(" and ")));
+        container.append($('<h1/>').text(makeChartTitle(domainField, rangeFields)));
         container.append(chart);
         var series = [];
         var options = {
@@ -7361,6 +7363,9 @@ Requires and includes dependencies of the Open Source Flot js Charting library
         container.removeClass('table');
         return container;
     }
+    this.makeChartTitle = function(domainField, rangeFields) {
+        return domainField + (rangeFields == null ? "" : " Vs ") + (rangeFields || []).join(" and ");
+    }
     /* given an array of objects, return an analytics panel based off of them */
     this.makeAnalyticsPanel = function(data, labels, panelClass, exportCallback) {
         var panel = $('<div/>');
@@ -7420,7 +7425,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
         panel.append(rangeSelectorWidget);
         // end range selector
         // rendering selector...
-        var renderingKinds = ['TABLE', 'LINE', 'SCATTER', 'PIE', 'BAR', 'JSON'];
+        var renderingKinds = ['TABLE', 'POWER-TABLE', 'LINE', 'SCATTER', 'PIE', 'BAR', 'JSON'];
         var renderingSelectorWidget = $('<div/>', {
             'class': 'rendering-selector widget'
         });
@@ -7459,50 +7464,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
             var selectedRendering = renderingSelector.val();
             var selectedAggregation = aggregationSelector.val();
             var visualizationDataSet = stripDataSet(data, Array.isArray(selectedRange) ? selectedRange.concat(selectedDomain) : [selectedRange, selectedDomain]);
-            switch (selectedRendering) {
-            case 'TABLE':
-                {
-                    chartWidget.append(makeHTMLTable(aggregate(visualizationDataSet, selectedDomain, getFlotAggregator(selectedAggregation))));
-                    chartWidget.addClass('table');
-                    break;
-                }
-            case 'JSON':
-                {
-                    var json = JSON.stringify(aggregate(visualizationDataSet, selectedDomain, getFlotAggregator(selectedAggregation)), null , '\t');
-                    var present = $('<pre/>', {
-                        'class': ' language-javascript'
-                    }).append($('<code/>', {
-                        'class': 'language-javascript'
-                    }).text(json));
-                    chartWidget.append(present);
-                    // prism will do the needful...
-                    chartWidget.addClass('json');
-                    setTimeout(function() {
-                        Prism.highlightAll();
-                    }, 3000);
-                    break;
-                }
-            case 'LINE':
-                {
-                    makeLineChart(visualizationDataSet, selectedDomain, getFlotAggregator(selectedAggregation), Array.isArray(selectedRange) ? selectedRange : [selectedRange], chartWidget)
-                    break;
-                }
-            case 'BAR':
-                {
-                    makeBarChart(visualizationDataSet, selectedDomain, getFlotAggregator(selectedAggregation), Array.isArray(selectedRange) ? selectedRange : [selectedRange], chartWidget)
-                    break;
-                }
-            case 'SCATTER':
-                {
-                    makeScatterChart(visualizationDataSet, selectedDomain, getFlotAggregator(selectedAggregation), Array.isArray(selectedRange) ? selectedRange : [selectedRange], chartWidget)
-                    break;
-                }
-            case 'PIE':
-                {
-                    makePieChart(aggregate(visualizationDataSet, selectedDomain, getFlotAggregator(selectedAggregation)), selectedDomain, Array.isArray(selectedRange) ? selectedRange : [selectedRange], chartWidget)
-                    break;
-                }
-            }
+             renderVisual(data, chartWidget, selectedDomain, selectedRange, selectedAggregation, selectedRendering);
         });
         // export trigger...       
         var exportTriggerWidget = $('<div/>', {
@@ -7749,6 +7711,27 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                 chartWidget.addClass('table');
                 break;
             }
+             case 'POWER-TABLE':
+                {
+                    var table = makeHTMLTable(aggregate(visualizationDataSet, selectedDomain, getFlotAggregator(selectedAggregation)));
+                    chartWidget.append(table);
+                    chartWidget.addClass('table');
+                    table.DataTable({
+                        dom: 'Blfrtip',
+                        aLengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+                        lengthChange: true,
+                        buttons: ['copyHtml5', {
+                            extend: 'csvHtml5',
+                            filename: makeChartTitle(selectedDomain, selectedRange)
+                        }, {
+                            extend: 'pdfHtml5',
+                            title: makeChartTitle(selectedDomain, selectedRange),
+                            filename: makeChartTitle(selectedDomain, selectedRange)
+                        }]
+                    })
+                    // then extend the table
+                    break;
+                }
         case 'JSON':
             {
                 var json = JSON.stringify(aggregate(visualizationDataSet, selectedDomain, getFlotAggregator(selectedAggregation)), null , '\t');
@@ -7852,43 +7835,43 @@ Requires and includes dependencies of the Open Source Flot js Charting library
             analyticsPanel.show();
         });
         // end trigger
-        if(dashboardSpec.length > 0){
-        // refresh dashboard trigger...       
-        var refreshDashboardTriggerWidget = $('<div/>', {
-            'class': 'refresh-dashboard-selector dashboard-controller widget'
-        });
-        var refreshDashboardTriggerButton = $('<button/>', {
-            'class': 'refresh-dashboard-button trigger'
-        }).text(labels.refreshDashboard);
-        refreshDashboardTriggerWidget.append(refreshDashboardTriggerButton);
-        dashboardPanel.append(refreshDashboardTriggerWidget);
-        refreshDashboardTriggerButton.click(function() {
-            if (refreshDashboardCallback == undefined) {
-                loadDashboardFunc();
-                // merely re-drawing the panels
-            } else {
-                refreshDashboardCallback();
-                // potential for refreshing with new data
-            }
-        });
-        // end trigger
-        // save dashboard trigger...       
-        var saveDashboardTriggerWidget = $('<div/>', {
-            'class': 'save-dashboard-selector dashboard-controller widget'
-        });
-        var savehDashboardTriggerButton = $('<button/>', {
-            'class': 'save-dashboard-button trigger'
-        }).text(labels.saveDashboard);
-        saveDashboardTriggerWidget.append(savehDashboardTriggerButton);
-        dashboardPanel.append(saveDashboardTriggerWidget);
-        savehDashboardTriggerButton.click(function() {
-            if (saveDashboardCallback == undefined) {
-                saveDashboard(dashboardSpec);
-            } else {
-                saveDashboardCallback(dashboardSpec);
-            }
-        });
-        // end trigger
+        if (dashboardSpec.length > 0) {
+            // refresh dashboard trigger...       
+            var refreshDashboardTriggerWidget = $('<div/>', {
+                'class': 'refresh-dashboard-selector dashboard-controller widget'
+            });
+            var refreshDashboardTriggerButton = $('<button/>', {
+                'class': 'refresh-dashboard-button trigger'
+            }).text(labels.refreshDashboard);
+            refreshDashboardTriggerWidget.append(refreshDashboardTriggerButton);
+            dashboardPanel.append(refreshDashboardTriggerWidget);
+            refreshDashboardTriggerButton.click(function() {
+                if (refreshDashboardCallback == undefined) {
+                    loadDashboardFunc();
+                    // merely re-drawing the panels
+                } else {
+                    refreshDashboardCallback();
+                    // potential for refreshing with new data
+                }
+            });
+            // end trigger
+            // save dashboard trigger...       
+            var saveDashboardTriggerWidget = $('<div/>', {
+                'class': 'save-dashboard-selector dashboard-controller widget'
+            });
+            var savehDashboardTriggerButton = $('<button/>', {
+                'class': 'save-dashboard-button trigger'
+            }).text(labels.saveDashboard);
+            saveDashboardTriggerWidget.append(savehDashboardTriggerButton);
+            dashboardPanel.append(saveDashboardTriggerWidget);
+            savehDashboardTriggerButton.click(function() {
+                if (saveDashboardCallback == undefined) {
+                    saveDashboard(dashboardSpec);
+                } else {
+                    saveDashboardCallback(dashboardSpec);
+                }
+            });
+            // end trigger
         }
     }
     this.saveDashboard = function(dashboardSpec) {
