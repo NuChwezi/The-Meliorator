@@ -1857,28 +1857,44 @@ Requires and includes dependencies of the Open Source Flot js Charting library
     }
     $.fn.Meliorator = Meliorator;
 })(jQuery)
+
+// the page using meliorator should override this global var to point to a reasonable
+// place where meliorator would find its dynamically loaded resources - e.g meliorator.css
+// if you have hosted the whole of meliorator's dependencies: js,css,vendor relative to this
+// script and the containing page, you don't have have to set this, otherwise, set it...
+if(window.MelioratorBaseURI == undefined){
+    //meaning, meliorator content will be loaded relative to the top-level domain
+    window.MelioratorBaseURI = ''; 
+}
+
 head.load([// our own css
-"css/meliorator.css", /* Jquery.event.drag */
-"vendor/js/jquery.event.drag.min.js", /* JQuery.color.helper */
-"vendor/js/jquery.colorhelpers.min.js", /* Jquery.mousewheel */
-"vendor/js/jquery.mousewheel.min.js", /* Jquery.resize */
-"vendor/js/jquery.resize.min.js", //We definitely need Flot.
+window.MelioratorBaseURI + "css/meliorator.css", /* Jquery.event.drag */
+window.MelioratorBaseURI + "vendor/js/jquery.event.drag.min.js", /* JQuery.color.helper */
+window.MelioratorBaseURI + "vendor/js/jquery.colorhelpers.min.js", /* Jquery.mousewheel */
+window.MelioratorBaseURI + "vendor/js/jquery.mousewheel.min.js", /* Jquery.resize */
+window.MelioratorBaseURI + "vendor/js/jquery.resize.min.js", //We definitely need Flot.
 "https://cdnjs.cloudflare.com/ajax/libs/flot/0.8.3/jquery.flot.min.js", /* Flot.Categories */
-"vendor/js/flot.categories.min.js", /* Flot.navigate */
-"vendor/js/flot.navigate.min.js", /* Flot.pie */
-"vendor/js/flot.pie.min.js", /* Flot.resize */
-"vendor/js/flot.resize.min.js", /* Flot.aggregate */
-"vendor/js/flot.aggregate.min.js", /* Flot.tooltip */
-"vendor/js/flot.tooltip.min.js", /* Flot Orderbars */
-"vendor/js/flot.orderbars.min.js", // we need underscore
+window.MelioratorBaseURI + "vendor/js/flot.categories.min.js", /* Flot.navigate */
+window.MelioratorBaseURI + "vendor/js/flot.navigate.min.js", /* Flot.pie */
+window.MelioratorBaseURI + "vendor/js/flot.pie.min.js", /* Flot.resize */
+window.MelioratorBaseURI + "vendor/js/flot.resize.min.js", /* Flot.aggregate */
+window.MelioratorBaseURI + "vendor/js/flot.aggregate.min.js", /* Flot.tooltip */
+window.MelioratorBaseURI + "vendor/js/flot.tooltip.min.js", /* Flot Orderbars */
+window.MelioratorBaseURI + "vendor/js/flot.orderbars.min.js", // we need underscore
 "https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js", // HTML2Canvas
 "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js", /* Canvas2Blob */
-"vendor/js/canvas2blob.min.js", /* File Saver */
+window.MelioratorBaseURI + "vendor/js/canvas2blob.min.js", /* File Saver */
 "https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js", /* Prism */
-"vendor/css/prism.css", // prism.css
-"vendor/js/prism.js", /* RandomColor */
+window.MelioratorBaseURI + "vendor/css/prism.css", // prism.css
+window.MelioratorBaseURI + "vendor/js/prism.js", /* RandomColor */
 "https://cdnjs.cloudflare.com/ajax/libs/randomcolor/0.4.4/randomColor.min.js", // stuff to power the POWER-TABLE rendering (data tables and all...)
-"https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js", "https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js", "https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js", "https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js", "https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js", "https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css", "https://cdn.datatables.net/buttons/1.2.2/css/buttons.dataTables.min.css"], function() {
+"https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js", 
+"https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js", 
+"https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js", 
+"https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js", 
+"https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js", 
+"https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css", 
+"https://cdn.datatables.net/buttons/1.2.2/css/buttons.dataTables.min.css"], function() {
     $(document).trigger('Meliorator-Ready');
     console.log("Meliorator is all ready now...");
 });
