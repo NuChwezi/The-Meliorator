@@ -135,6 +135,10 @@
                 display: inline-block;
                 background-size: 86.11764705882354px 60px;
             }
+
+            .dashboard-title.widget {
+                width: 100%;
+            }
         </style>
         <style type="text/css">
             .downloadBtn {
@@ -200,8 +204,7 @@
                         <h1>First, let's</h1>
                         <h2>Use Meliorator to make a table</h2>
                         <pre>
-                            <code class="language-javascript">
-var sampleData = range(0, 40).map(function(i) {
+                            <code class="language-javascript">var sampleData = range(0, 40).map(function(i) {
 return {
         Number: i,
         Square: Math.pow(i, 2),
@@ -230,8 +233,7 @@ $('#table').Meliorator('table', {
                         <h1>Then, with a dataset and dashboard spec</h1>
                         <h2>We can Meliorate for a Dashboard</h2>
                         <pre>
-                            <code class="language-javascript">
-    var parsedDataSet = $.makeArray($('.originalTable').Meliorator('parse-table')[0]);
+                            <code class="language-javascript">var parsedDataSet = $.makeArray($('.originalTable').Meliorator('parse-table')[0]);
     // so, assuming we already have a dashboard spec (say it was saved in a previous dasbhoard save mode, or something like that...)
     var dashboardSpec = {
         "title": "Dashboard-2016-10-10T12:49:47.395Z",
