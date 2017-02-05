@@ -1012,7 +1012,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
             var selectedRendering = renderingSelector.val();
             var selectedAggregation = aggregationSelector.val();
             var visualizationDataSet = stripDataSet(data, Array.isArray(selectedRange) ? selectedRange.concat(selectedDomain) : [selectedRange, selectedDomain]);
-            renderVisual(data, chartWidget, selectedDomain, selectedRange, selectedAggregation, selectedRendering);
+            renderVisual(data, chartWidget, selectedDomain, selectedRange, selectedAggregation, selectedRendering, labels);
         });
         // export trigger...       
         var exportTriggerWidget = $('<div/>', {
@@ -1277,7 +1277,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
             return dashboards;
         }
     }
-    this.renderVisual = function(data, chartWidget, selectedDomain, selectedRange, selectedAggregation, selectedRendering) {
+    this.renderVisual = function(data, chartWidget, selectedDomain, selectedRange, selectedAggregation, selectedRendering,labels) {
         chartWidget.empty();
         var visualizationDataSet = stripDataSet(data, Array.isArray(selectedRange) ? selectedRange.concat(selectedDomain) : [selectedRange, selectedDomain]);
         switch (selectedRendering) {
@@ -1302,7 +1302,8 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                     }, {
                         extend: 'pdfHtml5',
                         title: makeChartTitle(selectedDomain, selectedRange),
-                        filename: makeChartTitle(selectedDomain, selectedRange)
+                        filename: makeChartTitle(selectedDomain, selectedRange),
+                        orientation: labels.pdfExportOrientation || 'portrait'
                     }]
                 })
                 // then extend the table
@@ -1391,7 +1392,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                 var selectedRendering = spec.render;
                 var selectedAggregation = spec.aggregation;
                 // add render the chart onto the dashboard...
-                renderVisual(data, chartWidget, selectedDomain, selectedRange, selectedAggregation, selectedRendering);
+                renderVisual(data, chartWidget, selectedDomain, selectedRange, selectedAggregation, selectedRendering,labels);
                 if (removePanelCallback != false) {
                     var removePanelBtn = $('<button/>', {
                         'class': 'remove-panel-btn'
@@ -1741,7 +1742,8 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                         domainAggregation: labels.domainAggregation || 'Domain Aggregation',
                         renderAs: labels.renderAs || 'Render As',
                         renderVisuals: labels.renderVisuals || 'Render Visuals',
-                        exportVisuals: labels.exportVisuals || 'Export as Image'
+                        exportVisuals: labels.exportVisuals || 'Export as Image',
+                        pdfExportOrientation: labels.pdfExportOrientation || 'portrait'
                     },
                     // if defined, clicking the "export" button triggers the configured callback, passing it the analytics blob - this can then be posted to back-end, rendered elsewhere on the page, etc. If not set, export will automatically download the charts as image to client.
                     // the callback should be of the signature: function(blob){}
@@ -1784,7 +1786,8 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                         refreshDashboard: labels.refreshDashboard || "REFRESH Dashboard",
                         removeDashboardPanel: labels.removeDashboardPanel || "delete",
                         saveDashboard: labels.saveDashboard || "SAVE Dashboard",
-                        showSavedDashboard: labels.showSavedDashboard || "Show Saved Dashboard >>"
+                        showSavedDashboard: labels.showSavedDashboard || "Show Saved Dashboard >>",
+                        pdfExportOrientation: labels.pdfExportOrientation || 'portrait'
                     },
                     // if defined, clicking the "add to dashboard" button triggers the configured callback, passing it an obj containing the user-selected parameters
                     // specifying the currently displayed panel. 
@@ -1836,7 +1839,8 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                         refreshDashboard: labels.refreshDashboard || "REFRESH Dashboard",
                         removeDashboardPanel: labels.removeDashboardPanel || "delete",
                         saveDashboard: labels.saveDashboard || "SAVE Dashboard",
-                        showSavedDashboard: labels.showSavedDashboard || "Show Saved Dashboard >>"
+                        showSavedDashboard: labels.showSavedDashboard || "Show Saved Dashboard >>",
+                        pdfExportOrientation: labels.pdfExportOrientation || 'portrait'
                     }
                 }
                 if (op.data == undefined)
