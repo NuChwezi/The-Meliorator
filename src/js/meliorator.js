@@ -1521,7 +1521,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                         try {
                             var sum = 0;
                             for (i in rangeFieldValues)
-                                sum += rangeFieldValues[i];
+                                sum += (Number(rangeFieldValues[i]) || 0);
                             var avg = sum / rangeFieldValues.length;
                             domainRangeFieldValues[rangeField] = avg;
                         } catch (e) {
@@ -1646,7 +1646,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                         try {
                             var sum = 0;
                             for (i in rangeFieldValues)
-                                sum += isNaN(rangeFieldValues[i]) ? NaN : rangeFieldValues[i];
+                                sum += isNaN(rangeFieldValues[i]) ? 0 : Number(rangeFieldValues[i]);
                             domainRangeFieldValues[rangeField] = sum;
                         } catch (e) {
                             domainRangeFieldValues[rangeField] = NaN;
