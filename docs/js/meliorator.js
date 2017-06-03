@@ -605,7 +605,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
     /* given a dataset, make a line chart, append it to the container, and return the chart element */
     this.makeLineChart = function(data, domainField, selectedAggregation, rangeFields, container, domainTransformer) {
         var seriesMap = {}
-        var minRangeVal, maxRangeVal, minDomainVal, maxDomainVal;
+        var minRangeVal =0, maxRangeVal=0, minDomainVal=0, maxDomainVal=0;
         for (i in data) {
             domainValue = domainTransformer==null? data[i][domainField] : domainTransformer(data[i][domainField]);
             minDomainVal = isNaN(domainValue) ? minDomainVal : Math.min(minDomainVal, Number(domainValue));
@@ -688,7 +688,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
     /* given a dataset, make a bar chart, append it to the container, and return the chart element */
     this.makeBarChart = function(data, domainField, selectedAggregation, rangeFields, container) {
         var seriesMap = {}
-        var minRangeVal, maxRangeVal, minDomainVal, maxDomainVal;
+        var minRangeVal = 0, maxRangeVal= 0, minDomainVal=0, maxDomainVal=0;
         for (i in data) {
             domainValue = data[i][domainField];
             minDomainVal = isNaN(domainValue) ? minDomainVal : Math.min(minDomainVal, Number(domainValue));
@@ -773,7 +773,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
     /* given a dataset, make a scatter chart, append it to the container, and return the chart element */
     this.makeScatterChart = function(data, domainField, selectedAggregation, rangeFields, container) {
         var seriesMap = {}
-        var minRangeVal, maxRangeVal, minDomainVal, maxDomainVal;
+        var minRangeVal = 0, maxRangeVal=0, minDomainVal=0, maxDomainVal=0;
         for (i in data) {
             domainValue = data[i][domainField];
             minDomainVal = isNaN(domainValue) ? minDomainVal : Math.min(minDomainVal, Number(domainValue));
