@@ -603,11 +603,11 @@ Requires and includes dependencies of the Open Source Flot js Charting library
         return isCategorical;
     }
     /* given a dataset, make a line chart, append it to the container, and return the chart element */
-    this.makeLineChart = function(data, domainField, selectedAggregation, rangeFields, container) {
+    this.makeLineChart = function(data, domainField, selectedAggregation, rangeFields, container, domainTransformer) {
         var seriesMap = {}
         var minRangeVal, maxRangeVal, minDomainVal, maxDomainVal;
         for (i in data) {
-            domainValue = data[i][domainField];
+            domainValue = domainTransformer==null? data[i][domainField] : domainTransformer(data[i][domainField]);
             minDomainVal = isNaN(domainValue) ? minDomainVal : Math.min(minDomainVal, Number(domainValue));
             maxDomainVal = isNaN(domainValue) ? maxDomainVal : Math.max(maxDomainVal, Number(domainValue));
             for (k in rangeFields) {
@@ -973,7 +973,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
         panel.append(rangeSelectorWidget);
         // end range selector
         // rendering selector...
-        var renderingKinds = ['TABLE', 'POWER-TABLE', 'LINE', 'SCATTER', 'PIE', 'BAR', 'JSON'];
+        var renderingKinds = ['TABLE', 'POWER-TABLE', 'LINE', 'TIME-SERIES', 'SCATTER', 'PIE', 'BAR', 'JSON'];
         var renderingSelectorWidget = $('<div/>', {
             'class': 'rendering-selector widget'
         });
@@ -1328,6 +1328,14 @@ Requires and includes dependencies of the Open Source Flot js Charting library
         case 'LINE':
             {
                 makeLineChart(visualizationDataSet, selectedDomain, getFlotAggregator(selectedAggregation), Array.isArray(selectedRange) ? selectedRange : [selectedRange], chartWidget)
+                break;
+            }
+        case 'TIME-SERIES':
+            {
+                makeLineChart(visualizationDataSet, selectedDomain, getFlotAggregator(selectedAggregation), Array.isArray(selectedRange) ? selectedRange : [selectedRange], chartWidget, function(d){
+
+                    return moment(d).toDate();
+                })
                 break;
             }
         case 'BAR':
@@ -1865,7 +1873,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
 // the page using meliorator should override this global var to point to a reasonable
 // place where meliorator would find its dynamically loaded resources - e.g meliorator.css
 // if you have hosted the whole of meliorator's dependencies: js,css,vendor relative to this
-// script and the containing page, you don't have have to set this, otherwise, set it...
+// script and the containing page, you don't have have to set this, otherwise set it...
 if(window.MelioratorBaseURI == undefined){
     //meaning, meliorator content will be loaded relative to the top-level domain
     window.MelioratorBaseURI = ''; 
@@ -1891,6 +1899,7 @@ window.MelioratorBaseURI + "vendor/js/canvas2blob.min.js", /* File Saver */
 "https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js", /* Prism */
 window.MelioratorBaseURI + "vendor/css/prism.css", // prism.css
 window.MelioratorBaseURI + "vendor/js/prism.js", /* RandomColor */
+window.MelioratorBaseURI + "vendor/js/moment.min.js", /* Moment */
 "https://cdnjs.cloudflare.com/ajax/libs/randomcolor/0.4.4/randomColor.min.js", // stuff to power the POWER-TABLE rendering (data tables and all...)
 "https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js", 
 "https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js", 
