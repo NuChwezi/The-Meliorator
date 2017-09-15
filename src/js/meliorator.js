@@ -914,6 +914,27 @@ Requires and includes dependencies of the Open Source Flot js Charting library
     this.makeChartTitle = function(domainField, rangeFields) {
         return domainField + (rangeFields == null ? "" : " Vs ") + (rangeFields || []).join(" and ");
     }
+/* given an array of objects, return an analytics widget based off of them */
+    this.makeAnalyticsWidget = function(data, selectedDomain, selectedDomainAggregation, selectedRange, selectedRendering, widgetClass ) {
+        var panel = $('<div/>');
+        if (widgetClass)
+            panel.addClass(widgetClass);
+        panel.addClass(MelioratorClass);        
+
+        // chart widget...       
+        var chartWidget = $('<div/>', {
+            'class': 'chart widget'
+        });
+        panel.append(chartWidget);
+        // end chart widget.
+
+        setTimeout(function(){
+            renderVisual(data, chartWidget, selectedDomain, selectedRange, selectedDomainAggregation, selectedRendering, null);
+        }, 5000);        
+     
+        return panel;
+    }
+
     /* given an array of objects, return an analytics panel based off of them */
     this.makeAnalyticsPanel = function(data, labels, panelClass, exportCallback) {
         var panel = $('<div/>');
@@ -1280,7 +1301,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
     this.renderVisual = function(data, chartWidget, selectedDomain, selectedRange, selectedAggregation, selectedRendering,labels) {
         chartWidget.empty();
         var visualizationDataSet = stripDataSet(data, Array.isArray(selectedRange) ? selectedRange.concat(selectedDomain) : [selectedRange, selectedDomain]);
-        switch (selectedRendering) {
+        switch (selectedRendering.toUpperCase()) {
         case 'TABLE':
             {
                 chartWidget.append(makeHTMLTable(aggregate(visualizationDataSet, selectedDomain, getFlotAggregator(selectedAggregation))));
@@ -1732,6 +1753,43 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                 });
                 return collection;
             }
+            // takes an array of objects, and then renders an analytics widget visualizing the data from the specified perspective
+            // in the selected container elements
+        case 'analytics-widget':
+            {
+                var labels = options.labels == undefined ? {} : options.labels;
+                var op = {
+                    // data : is REQUIRED : tells Meliorator where the data to work with,
+                    // is to come from. It is expected to be an array of objects. 
+                    data: options.data || undefined,
+                    // panelClass: OPTIONAL : will be the class(es) that will be applied to the generated panels(s)
+                    widgetClass: options.widgetClass || 'analytics-widget',
+                    domainField:  options.domainField, /*REQUIRED*/
+                    rangeField:  options.rangeField, /*REQUIRED*/
+                    domainAggregation: options.domainAggregation || 'none',
+                    renderAs: options.renderAs /*REQUIRED*/    
+               
+                }
+                if (op.data == undefined)
+                    break;
+                if (!Array.isArray(op.data))
+                    break
+                if (op.data.length == 0)
+                    break
+                if (op.renderAs == undefined)
+                    break;
+                if (op.domainField == undefined)
+                    break;
+                if (op.rangeField == undefined)
+                    break;
+                
+
+                this.each(function() {
+                    $(this).append(makeAnalyticsWidget(op.data, op.domainField, op.domainAggregation, op.rangeField, op.renderAs, op.widgetClass))
+                });
+                break;
+            }
+
             // takes an array of objects, and then renders an analytics panel for their visualization/exploration
             // in the selected container elements
         case 'analytics-panel':
