@@ -180,3 +180,6 @@
     background-color: gold;
 }
 
+.legend div:nth-child(1){
+  background: none !important; /*fix bug in Meliorator's use of Plot legend */
+}
