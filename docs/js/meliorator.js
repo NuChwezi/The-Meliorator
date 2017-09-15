@@ -915,7 +915,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
         return domainField + (rangeFields == null ? "" : " Vs ") + (rangeFields || []).join(" and ");
     }
 /* given an array of objects, return an analytics widget based off of them */
-    this.makeAnalyticsWidget = function(data, selectedDomain, selectedDomainAggregation, selectedRange, selectedRendering, widgetClass ) {
+    this.makeAnalyticsWidget = function(data, selectedDomain, selectedDomainAggregation, selectedRange, selectedRendering, widgetClass) {
         var panel = $('<div/>');
         if (widgetClass)
             panel.addClass(widgetClass);
@@ -930,7 +930,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
 
         setTimeout(function(){
             renderVisual(data, chartWidget, selectedDomain, selectedRange, selectedDomainAggregation, selectedRendering, null);
-        }, 5000);        
+        }, 0);        
      
         return panel;
     }
