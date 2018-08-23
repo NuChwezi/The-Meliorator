@@ -212,7 +212,7 @@
   "headers": {
 	"content-type": "application/json"
   },
-  "data": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"Name\": { \"type\": \"string\", \"ipsum\": \"name\" },\n    \"Group\": {\n  \"type\": \"string\",\n  \"enum\": [\"Plankton\", \"Islander\", \"Mystic\", \"Veterans\"]\n},\n    \"City\": {\n  \"type\": \"string\",\n  \"enum\": [\"Entebbe\", \"Kampala\", \"Jinja\", \"Masindi\", \"Gulu\", \"Masaka\", \"Mbarara\"]\n},\n    \"Age\": { \"type\": \"integer\" },\n\t  \"Score\": { \"type\": \"number\" },\n\t  \"Rank\": { \"type\": \"integer\" }\n   \n  }\n}"
+  "data": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"Date\": { \"type\": \"string\", \"format\": \"date-time\" },\n    \"Name\": { \"type\": \"string\", \"ipsum\": \"name\" },\n    \"Group\": {\n  \"type\": \"string\",\n  \"enum\": [\"Plankton\", \"Islander\", \"Mystic\", \"Veterans\"]\n},\n    \"City\": {\n  \"type\": \"string\",\n  \"enum\": [\"Entebbe\", \"Kampala\", \"Jinja\", \"Masindi\", \"Gulu\", \"Masaka\", \"Mbarara\"]\n},\n    \"Age\": { \"type\": \"integer\" },\n\t  \"Score\": { \"type\": \"number\" },\n\t  \"Rank\": { \"type\": \"integer\" }\n   \n  }\n}"
 }
 
 // in this case, the data is obtained via an api, and then we pass the result to 
@@ -278,6 +278,9 @@ $.ajax(settings).done(function (response) {
                             <a href="auto-dashboard-example.html">Render Pre-existing a Dashboard</a>
                         </div>
                         <div style="margin:10px">
+                            <a href="minimal.html">Render a Single Analytics Widget</a>
+                        </div>
+                        <div style="margin:10px">
                             <a href="image_table-example.html">Automagically Render images and other Binary Objects</a>
                         </div>
                     </div>
@@ -332,7 +335,7 @@ $.ajax(settings).done(function (response) {
                     "headers": {
                         "content-type": "application/json"
                     },
-                    "data": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"Name\": { \"type\": \"string\", \"ipsum\": \"name\" },\n    \"Group\": {\n  \"type\": \"string\",\n  \"enum\": [\"Plankton\", \"Islander\", \"Mystic\", \"Veterans\"]\n},\n    \"City\": {\n  \"type\": \"string\",\n  \"enum\": [\"Entebbe\", \"Kampala\", \"Jinja\", \"Masindi\", \"Gulu\", \"Masaka\", \"Mbarara\"]\n},\n    \"Age\": { \"type\": \"integer\" },\n\t  \"Score\": { \"type\": \"number\" },\n\t  \"Rank\": { \"type\": \"integer\" }\n   \n  }\n}"
+                    "data": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"Date\": { \"type\": \"string\", \"format\": \"date-time\" },\n    \"Name\": { \"type\": \"string\", \"ipsum\": \"name\" },\n    \"Group\": {\n  \"type\": \"string\",\n  \"enum\": [\"Plankton\", \"Islander\", \"Mystic\", \"Veterans\"]\n},\n    \"City\": {\n  \"type\": \"string\",\n  \"enum\": [\"Entebbe\", \"Kampala\", \"Jinja\", \"Masindi\", \"Gulu\", \"Masaka\", \"Mbarara\"]\n},\n    \"Age\": { \"type\": \"integer\" },\n\t  \"Score\": { \"type\": \"number\" },\n\t  \"Rank\": { \"type\": \"integer\" }\n   \n  }\n}"
                 }
                 $(document).on('Meliorator-Ready', function() {
                     // in this case, the data is obtained via an api, and then we pass the result to 

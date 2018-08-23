@@ -549,7 +549,10 @@ Requires and includes dependencies of the Open Source Flot js Charting library
     this.MelioratorClass = 'meliorator';
     this.STORAGE_KEY_DASHBOARDS = "DASHBOARDS"
     this.isBin = function(cdata){
-        return cdata.startsWith("data:") && cdata.length > 100;
+        if (typeof cdata === 'string' || cdata instanceof String)
+            return cdata.startsWith("data:") && cdata.length > 100;
+        else
+            return false;
     }
     /* given an array of objects, return an html table based off of them */
     this.makeHTMLTable = function(data, tableClass) {
@@ -613,11 +616,11 @@ Requires and includes dependencies of the Open Source Flot js Charting library
         return isCategorical;
     }
     /* given a dataset, make a line chart, append it to the container, and return the chart element */
-    this.makeLineChart = function(data, domainField, selectedAggregation, rangeFields, container) {
+    this.makeLineChart = function(data, domainField, selectedAggregation, rangeFields, container, domainTransformer) {
         var seriesMap = {}
-        var minRangeVal, maxRangeVal, minDomainVal, maxDomainVal;
+        var minRangeVal =0, maxRangeVal=0, minDomainVal=0, maxDomainVal=0;
         for (i in data) {
-            domainValue = data[i][domainField];
+            domainValue = domainTransformer==null? data[i][domainField] : domainTransformer(data[i][domainField]);
             minDomainVal = isNaN(domainValue) ? minDomainVal : Math.min(minDomainVal, Number(domainValue));
             maxDomainVal = isNaN(domainValue) ? maxDomainVal : Math.max(maxDomainVal, Number(domainValue));
             for (k in rangeFields) {
@@ -698,7 +701,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
     /* given a dataset, make a bar chart, append it to the container, and return the chart element */
     this.makeBarChart = function(data, domainField, selectedAggregation, rangeFields, container) {
         var seriesMap = {}
-        var minRangeVal, maxRangeVal, minDomainVal, maxDomainVal;
+        var minRangeVal = 0, maxRangeVal= 0, minDomainVal=0, maxDomainVal=0;
         for (i in data) {
             domainValue = data[i][domainField];
             minDomainVal = isNaN(domainValue) ? minDomainVal : Math.min(minDomainVal, Number(domainValue));
@@ -783,7 +786,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
     /* given a dataset, make a scatter chart, append it to the container, and return the chart element */
     this.makeScatterChart = function(data, domainField, selectedAggregation, rangeFields, container) {
         var seriesMap = {}
-        var minRangeVal, maxRangeVal, minDomainVal, maxDomainVal;
+        var minRangeVal = 0, maxRangeVal=0, minDomainVal=0, maxDomainVal=0;
         for (i in data) {
             domainValue = data[i][domainField];
             minDomainVal = isNaN(domainValue) ? minDomainVal : Math.min(minDomainVal, Number(domainValue));
@@ -924,6 +927,27 @@ Requires and includes dependencies of the Open Source Flot js Charting library
     this.makeChartTitle = function(domainField, rangeFields) {
         return domainField + (rangeFields == null ? "" : " Vs ") + (rangeFields || []).join(" and ");
     }
+/* given an array of objects, return an analytics widget based off of them */
+    this.makeAnalyticsWidget = function(data, selectedDomain, selectedDomainAggregation, selectedRange, selectedRendering, widgetClass) {
+        var panel = $('<div/>');
+        if (widgetClass)
+            panel.addClass(widgetClass);
+        panel.addClass(MelioratorClass);        
+
+        // chart widget...       
+        var chartWidget = $('<div/>', {
+            'class': 'chart widget'
+        });
+        panel.append(chartWidget);
+        // end chart widget.
+
+        setTimeout(function(){
+            renderVisual(data, chartWidget, selectedDomain, selectedRange, selectedDomainAggregation, selectedRendering, null);
+        }, 0);        
+     
+        return panel;
+    }
+
     /* given an array of objects, return an analytics panel based off of them */
     this.makeAnalyticsPanel = function(data, labels, panelClass, exportCallback) {
         var panel = $('<div/>');
@@ -983,7 +1007,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
         panel.append(rangeSelectorWidget);
         // end range selector
         // rendering selector...
-        var renderingKinds = ['TABLE', 'POWER-TABLE', 'LINE', 'SCATTER', 'PIE', 'BAR', 'JSON'];
+        var renderingKinds = ['TABLE', 'POWER-TABLE', 'LINE', 'TIME-SERIES', 'SCATTER', 'PIE', 'BAR', 'JSON'];
         var renderingSelectorWidget = $('<div/>', {
             'class': 'rendering-selector widget'
         });
@@ -1022,7 +1046,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
             var selectedRendering = renderingSelector.val();
             var selectedAggregation = aggregationSelector.val();
             var visualizationDataSet = stripDataSet(data, Array.isArray(selectedRange) ? selectedRange.concat(selectedDomain) : [selectedRange, selectedDomain]);
-            renderVisual(data, chartWidget, selectedDomain, selectedRange, selectedAggregation, selectedRendering);
+            renderVisual(data, chartWidget, selectedDomain, selectedRange, selectedAggregation, selectedRendering, labels);
         });
         // export trigger...       
         var exportTriggerWidget = $('<div/>', {
@@ -1287,10 +1311,10 @@ Requires and includes dependencies of the Open Source Flot js Charting library
             return dashboards;
         }
     }
-    this.renderVisual = function(data, chartWidget, selectedDomain, selectedRange, selectedAggregation, selectedRendering) {
+    this.renderVisual = function(data, chartWidget, selectedDomain, selectedRange, selectedAggregation, selectedRendering,labels) {
         chartWidget.empty();
         var visualizationDataSet = stripDataSet(data, Array.isArray(selectedRange) ? selectedRange.concat(selectedDomain) : [selectedRange, selectedDomain]);
-        switch (selectedRendering) {
+        switch (selectedRendering.toUpperCase()) {
         case 'TABLE':
             {
                 chartWidget.append(makeHTMLTable(aggregate(visualizationDataSet, selectedDomain, getFlotAggregator(selectedAggregation))));
@@ -1312,7 +1336,8 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                     }, {
                         extend: 'pdfHtml5',
                         title: makeChartTitle(selectedDomain, selectedRange),
-                        filename: makeChartTitle(selectedDomain, selectedRange)
+                        filename: makeChartTitle(selectedDomain, selectedRange),
+                        orientation: labels.pdfExportOrientation || 'portrait'
                     }]
                 })
                 // then extend the table
@@ -1337,6 +1362,14 @@ Requires and includes dependencies of the Open Source Flot js Charting library
         case 'LINE':
             {
                 makeLineChart(visualizationDataSet, selectedDomain, getFlotAggregator(selectedAggregation), Array.isArray(selectedRange) ? selectedRange : [selectedRange], chartWidget)
+                break;
+            }
+        case 'TIME-SERIES':
+            {
+                makeLineChart(visualizationDataSet, selectedDomain, getFlotAggregator(selectedAggregation), Array.isArray(selectedRange) ? selectedRange : [selectedRange], chartWidget, function(d){
+
+                    return moment(d).toDate();
+                })
                 break;
             }
         case 'BAR':
@@ -1401,7 +1434,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                 var selectedRendering = spec.render;
                 var selectedAggregation = spec.aggregation;
                 // add render the chart onto the dashboard...
-                renderVisual(data, chartWidget, selectedDomain, selectedRange, selectedAggregation, selectedRendering);
+                renderVisual(data, chartWidget, selectedDomain, selectedRange, selectedAggregation, selectedRendering,labels);
                 if (removePanelCallback != false) {
                     var removePanelBtn = $('<button/>', {
                         'class': 'remove-panel-btn'
@@ -1530,7 +1563,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                         try {
                             var sum = 0;
                             for (i in rangeFieldValues)
-                                sum += rangeFieldValues[i];
+                                sum += (Number(rangeFieldValues[i]) || 0);
                             var avg = sum / rangeFieldValues.length;
                             domainRangeFieldValues[rangeField] = avg;
                         } catch (e) {
@@ -1655,7 +1688,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                         try {
                             var sum = 0;
                             for (i in rangeFieldValues)
-                                sum += isNaN(rangeFieldValues[i]) ? NaN : rangeFieldValues[i];
+                                sum += isNaN(rangeFieldValues[i]) ? 0 : Number(rangeFieldValues[i]);
                             domainRangeFieldValues[rangeField] = sum;
                         } catch (e) {
                             domainRangeFieldValues[rangeField] = NaN;
@@ -1733,6 +1766,43 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                 });
                 return collection;
             }
+            // takes an array of objects, and then renders an analytics widget visualizing the data from the specified perspective
+            // in the selected container elements
+        case 'analytics-widget':
+            {
+                var labels = options.labels == undefined ? {} : options.labels;
+                var op = {
+                    // data : is REQUIRED : tells Meliorator where the data to work with,
+                    // is to come from. It is expected to be an array of objects. 
+                    data: options.data || undefined,
+                    // panelClass: OPTIONAL : will be the class(es) that will be applied to the generated panels(s)
+                    widgetClass: options.widgetClass || 'analytics-widget',
+                    domainField:  options.domainField, /*REQUIRED*/
+                    rangeField:  options.rangeField, /*REQUIRED*/
+                    domainAggregation: options.domainAggregation || 'none',
+                    renderAs: options.renderAs /*REQUIRED*/    
+               
+                }
+                if (op.data == undefined)
+                    break;
+                if (!Array.isArray(op.data))
+                    break
+                if (op.data.length == 0)
+                    break
+                if (op.renderAs == undefined)
+                    break;
+                if (op.domainField == undefined)
+                    break;
+                if (op.rangeField == undefined)
+                    break;
+                
+
+                this.each(function() {
+                    $(this).append(makeAnalyticsWidget(op.data, op.domainField, op.domainAggregation, op.rangeField, op.renderAs, op.widgetClass))
+                });
+                break;
+            }
+
             // takes an array of objects, and then renders an analytics panel for their visualization/exploration
             // in the selected container elements
         case 'analytics-panel':
@@ -1751,7 +1821,8 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                         domainAggregation: labels.domainAggregation || 'Domain Aggregation',
                         renderAs: labels.renderAs || 'Render As',
                         renderVisuals: labels.renderVisuals || 'Render Visuals',
-                        exportVisuals: labels.exportVisuals || 'Export as Image'
+                        exportVisuals: labels.exportVisuals || 'Export as Image',
+                        pdfExportOrientation: labels.pdfExportOrientation || 'portrait'
                     },
                     // if defined, clicking the "export" button triggers the configured callback, passing it the analytics blob - this can then be posted to back-end, rendered elsewhere on the page, etc. If not set, export will automatically download the charts as image to client.
                     // the callback should be of the signature: function(blob){}
@@ -1794,7 +1865,8 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                         refreshDashboard: labels.refreshDashboard || "REFRESH Dashboard",
                         removeDashboardPanel: labels.removeDashboardPanel || "delete",
                         saveDashboard: labels.saveDashboard || "SAVE Dashboard",
-                        showSavedDashboard: labels.showSavedDashboard || "Show Saved Dashboard >>"
+                        showSavedDashboard: labels.showSavedDashboard || "Show Saved Dashboard >>",
+                        pdfExportOrientation: labels.pdfExportOrientation || 'portrait'
                     },
                     // if defined, clicking the "add to dashboard" button triggers the configured callback, passing it an obj containing the user-selected parameters
                     // specifying the currently displayed panel. 
@@ -1846,7 +1918,8 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                         refreshDashboard: labels.refreshDashboard || "REFRESH Dashboard",
                         removeDashboardPanel: labels.removeDashboardPanel || "delete",
                         saveDashboard: labels.saveDashboard || "SAVE Dashboard",
-                        showSavedDashboard: labels.showSavedDashboard || "Show Saved Dashboard >>"
+                        showSavedDashboard: labels.showSavedDashboard || "Show Saved Dashboard >>",
+                        pdfExportOrientation: labels.pdfExportOrientation || 'portrait'
                     }
                 }
                 if (op.data == undefined)
@@ -1871,7 +1944,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
 // the page using meliorator should override this global var to point to a reasonable
 // place where meliorator would find its dynamically loaded resources - e.g meliorator.css
 // if you have hosted the whole of meliorator's dependencies: js,css,vendor relative to this
-// script and the containing page, you don't have have to set this, otherwise, set it...
+// script and the containing page, you don't have have to set this, otherwise set it...
 if(window.MelioratorBaseURI == undefined){
     //meaning, meliorator content will be loaded relative to the top-level domain
     window.MelioratorBaseURI = ''; 
@@ -1897,6 +1970,7 @@ window.MelioratorBaseURI + "vendor/js/canvas2blob.min.js", /* File Saver */
 "https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js", /* Prism */
 window.MelioratorBaseURI + "vendor/css/prism.css", // prism.css
 window.MelioratorBaseURI + "vendor/js/prism.js", /* RandomColor */
+window.MelioratorBaseURI + "vendor/js/moment.min.js", /* Moment */
 "https://cdnjs.cloudflare.com/ajax/libs/randomcolor/0.4.4/randomColor.min.js", // stuff to power the POWER-TABLE rendering (data tables and all...)
 "https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js", 
 "https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js", 

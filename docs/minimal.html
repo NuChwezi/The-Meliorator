@@ -184,9 +184,6 @@
                 position: relative;
                 top: 1px;
             }
-             .dashboard-title.widget {
-                width: 100%;
-            }
         </style>
     </head>
     <body>
@@ -227,14 +224,21 @@ $('#table').Meliorator('table', {
                         <div id="table" class="inline data-container"></div>
                     </hgroup>
                 </div>
+               
+              
                 <div class="plan">
                     <hgroup>
-                        <h1>Then, with a dataset</h1>
-                        <h2>We can Meliorate for a Dashboard</h2>
+                        <h1>Then, with this dataset</h1>
+                        <h2>We can Meliorate</h2>
                         <pre>
-                            <code class="language-javascript">$('#analytics').Meliorator('dashboard-panel', {
-    data: parsedDataSet
-});
+                            <code class="language-javascript">$('#analytics').Meliorator('analytics-widget', {
+                        data: parsedDataSet,
+                        domainField: 'Number',
+                        rangeField: 'Square',
+                        domainAggregation: 'NONE',
+                        renderAs: 'LINE'
+                                          
+                    });
 
                             </code>
                         </pre>
@@ -244,7 +248,7 @@ $('#table').Meliorator('table', {
             <div class="plan large">
                 <hgroup>
                     <h1>To Get?</h1>
-                    <h2>This dashboard builder for FREE!</h2>
+                    <h2>This minimal analytics widget for FREE!</h2>
                     <div id="analytics"></div>
                 </hgroup>
             </div>
@@ -255,19 +259,16 @@ $('#table').Meliorator('table', {
                     <h2>Other Examples...</h2>
                     <div style="padding:10px; margin-left:20px; margin-top:20px">
                         <div style="margin:10px">
-                            <a href="auto-dashboard-example.html">Render Pre-existing a Dashboard</a>
-                        </div>
-                        <div style="margin:10px">
                             <a href="uri-example.html">Using URI/API sourced Data</a>
                         </div>
                         <div style="margin:10px">
+                            <a href="dashboard-example.html">(Design/View) Dashboard Mode Example</a>
+                        </div>
+                        <div style="margin:10px">
+                            <a href="auto-dashboard-example.html">Render Pre-existing a Dashboard</a>
+                        </div>
+                        <div style="margin:10px">
                             <a href="index.html">Sourcing data from existing HTML Tables</a>
-                        </div>
-                        <div style="margin:10px">
-                            <a href="minimal.html">Render a Single Analytics Widget</a>
-                        </div>
-                        <div style="margin:10px">
-                            <a href="image_table-example.html">Automagically Render images and other Binary Objects</a>
                         </div>
                     </div>
                 </hgroup>
@@ -280,6 +281,13 @@ $('#table').Meliorator('table', {
                         <div style="margin:10px">
                             <a href="https://github.com/NuChwezi/The-Meliorator/archive/master.zip" class="downloadBtn">DOWNLOAD</a>
                         </div>
+                        <!-- div style="margin:10px">
+                                <iframe src="https://ghbtns.com/github-btn.html?user=NuChwezi&repo=The-Meliorator&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+                            </div>
+
+                             <div style="margin:10px">
+                                <iframe src="https://ghbtns.com/github-btn.html?user=NuChwezi&repo=The-Meliorator&type=fork&count=true&size=large&v=2" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+                            </div -->
                         <div style="margin:10px">
                             <a href="https://nuchwezi.com" title="This project is brought to you by the NuChwezi, with love, from Uganda, East Africa.">
                                 <div class="logo-nuchwezi"></div>
@@ -299,6 +307,7 @@ $('#table').Meliorator('table', {
                 return d;
             }
             $(document).ready(function() {
+                // imports are loaded and elements have been registered
                 $('.fit').fitText(0.8);
                 // let's make some basic dataset that we'll use to test our lib...
                 var sampleData = range(0, 10).map(function(i) {
@@ -308,6 +317,7 @@ $('#table').Meliorator('table', {
                         Cube: Math.pow(i, 3)
                     }
                 });
+                // only use meliorator after it has been fully loaded...
                 $(document).on('Meliorator-Ready', function() {
                     // here, we get the dataset, and see how we can use Meliorator to tranform it into a proper html table,
                     // which is rendered in the container(s) we specify.
@@ -325,18 +335,15 @@ $('#table').Meliorator('table', {
                     // casting to plain old arrays for simpler use...
                     var parsedDataSet = $.makeArray($('.originalTable').Meliorator('parse-table')[0]);
                     console.log(parsedDataSet);
-                    // then, we can start constructing and using our dashboard for this data as such...
-                    $('#analytics').Meliorator('dashboard-panel', {
+           
+                    // okay, now let's take this parsed table, and render a single minimal analytics widget for one possible perspective to the data
+                    $('#analytics').Meliorator('analytics-widget', {
                         data: parsedDataSet,
-                        /*saveDashboardCallback: function(dashboardSpec){
-                    	alert(dashboardSpec);
-                    }*/
-                        // note: it's possible to intercept the export function, to instead deal with the export blob - which is an image of the visuals rendered by the panel...
-                        /*
-                    exportCallback: function(blob){
-                    	alert('we got data...');
-                    	console.log(blob);
-                    }*/
+                        domainField: 'Number',
+                        rangeField: 'Square',
+                        domainAggregation: 'NONE',
+                        renderAs: 'LINE'
+                                          
                     });
                 });
             });
