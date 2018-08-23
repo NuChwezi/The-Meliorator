@@ -119,6 +119,10 @@
                 margin: 6px;
             }
 
+            .large .data-container {
+                width: 64.5em;
+            }
+
             .legend {
                 color: #49a761;
                 font-size: larger;
@@ -184,9 +188,6 @@
                 position: relative;
                 top: 1px;
             }
-             .dashboard-title.widget {
-                width: 100%;
-            }
         </style>
     </head>
     <body>
@@ -201,19 +202,20 @@
                 <div class="plan">
                     <hgroup>
                         <h1>First, let's</h1>
-                        <h2>Use Meliorator to make a table</h2>
+                        <h2>Get some data via an API...</h2>
                         <pre>
-                            <code class="language-javascript">var sampleData = range(0, 40).map(function(i) {
-return {
-        Number: i,
-        Square: Math.pow(i, 2),
-        Cube: Math.pow(i, 3)
-    }
-});
+                            <code class="language-javascript">var settings = {
+ "url": "https://api.myjson.com/bins/183uzk",
+ "method": "GET",
+  "headers": {
+	"content-type": "application/json"
+  },
+}
 
-$('#table').Meliorator('table', {
-    data: sampleData,
-    tableClass: 'originalTable'
+// in this case, the data is obtained via an api already as a JSON object, and then we pass the result to 
+// Meliorator to render for us a table respecting embedded images and objects... (basically, do nothing else)
+$.ajax(settings).done(function (response) {
+  initPanels(response);
 });
 
                             </code>
@@ -222,29 +224,38 @@ $('#table').Meliorator('table', {
                 </div>
                 <div class="plan">
                     <hgroup>
-                        <h1>So?</h1>
-                        <h2>We get this...</h2>
-                        <div id="table" class="inline data-container"></div>
-                    </hgroup>
-                </div>
-                <div class="plan">
-                    <hgroup>
-                        <h1>Then, with a dataset</h1>
-                        <h2>We can Meliorate for a Dashboard</h2>
+                        <h1>Then, with the parsed dataset</h1>
+                        <h2>We can Meliorate</h2>
                         <pre>
-                            <code class="language-javascript">$('#analytics').Meliorator('dashboard-panel', {
-    data: parsedDataSet
-});
+                            <code class="language-javascript">function initPanels(data){
+               
+	$('#table').Meliorator('table', {
+		data: data,
+		tableClass: 'derivedTable'
+	});
+
+	$('#analytics').Meliorator('analytics-panel', {
+		data: data
+	});
+
+}      
 
                             </code>
                         </pre>
+                    </hgroup>
+                </div>
+                <div class="plan large">
+                    <hgroup>
+                        <h1>To get?</h1>
+                        <h2>This!</h2>
+                        <div id="derivedTable" class="inline data-container"></div>
                     </hgroup>
                 </div>
             </div>
             <div class="plan large">
                 <hgroup>
-                    <h1>To Get?</h1>
-                    <h2>This dashboard builder for FREE!</h2>
+                    <h1>And</h1>
+                    <h2>This amazing analytics panel for FREE!</h2>
                     <div id="analytics"></div>
                 </hgroup>
             </div>
@@ -255,16 +266,13 @@ $('#table').Meliorator('table', {
                     <h2>Other Examples...</h2>
                     <div style="padding:10px; margin-left:20px; margin-top:20px">
                         <div style="margin:10px">
-                            <a href="auto-dashboard-example.html">Render Pre-existing a Dashboard</a>
-                        </div>
-                        <div style="margin:10px">
-                            <a href="uri-example.html">Using URI/API sourced Data</a>
-                        </div>
-                        <div style="margin:10px">
                             <a href="index.html">Sourcing data from existing HTML Tables</a>
                         </div>
                         <div style="margin:10px">
-                            <a href="image_table-example.html">Automagically Render images and other Binary Objects</a>
+                            <a href="dashboard-example.html">(Design/View) Dashboard Mode Example</a>
+                        </div>
+                        <div style="margin:10px">
+                            <a href="auto-dashboard-example.html">Render Pre-existing a Dashboard</a>
                         </div>
                     </div>
                 </hgroup>
@@ -289,51 +297,39 @@ $('#table').Meliorator('table', {
         <!-- some fancy typography... -->
         <script src="vendor/js/jquery.fittext.min.js"></script>
         <script>
-            function range(low, high) {
-                d = []
-                for (i = low; i <= high; i++)
-                    d.push(i);
-                return d;
+            function initPanels(data) {
+                console.log(data);
+                // here, we get the dataset, and see how we can use Meliorator to tranform it into a proper html table,
+                // which is rendered in the container(s) we specify.
+                // the only option we need to set is the 'data' field, others are optional.
+                $('#derivedTable').Meliorator('table', {
+                    data: data,
+                    tableClass: 'derivedTable'
+                });
+                // okay, now let's take this parsed table, and render an analytics panel for it :-)
+                $('#analytics').Meliorator('analytics-panel', {
+                    data: data,
+                    labels: {
+                        range: 'Series'
+                    }
+                });
             }
             $(document).ready(function() {
                 $('.fit').fitText(0.8);
-                // let's make some basic dataset that we'll use to test our lib...
-                var sampleData = range(0, 10).map(function(i) {
-                    return {
-                        Number: i,
-                        Square: Math.pow(i, 2),
-                        Cube: Math.pow(i, 3)
-                    }
-                });
+                // let's make lorem objects with which to test our lib...
+                // we'll use the awesome schematic-ipsum API for this..
+                var settings = {
+                    "url": "https://api.myjson.com/bins/183uzk",
+                    "method": "GET",
+                    "headers": {
+                        "content-type": "application/json"
+                    },
+                }
                 $(document).on('Meliorator-Ready', function() {
-                    // here, we get the dataset, and see how we can use Meliorator to tranform it into a proper html table,
-                    // which is rendered in the container(s) we specify.
-                    // the only option we need to set is the 'data' field, others are optional.
-                    $('#table').Meliorator('table', {
-                        data: sampleData,
-                        tableClass: 'originalTable'
-                    });
-                    // in the next one, we shall attempt to use a pre-existing html table, as the source of our other
-                    // transformations. This comes in handy, because, there might be scenarios in the real world, where
-                    // the data to be used for analysis is only available in some html table on the document.
-                    // so, the following shows how Meliorator can scan an existing html table, and return an array of
-                    // objects from it.
-                    // NOTE: because jQuery annotates any results from operating on its selectors, we shall need to force
-                    // casting to plain old arrays for simpler use...
-                    var parsedDataSet = $.makeArray($('.originalTable').Meliorator('parse-table')[0]);
-                    console.log(parsedDataSet);
-                    // then, we can start constructing and using our dashboard for this data as such...
-                    $('#analytics').Meliorator('dashboard-panel', {
-                        data: parsedDataSet,
-                        /*saveDashboardCallback: function(dashboardSpec){
-                    	alert(dashboardSpec);
-                    }*/
-                        // note: it's possible to intercept the export function, to instead deal with the export blob - which is an image of the visuals rendered by the panel...
-                        /*
-                    exportCallback: function(blob){
-                    	alert('we got data...');
-                    	console.log(blob);
-                    }*/
+                    // in this case, the data is obtained via an api, and then we pass the result to 
+                    // Meliorator
+                    $.ajax(settings).done(function(response) {
+                        initPanels(response);
                     });
                 });
             });

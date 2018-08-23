@@ -548,6 +548,9 @@ Requires and includes dependencies of the Open Source Flot js Charting library
 (function($) {
     this.MelioratorClass = 'meliorator';
     this.STORAGE_KEY_DASHBOARDS = "DASHBOARDS"
+    this.isBin = function(cdata){
+        return cdata.startsWith("data:") && cdata.length > 100;
+    }
     /* given an array of objects, return an html table based off of them */
     this.makeHTMLTable = function(data, tableClass) {
         var sample = data[0];
@@ -571,9 +574,16 @@ Requires and includes dependencies of the Open Source Flot js Charting library
             var record = data[i];
             var rtb = $('<tr/>');
             for (h in headers) {
-                rtb.append($('<td/>', {
-                    'class': headers[h]
-                }).text(record[headers[h]]));
+                var cell_data = record[headers[h]];
+                if((cell_data != undefined) && isBin(cell_data)){
+                    rtb.append($('<td/>', {
+                        'class': headers[h]
+                    }).append($('<iframe/>', {'src': cell_data, 'frameborder': 0, 'style': 'width:100%; height:200px'})));
+                }else {
+                    rtb.append($('<td/>', {
+                        'class': headers[h]
+                    }).text(cell_data));
+                }
             }
             tb.append(rtb)
         }
