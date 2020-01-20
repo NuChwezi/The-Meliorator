@@ -615,6 +615,188 @@ Requires and includes dependencies of the Open Source Flot js Charting library
                 isCategorical = isCategorical || true;
         return isCategorical;
     }
+
+
+var LOBFUtils = {}; // to hold LOBF utils...
+
+    LOBFUtils.makeLOBFDataset = function(datasetXY, labelY, labelX){
+
+            var meanX = LOBFUtils.getAvX(datasetXY);
+            var meanY = LOBFUtils.getAvY(datasetXY);
+            var gradient = LOBFUtils.computeGradient(datasetXY, meanX, meanY);
+            var yIntercept = LOBFUtils.computeYintercept(datasetXY, meanX, meanY);
+
+            var lobfDataset = [];
+            for(i in datasetXY){
+                lobfDataset.push([datasetXY[i][0], yIntercept + datasetXY[i][0] * gradient]);
+            }
+
+            return [lobfDataset, labelY +" = "+ yIntercept + " + "+ labelX +"*"+ gradient]; // include readble lobf equation
+
+    };
+
+
+        LOBFUtils.getAvX = function (data){
+	var sumX = 0;
+	
+	for(i=0; i< data.length; i++)
+		sumX = sumX + data[i][0];
+		
+	var numberOfItems = data.length;
+	return sumX / numberOfItems;
+};
+
+LOBFUtils.getAvY = function (data){
+	var sumY = 0;
+	
+	for(i=0; i< data.length; i++)
+		sumY = sumY + data[i][1];
+		
+	var numberOfItems = data.length;
+	return sumY / numberOfItems;
+};
+
+// we also need a function that if given some number, n, returns the square of that number
+
+LOBFUtils.square = function square(n){
+	return n * n;
+};
+
+// then we'll need to find the gradient manifest
+
+LOBFUtils.getGradient = function getGradient(data, avX, avY) {
+	var den = 0;
+	var num =0;
+	for(i=0; i< data.length; i++) {
+	 num = num + ((data[i][0] - avX) * (data[i][1] - avY));
+	 den = den + LOBFUtils.square((data[i][0] - avX));
+	 }
+	return num / den;
+};
+
+// get gradient, m, of the line of best fit...
+LOBFUtils.computeGradient = function(dataset,meanX,meanY){
+    //var meanX = getAvX(dataset);
+    //var meanY =getAvY(dataset);
+var bestFitGradient = LOBFUtils.getGradient(dataset,meanX, meanY);
+return bestFitGradient;
+};
+
+// this finds the y-intercept given slope and mean of X and Y
+LOBFUtils.getYintercept = function getYintercept(grad, avX, avY){
+	return avY - (avX * grad);
+};
+
+// get y-intercept, c, of the line of best fit...
+LOBFUtils.computeYintercept = function(dataset,meanX, meanY){
+    var bestFitGradient = LOBFUtils.getGradient(dataset,meanX, meanY);
+    var yIntercept = LOBFUtils.getYintercept(bestFitGradient, meanX, meanY);
+    return yIntercept;
+};
+
+   
+
+    /* given a dataset, make a line chart with special line of best fit plot included... */
+    this.makeLineOfBestFitChart = function(data, domainField, selectedAggregation, rangeFields, container, domainTransformer) {
+        var seriesMap = {}
+        var minRangeVal =0, maxRangeVal=0, minDomainVal=0, maxDomainVal=0;
+        for (i in data) {
+            domainValue = domainTransformer==null? data[i][domainField] : domainTransformer(data[i][domainField]);
+            minDomainVal = isNaN(domainValue) ? minDomainVal : Math.min(minDomainVal, Number(domainValue));
+            maxDomainVal = isNaN(domainValue) ? maxDomainVal : Math.max(maxDomainVal, Number(domainValue));
+            for (k in rangeFields) {
+                rangeField = rangeFields[k];
+                if (seriesMap[rangeField] == undefined)
+                    seriesMap[rangeField] = [];
+                rangeValue = data[i][rangeField];
+                minRangeVal = isNaN(rangeValue) ? minRangeVal : Math.min(minRangeVal, Number(rangeValue));
+                maxRangeVal = isNaN(rangeValue) ? maxRangeVal : Math.max(maxRangeVal, Number(rangeValue));
+                seriesMap[rangeField].push([domainValue, rangeValue]);
+            }
+        }
+        var chart = $('<div/>', {
+            'class': 'chart-canvas'
+        });
+        // put a title over our chart...
+        container.append($('<h1/>').text(makeChartTitle(domainField, rangeFields)));
+        container.append(chart);
+        var series = [];
+        var options = {
+            series: {
+                lines: {
+                    show: true
+                },
+                points: {
+                    show: true
+                }
+            },
+            xaxis: {
+                zoomRange: [0.1, maxDomainVal],
+                panRange: [minDomainVal, maxDomainVal],
+                aggregate: selectedAggregation
+            },
+            yaxis: {
+                zoomRange: [0.1, maxRangeVal],
+                panRange: [minRangeVal, maxRangeVal]
+            },
+            zoom: {
+                interactive: true
+            },
+            pan: {
+                interactive: true
+            },
+            grid: {
+                hoverable: true
+            },
+            tooltip: {
+                show: true,
+                content: function(label, xval, yval, flotItem) {
+                    return label + " | " + xval + " : " + yval;
+                    // manually constructing this prevents the bug in tooltip plugin that breaks when there are multiple series. 
+                }
+            }
+        }
+        for (var o in seriesMap) {
+            var seriesData = seriesMap[o];
+            var lobfInfo = LOBFUtils.makeLOBFDataset(seriesData,rangeField, domainField);
+            var lobfSerieData = lobfInfo[0]
+            var isCategorical = checkIfDataIsCategorical(seriesData, function(v) {
+                return String(v[0])
+            }, 1);
+            var serie = {
+                color: randomColor({
+                    luminosity: 'bright'
+                }),
+                data: seriesData,
+                label: o,
+                lines: {
+                    show: false
+                },
+                points: {
+                    show: true
+                }
+            };
+            if (isCategorical) {
+                options['xaxis']['mode'] = 'categories';
+                options['xaxis']['tickLength'] = 0;
+            }else {
+                // add lobf series for this dataset...                
+                var serieLOBF = {
+                color: randomColor({
+                    luminosity: 'dark'
+                }),
+                data: lobfSerieData,
+                label: "LOBF: " + lobfInfo[1]
+                };
+                series.push(serieLOBF);
+            }
+            series.push(serie);
+        }
+        $.plot(chart, series, options);
+        container.removeClass('pie-chart');
+        container.removeClass('table');
+        return container;
+    }
     /* given a dataset, make a line chart, append it to the container, and return the chart element */
     this.makeLineChart = function(data, domainField, selectedAggregation, rangeFields, container, domainTransformer) {
         var seriesMap = {}
@@ -1007,7 +1189,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
         panel.append(rangeSelectorWidget);
         // end range selector
         // rendering selector...
-        var renderingKinds = ['TABLE', 'POWER-TABLE', 'LINE', 'TIME-SERIES', 'SCATTER', 'PIE', 'BAR', 'JSON'];
+        var renderingKinds = ['TABLE', 'POWER-TABLE', 'LINE', 'LINEBF', 'TIME-SERIES', 'SCATTER', 'PIE', 'BAR', 'JSON'];
         var renderingSelectorWidget = $('<div/>', {
             'class': 'rendering-selector widget'
         });
@@ -1362,6 +1544,11 @@ Requires and includes dependencies of the Open Source Flot js Charting library
         case 'LINE':
             {
                 makeLineChart(visualizationDataSet, selectedDomain, getFlotAggregator(selectedAggregation), Array.isArray(selectedRange) ? selectedRange : [selectedRange], chartWidget)
+                break;
+            }
+            case 'LINEBF':
+            {
+                makeLineOfBestFitChart(visualizationDataSet, selectedDomain, getFlotAggregator(selectedAggregation), Array.isArray(selectedRange) ? selectedRange : [selectedRange], chartWidget)
                 break;
             }
         case 'TIME-SERIES':

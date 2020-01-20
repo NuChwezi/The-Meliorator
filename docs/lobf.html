@@ -198,13 +198,12 @@
                 <div class="plan">
                     <hgroup>
                         <h1>First, let's</h1>
-                        <h2>Use Meliorator to make a table</h2>
+                        <h2>Make a table of random data</h2>
                         <pre>
                             <code class="language-javascript">var sampleData = range(0, 40).map(function(i) {
 return {
         Number: i,
-        Square: Math.pow(i, 2),
-        Cube: Math.pow(i, 3)
+        Function: Math.random(i) + Math.floor(i*.5)
     }
 });
 
@@ -224,34 +223,21 @@ $('#table').Meliorator('table', {
                         <div id="table" class="inline data-container"></div>
                     </hgroup>
                 </div>
+               
+              
                 <div class="plan">
                     <hgroup>
-                        <h1>Meliorator</h1>
-                        <h2>Can reverse engineer an existing table</h2>
-                        <pre>
-                            <code class="language-javascript">var parsedDataSet = $.makeArray(
-    $('.originalTable').Meliorator('parse-table')[0]
-);
-
-                            </code>
-                        </pre>
-                    </hgroup>
-                </div>
-                <div class="plan">
-                    <hgroup>
-                        <h1>To get?</h1>
-                        <h2>This!</h2>
-                        <div id="derivedTable" class="inline data-container"></div>
-                    </hgroup>
-                </div>
-                <div class="plan">
-                    <hgroup>
-                        <h1>Then, with a dataset</h1>
+                        <h1>Then, with this dataset</h1>
                         <h2>We can Meliorate</h2>
                         <pre>
-                            <code class="language-javascript">$('#analytics').Meliorator('analytics-panel', {
-    data: parsedDataSet
-});
+                            <code class="language-javascript">$('#analytics').Meliorator('analytics-widget', {
+                        data: parsedDataSet,
+                        domainField: 'Number',
+                        rangeField: 'Function',
+                        domainAggregation: 'NONE',
+                        renderAs: 'LINEBF'
+                                          
+                    });
 
                             </code>
                         </pre>
@@ -261,7 +247,7 @@ $('#table').Meliorator('table', {
             <div class="plan large">
                 <hgroup>
                     <h1>To Get?</h1>
-                    <h2>This amazing analytics panel for FREE!</h2>
+                    <h2>This Line of Best Fit analytics widget for FREE!</h2>
                     <div id="analytics"></div>
                 </hgroup>
             </div>
@@ -281,13 +267,7 @@ $('#table').Meliorator('table', {
                             <a href="auto-dashboard-example.html">Render Pre-existing a Dashboard</a>
                         </div>
                         <div style="margin:10px">
-                            <a href="minimal.html">Render a Single Analytics Widget</a>
-                        </div>
-                        <div style="margin:10px">
-                            <a href="image_table-example.html">Automagically Render images and other Binary Objects</a>
-                        </div>
-                         <div style="margin:10px">
-                            <a href="lobf.html">Plotting Line of Best Fit</a>
+                            <a href="index.html">Sourcing data from existing HTML Tables</a>
                         </div>
                     </div>
                 </hgroup>
@@ -328,12 +308,11 @@ $('#table').Meliorator('table', {
             $(document).ready(function() {
                 // imports are loaded and elements have been registered
                 $('.fit').fitText(0.8);
-                // let's make some basic dataset that we'll use to test our lib...
+                // let's make some basic random dataset that we'll use to test our lib...
                 var sampleData = range(0, 10).map(function(i) {
                     return {
                         Number: i,
-                        Square: Math.pow(i, 2),
-                        Cube: Math.pow(i, 3)
+                        Function: Math.random(i) + Math.floor(i*.5)
                     }
                 });
                 // only use meliorator after it has been fully loaded...
@@ -354,20 +333,15 @@ $('#table').Meliorator('table', {
                     // casting to plain old arrays for simpler use...
                     var parsedDataSet = $.makeArray($('.originalTable').Meliorator('parse-table')[0]);
                     console.log(parsedDataSet);
-                    // then, let's see if this parsed DataSet is indeed capable of being used to render the same table again
-                    $('#derivedTable').Meliorator('table', {
+           
+                    // okay, now let's take this parsed table, and render a single minimal analytics widget for one possible perspective to the data
+                    $('#analytics').Meliorator('analytics-widget', {
                         data: parsedDataSet,
-                        tableClass: 'derivedTable'
-                    });
-                    // okay, now let's take this parsed table, and render an analytics panel for it :-)
-                    $('#analytics').Meliorator('analytics-panel', {
-                        data: parsedDataSet,
-                        // note: it's possible to intercept the export function, to instead deal with the export blob - which is an image of the visuals rendered by the panel...
-                        /*
-                    exportCallback: function(blob){
-                    	alert('we got data...');
-                    	console.log(blob);
-                    }*/
+                        domainField: 'Number',
+                        rangeField: 'Function',
+                        domainAggregation: 'NONE',
+                        renderAs: 'LINEBF'
+                                          
                     });
                 });
             });
