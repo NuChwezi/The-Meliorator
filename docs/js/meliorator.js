@@ -631,7 +631,13 @@ var LOBFUtils = {}; // to hold LOBF utils...
                 lobfDataset.push([datasetXY[i][0], yIntercept + datasetXY[i][0] * gradient]);
             }
 
-            return [lobfDataset, labelY +" = "+ yIntercept + " + "+ labelX +"*"+ gradient]; // include readble lobf equation
+            // returns:
+            // [array of coordinates on the lobf line, an equation for the lobf as a humane-string, a function that can take y and return x, a function that can take y and return x]
+            return [lobfDataset, 
+            labelY +" = "+ yIntercept + " + "+ labelX +"*"+ gradient,
+            function (x) {return (yIntercept + gradient * x);},
+            function (y) {return ((y - yIntercept)/gradient);}
+            ]; 
 
     };
 
@@ -758,6 +764,8 @@ LOBFUtils.computeYintercept = function(dataset,meanX, meanY){
         }
         for (var o in seriesMap) {
             var seriesData = seriesMap[o];
+             // returns:
+            // [array of coordinates on the lobf line, an equation for the lobf as a humane-string, a function that can take y and return x, a function that can take y and return x]
             var lobfInfo = LOBFUtils.makeLOBFDataset(seriesData,rangeField, domainField);
             var lobfSerieData = lobfInfo[0]
             var isCategorical = checkIfDataIsCategorical(seriesData, function(v) {
@@ -795,6 +803,38 @@ LOBFUtils.computeYintercept = function(dataset,meanX, meanY){
         $.plot(chart, series, options);
         container.removeClass('pie-chart');
         container.removeClass('table');
+
+        // we'll also add a mechanism to allow automated computing of domainValue given rangeValue and vise-versa...
+        var rangeFVWidget = $('<input/>', {
+            'placeholder': rangeField + " value?",
+            'type': "number",
+            'class': 'prediction-panel-widget'
+        });
+        var domainFVWidget = $('<input/>', {
+            'placeholder': domainField + " value?",
+            'type': "number",
+            'class': 'prediction-panel-widget'
+        });
+        var predictionPanel = $('<div/>',{
+            'class': 'prediction-panel',
+        }).append(rangeFVWidget,domainFVWidget);
+        // add some labels...
+        $(rangeFVWidget).before($("<label/>").text(rangeField));
+        $(domainFVWidget).before($("<label/>").text(domainField));
+        // we want tht whenever the value in one is updated, we automatically compute the value in the other...
+        var domainVXComputer = lobfInfo[2];
+        var rangeVYComputer = lobfInfo[3];
+        rangeFVWidget.change(function(){
+            domainFVWidget.val(domainVXComputer(rangeFVWidget.val()));
+        });
+        domainFVWidget.change(function(){
+            rangeFVWidget.val(rangeVYComputer(domainFVWidget.val()));
+        });
+
+
+
+        container.append(predictionPanel);
+
         return container;
     }
     /* given a dataset, make a line chart, append it to the container, and return the chart element */

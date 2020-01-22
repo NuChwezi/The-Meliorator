@@ -183,3 +183,17 @@
 .legend div:nth-child(1){
   background: none !important; /*fix bug in Meliorator's use of Plot legend */
 }
+
+.prediction-panel {
+    background-color: tomato;
+    padding: 10px;
+    color: white;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.prediction-panel-widget {
+    border-radius: 6px;
+    padding: 3px;
+    margin:3px;
+}
