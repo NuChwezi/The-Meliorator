@@ -631,12 +631,29 @@ var LOBFUtils = {}; // to hold LOBF utils...
                 lobfDataset.push([datasetXY[i][0], yIntercept + datasetXY[i][0] * gradient]);
             }
 
+            var sdX = LOBFUtils.standardDeviationX(datasetXY, meanX);
+            var sdY = LOBFUtils.standardDeviationY(datasetXY, meanY);
+            var covXY = LOBFUtils.covarianceXY(datasetXY, meanX, meanY);
+            var ppmcXY = LOBFUtils.computePPMC(covXY, sdX, sdY);
+
+            var interpretation = LOBFUtils.interpretPPMC(ppmcXY, labelX, labelY);
+
             // returns:
-            // [array of coordinates on the lobf line, an equation for the lobf as a humane-string, a function that can take y and return x, a function that can take y and return x]
+            /* [
+            array of coordinates on the lobf line, 
+            an equation for the lobf as a humane-string, 
+            a function that can take y and return x, 
+            a function that can take y and return x,
+            sample standard deviation of x,
+            sample standard deviation of y,
+            Pearson correlation coefficient of X and Y,
+            an interpretation of the coefficient value...
+            ] */
             return [lobfDataset, 
             labelY +" = "+ yIntercept + " + "+ labelX +"*"+ gradient,
             function (x) {return (yIntercept + gradient * x);},
-            function (y) {return ((y - yIntercept)/gradient);}
+            function (y) {return ((y - yIntercept)/gradient);},
+            sdX, sdY, ppmcXY, interpretation
             ]; 
 
     };
@@ -681,10 +698,10 @@ LOBFUtils.getGradient = function getGradient(data, avX, avY) {
 };
 
 // get gradient, m, of the line of best fit...
-LOBFUtils.computeGradient = function(dataset,meanX,meanY){
-    //var meanX = getAvX(dataset);
-    //var meanY =getAvY(dataset);
-var bestFitGradient = LOBFUtils.getGradient(dataset,meanX, meanY);
+LOBFUtils.computeGradient = function(data,meanX,meanY){
+    //var meanX = getAvX(data);
+    //var meanY =getAvY(data);
+var bestFitGradient = LOBFUtils.getGradient(data,meanX, meanY);
 return bestFitGradient;
 };
 
@@ -694,23 +711,70 @@ LOBFUtils.getYintercept = function getYintercept(grad, avX, avY){
 };
 
 // get y-intercept, c, of the line of best fit...
-LOBFUtils.computeYintercept = function(dataset,meanX, meanY){
-    var bestFitGradient = LOBFUtils.getGradient(dataset,meanX, meanY);
+LOBFUtils.computeYintercept = function(data,meanX, meanY){
+    var bestFitGradient = LOBFUtils.getGradient(data,meanX, meanY);
     var yIntercept = LOBFUtils.getYintercept(bestFitGradient, meanX, meanY);
     return yIntercept;
 };
 
-   
+
+// we'll need a function to compute the standard deviation of X and Y
+
+LOBFUtils.standardDeviationX = function standardDeviationX(data, meanX){
+	var _sum = 0;
+	for(i=0; i< data.length; i++)
+		_sum = _sum + LOBFUtils.square(data[i][0] - meanX);
+	return Math.sqrt((1/(data.length - 1)) * _sum);
+}
+LOBFUtils.standardDeviationY = function(data, meanY){
+	var _sum = 0;
+	for(i=0; i< data.length; i++)
+		_sum = _sum + LOBFUtils.square(data[i][1] - meanY);
+	return Math.sqrt((1/(data.length - 1)) * _sum);
+}
+
+// we'll also need the covariance of the two variables...
+LOBFUtils.covarianceXY = function(data, meanX, meanY){
+	var _sum = 0;
+	for(i=0; i< data.length; i++)
+		_sum = _sum + ((data[i][0] - meanY) * (data[i][1] - meanY));
+	// note that the difference btwn sample covariance and population covariance is that the later uses 1/n while the former uses 1/(n-1) in this expression
+	return (1/(data.length - 1)) * _sum; 
+}
+
+// now we can compute the Pearson product-moment correlation coefficient (PPMCC) aka. Bivariate Correlation
+LOBFUtils.computePPMC = function(covXY, sdX, sdY){
+	return covXY / (sdX * sdY);
+}
+
+LOBFUtils.interpretPPMC = function(r, lX, lY) {
+	if(r == 0){
+		return lx + " and " + lY + " are not related";
+	}else {
+		var relStrength = Math.abs(r) >= 0.5 ? "and they are strongly related" : "but they are weakly related";
+		if( r >0) {
+			return "As " + lX + " increases " + lY + " also increases " + relStrength ;
+		}else {
+			return "As " + lX + " increases " + lY + " decreases " + relStrength;
+		}
+	}
+}
+
+
 
     /* given a dataset, make a line chart with special line of best fit plot included... */
     this.makeLineOfBestFitChart = function(data, domainField, selectedAggregation, rangeFields, container, domainTransformer) {
         var seriesMap = {}
-        var minRangeVal =0, maxRangeVal=0, minDomainVal=0, maxDomainVal=0;
+        var minRangeVal =0, maxRangeVal=0, minDomainVal=0, maxDomainVal=0, rangeField = rangeFields[0];
         for (i in data) {
             domainValue = domainTransformer==null? data[i][domainField] : domainTransformer(data[i][domainField]);
             minDomainVal = isNaN(domainValue) ? minDomainVal : Math.min(minDomainVal, Number(domainValue));
             maxDomainVal = isNaN(domainValue) ? maxDomainVal : Math.max(maxDomainVal, Number(domainValue));
+            var rf = 1
             for (k in rangeFields) {
+            	if(rf > 1) {
+            		break; // we only handle a single range field for line of best fit.
+            	}
                 rangeField = rangeFields[k];
                 if (seriesMap[rangeField] == undefined)
                     seriesMap[rangeField] = [];
@@ -718,6 +782,8 @@ LOBFUtils.computeYintercept = function(dataset,meanX, meanY){
                 minRangeVal = isNaN(rangeValue) ? minRangeVal : Math.min(minRangeVal, Number(rangeValue));
                 maxRangeVal = isNaN(rangeValue) ? maxRangeVal : Math.max(maxRangeVal, Number(rangeValue));
                 seriesMap[rangeField].push([domainValue, rangeValue]);
+                rf += 1;
+              
             }
         }
         var chart = $('<div/>', {
@@ -739,11 +805,13 @@ LOBFUtils.computeYintercept = function(dataset,meanX, meanY){
             xaxis: {
                 zoomRange: [0.1, maxDomainVal],
                 panRange: [minDomainVal, maxDomainVal],
-                aggregate: selectedAggregation
+                aggregate: selectedAggregation,
+                 axisLabel: domainField    
             },
             yaxis: {
                 zoomRange: [0.1, maxRangeVal],
-                panRange: [minRangeVal, maxRangeVal]
+                panRange: [minRangeVal, maxRangeVal],
+                axisLabel: rangeField 
             },
             zoom: {
                 interactive: true
@@ -815,9 +883,18 @@ LOBFUtils.computeYintercept = function(dataset,meanX, meanY){
             'type': "number",
             'class': 'prediction-panel-widget'
         });
+
+        var correlationAnalysisPanel = $('<div/>', {
+            'class': 'correlation-analysis-panel'
+        }).html(
+        "The sample standard deviation of " + domainField + " is <b>" + lobfInfo[4].toFixed(3)
+        + "</b>, that of " + rangeField + " is <b>" + lobfInfo[5].toFixed(3) + "</b> and their correlation (PPMCC) is " + lobfInfo[6].toFixed(3)
+        + ".<br/>Analyis shows that <b>" + lobfInfo[7] + "</b>");
+
         var predictionPanel = $('<div/>',{
             'class': 'prediction-panel',
-        }).append(rangeFVWidget,domainFVWidget);
+        }).append(correlationAnalysisPanel, rangeFVWidget,domainFVWidget);
+        
         // add some labels...
         $(rangeFVWidget).before($("<label/>").text(rangeField));
         $(domainFVWidget).before($("<label/>").text(domainField));
@@ -2190,6 +2267,7 @@ window.MelioratorBaseURI + "vendor/js/flot.pie.min.js", /* Flot.resize */
 window.MelioratorBaseURI + "vendor/js/flot.resize.min.js", /* Flot.aggregate */
 window.MelioratorBaseURI + "vendor/js/flot.aggregate.min.js", /* Flot.tooltip */
 window.MelioratorBaseURI + "vendor/js/flot.tooltip.min.js", /* Flot Orderbars */
+window.MelioratorBaseURI + "vendor/js/jquery.flot.axislabels.js", /* Flot Axis Labels */
 window.MelioratorBaseURI + "vendor/js/flot.orderbars.min.js", // we need underscore
 "https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js", // HTML2Canvas
 "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js", /* Canvas2Blob */
