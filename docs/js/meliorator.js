@@ -549,6 +549,7 @@ Requires and includes dependencies of the Open Source Flot js Charting library
     this.MelioratorClass = 'meliorator';
     this.STORAGE_KEY_DASHBOARDS = "DASHBOARDS"
     this.isBin = function(cdata){
+    	// so we can recognize embedded images for example...
         if (typeof cdata === 'string' || cdata instanceof String)
             return cdata.startsWith("data:") && cdata.length > 100;
         else
